@@ -19,3 +19,12 @@ from django.urls import path
 urlpatterns = [
     path('admin/', admin.site.urls),
 ]
+
+from django.conf.urls import url
+from django.contrib import admin
+from User import home
+
+urlpatterns = [
+    url(r'^admin/', admin.site.urls),
+    url(r'^home$', home.get_path),
+]
