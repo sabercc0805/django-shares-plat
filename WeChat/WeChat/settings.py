@@ -25,7 +25,7 @@ SECRET_KEY = 'mi%tre=qolrih14h4ly^a%5btqcoj65op#dv&-ff-!peulu5c='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*',]
 
 
 # Application definition
@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    #'werkzeug_debugger_runserver',证书到时候直接域名使用
+   # 'django_extensions',
 ]
 
 MIDDLEWARE = [
