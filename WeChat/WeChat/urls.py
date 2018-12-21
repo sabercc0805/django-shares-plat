@@ -29,5 +29,9 @@ from User import home
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$',home.homepage),
-
+    url(r'^index/', home.index),
+    url(r'^login/', home.login),
+    url(r'^register/', home.register),
+    url(r'^logout/', home.logout),
 ]
+
