@@ -134,6 +134,7 @@ STATICFILES_DIRS = (
     ('css', os.path.join(STATIC_ROOT, 'css').replace('\\', '/')),
     ('js', os.path.join(STATIC_ROOT, 'js').replace('\\', '/')),
     ('images', os.path.join(STATIC_ROOT, 'images').replace('\\', '/')),
+    ('bootstrap', os.path.join(STATIC_ROOT, 'bootstrap').replace('\\', '/')),
 )
 #HERE = os.path.dirname(os.path.abspath(__file__))
 #HERE = os.path.join(HERE, '../')
