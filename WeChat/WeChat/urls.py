@@ -22,6 +22,7 @@ urlpatterns = [
 ]
 
 from django.conf.urls import url
+from django.conf.urls import include
 from django.contrib import admin
 from User import home
 
@@ -33,5 +34,6 @@ urlpatterns = [
     url(r'^login/', home.login),
     url(r'^register/', home.register),
     url(r'^logout/', home.logout),
+    url(r'^captcha', include('captcha.urls')),
 ]
 
