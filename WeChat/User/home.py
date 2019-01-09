@@ -10,8 +10,8 @@ from .forms import UserForm
 
 @csrf_exempt
 @csrf_protect
-@login_required
 
+@login_required
 def homepage(request):
     return render(request, "form.html")
 
@@ -56,7 +56,6 @@ def logout(request):
     # del request.session['user_id']
     # del request.session['user_name']
     return redirect("/index/")
-
 
 def register(request):
     pass
