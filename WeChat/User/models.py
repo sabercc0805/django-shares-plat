@@ -7,6 +7,26 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 
+class BlogTag(models.Model):
+    name = models.CharField(db_column='tag', max_length=20)
+
+    class Meta:
+        managed = True
+        db_table = 'blogtag'
+
+class BlogArticle(models.Model):
+    userid = models.CharField(db_column='UserID',max_length=16)  # Field name made lowercase.
+    title = models.CharField(db_column='title', max_length=100)
+    content = models.TextField(db_column='content', default='')
+    create_time = models.DateTimeField(db_column='createtime', auto_now = True)
+    modify_time = models.DateTimeField(db_column='modifytime',auto_now = True)
+    click_nums = models.IntegerField(db_column='clickrate', default=0)
+    tag = models.CharField(db_column='tag', max_length=20,default='')
+    delete_flag = models.IntegerField(db_column='deleteflag', default=0)
+
+    class Meta:
+        managed = True
+        db_table = 'blogarticle'
 
 class Accoountgiveout(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
@@ -59,7 +79,7 @@ class Commonuser(models.Model):
     recharge = models.IntegerField(db_column='Recharge', blank=True, null=True)  # Field name made lowercase.
     currentrechargedate = models.DateTimeField(db_column='CurrentRechargeDate', blank=True, null=True)  # Field name made lowercase.
     currentrecharge = models.IntegerField(db_column='CurrentRecharge', blank=True, null=True)  # Field name made lowercase.
-    registerdate = models.DateTimeField(db_column='RegisterDate')  # Field name made lowercase.
+    registerdate = models.DateTimeField(db_column='RegisterDate',auto_now = True)  # Field name made lowercase.
     firstlogindate = models.DateTimeField(db_column='FirstLoginDate', blank=True, null=True)  # Field name made lowercase.
     currnetlogindate = models.DateTimeField(db_column='CurrnetLoginDate', blank=True, null=True)  # Field name made lowercase.
     isfree = models.IntegerField(db_column='IsFree', blank=True, null=True)  # Field name made lowercase.

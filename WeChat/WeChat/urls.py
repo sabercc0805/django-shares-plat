@@ -25,7 +25,8 @@ from django.conf.urls import url
 from django.conf.urls import include
 from django.contrib import admin
 from User import home
-
+from superuser import super
+from account import account
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -34,6 +35,21 @@ urlpatterns = [
     url(r'^login/', home.login),
     url(r'^register/', home.register),
     url(r'^logout/', home.logout),
+    url(r'^superlogin/', super.superlogin),
+    url(r'^superlogout/', super.superlogout),
+    url(r'^superindex/', super.superindex),
+    url(r'^accountlogin/', account.accountlogin),
+    url(r'^accountlogout/', account.accountlogout),
     url(r'^captcha', include('captcha.urls')),
+    url(r'^userinfo/', home.userinfo),
+    url(r'^article/', home.article),
+    url(r'^articlecontent/', home.articlecontent),
+    url(r'^changepassword/', home.changepassword),
+    url(r'^articleadd/', super.articleadd),
+    url(r'^articlemodify/', super.articlemodify),
+    url(r'^articledelete/', super.articledelete),
+    url(r'^articlerecoverlist/', super.articlerecoverlist),
+    url(r'^articlerecover/', super.articlerecover),
+    url(r'^articlemanage/', super.articlemanage),
 ]
 

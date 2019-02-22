@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}{{ titlename}}{% endblock %}
+
+{% block content %}
+     <div class="container">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="row clearfix">
+                <h2 class="text-center">{{ titlename}}</h2>
+            </div>
+            <HR>
+            <div class="row clearfix">
+                <nav style="text-align: center">
+                    <div class="div-inline">作者：{{ userid }}  时间：{{ createtime }}  点击率：{{ clickrate }}</div>
+                </nav>
+            </div>
+            <BR>
+            <div class="row clearfix">
+                <p>{{ content }}</p>
+            </div>
+        </div>
+     </div>
+
+{% endblock %}

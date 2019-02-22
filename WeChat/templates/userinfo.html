@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}用户信息{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/userinfo.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row clearfix">
+            <div class="col-md-3 column" id="useroprate">
+                <img src="{% static 'images/login.jpg' %}" class="img-circle center-block" alt="140x140" width="140px" height="140px"/>
+                 <br/>
+                <div class="row clearfix">
+                        <button type="button" class="btn btn-default btn-primary center-block" data-toggle="modal" data-target="#picmodel">上传头像</button>
+                        <!-- 模态框（Modal） -->
+                        <div class="modal fade" id="picmodel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	                        <div class="modal-dialog">
+		                        <div class="modal-content">
+			                        <div class="modal-header">
+				                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					                                                                &times;
+                                        </button>
+				                        <h4 class="modal-title" id="myModalLabel">
+					                               上传头像
+                                        </h4>
+			                        </div>
+			                        <div class="modal-body">
+				                        在这里添加一些文本
+			                        </div>
+			                        <div class="modal-footer">
+				                        <input id="input-1a" type="file" class="file" data-show-preview="false">
+			                        </div>
+		                        </div><!-- /.modal-content -->
+	                        </div><!-- /.modal -->
+                        </div>
+                </div>
+                <HR>
+                <div class="row clearfix">
+                    <button type="button" class="btn btn-default btn-primary center-block" data-toggle="modal" data-target="#passwordmodel">修改密码</button>
+                </div>
+                <br/>
+                <div class="row clearfix">
+                    <button type="button" class="btn btn-default btn-primary center-block" data-toggle="modal" data-target="#connectmodel">会员充值</button>
+                </div>
+                <br/>
+                <div class="row clearfix">
+                    <button type="button" class="btn btn-default btn-primary center-block" data-toggle="modal" data-target="#connectmodel">联系我们</button>
+                </div>
+                <div class="row clearfix">
+                    {% if errortype == 0 %}
+                        <div id="myAlert1" class="alert alert-success center-block">
+                            <a href="#" class="close" data-dismiss="alert">&times;</a>
+                            <strong>成功！</strong>修改密码成功。
+                        </div>
+                    {% elif errortype == 1 %}
+                        <div id="myAlert2" class="alert alert-success center-block">
+                            <a href="#" class="close" data-dismiss="alert">&times;</a>
+                            <strong>失败！</strong>原密码错误。
+                        </div>
+                    {% elif errortype == 2 %}
+                        <div id="myAlert3" class="alert alert-success center-block">
+                            <a href="#" class="close" data-dismiss="alert">&times;</a>
+                            <strong>失败！</strong>两次输入密码长度不同。
+                        </div>
+                    {% endif %}
+
+                </div>
+                <!-- 模态框（Modal） -->
+                <div class="modal fade" id="passwordmodel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                    &times;
+                                </button>
+                                <h4 class="modal-title" id="myModalLabel">
+                                    修改密码
+                                </h4>
+                            </div>
+                            <div class="modal-body">
+                                <form class='form-login' action="/changepassword/" method="post">
+                                    {% csrf_token %}
+                                    <p class="form-group">
+                                        <span> {{ ChangePwd_form.oldpassword.label_tag}}</span>
+                                        {{ ChangePwd_form.oldpassword}}
+                                     </p>
+                                    <p class="form-group">
+                                        <span>{{ ChangePwd_form.newpassword1.label_tag}}</span>
+                                        {{ ChangePwd_form.newpassword1}}
+                                    </p>
+                                    <p class="form-group">
+                                        <span>{{ ChangePwd_form.newpassword2.label_tag}}</span>
+                                        {{ ChangePwd_form.newpassword2}}
+                                    </p>
+                                    <button type="submit" class="btn btn-primary center-block">提交</button>
+                                </form>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal -->
+                </div>
+                 <!-- 模态框（Modal） -->
+                <div class="modal fade" id="connectmodel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                    &times;
+                                </button>
+                                <h4 class="modal-title" id="myModalLabel">
+                                   联系我们
+                                </h4>
+                            </div>
+                            <div class="modal-body">
+                                    联系邮箱：3132312321@qq.com
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal -->
+                </div>
+            </div>
+            <div class="col-md-9 column center-block">
+                <form class='form-login' action="/login/" method="post">
+                    {% csrf_token %}
+                    <h2 class="text-center">用户信息</h2>
+
+                    <p class="form-group">
+                        {{ UserInfo_form.username.label_tag}}
+                        {{ UserInfo_form.username}}
+                    </p>
+                    <p class="form-group">
+                        {{ UserInfo_form.registertime.label_tag}}
+                        {{ UserInfo_form.registertime}}
+                     </p>
+                    <p class="form-group">
+                        {{ UserInfo_form.endtime.label_tag}}
+                        {{ UserInfo_form.endtime}}
+                     </p>
+                    <p class="form-group">
+                        {{ UserInfo_form.level.label_tag}}
+                        {{ UserInfo_form.level}}
+                     </p>
+                     <p class="form-group">
+                        {{ UserInfo_form.phonenum.label_tag}}
+                        {{ UserInfo_form.phonenum}}
+                    </p>
+                    <p class="form-group">
+                        {{ UserInfo_form.email.label_tag}}
+                        {{ UserInfo_form.email}}
+                    </p>
+                     <button type="submit" class="btn btn-primary center-block">保存修改</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

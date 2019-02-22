@@ -1,0 +1,91 @@
+{% extends 'superindex.html' %}
+{% load staticfiles %}
+{% block title %}文章管理{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/article.css' %}">
+    <link rel="stylesheet" href="{% static 'css/superindex.css' %}">
+{% endblock %}
+
+{% block maincontent %}
+    <div class="container">
+        <div class="col-md-10 col-md-offset-1">
+        {% if articlekind == 0 %}
+          <form class='form-login' action="/articleadd/" method="post">
+              {% if message == 1%}
+                  <div class="alert alert-success alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                        &times;
+                    </button>
+                    成功！标题为《{{ articletitle }}》的文章已添加。
+                  </div>
+              {% elif message == 0 %}
+                  <div class="alert alert-danger alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                        &times;
+                    </button>
+                     错误！文章标题已存在请换一个。
+                  </div>
+              {% elif message == 2 %}
+                  <div class="alert alert-danger alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                        &times;
+                    </button>
+                     错误！请检查填写内容，标题及内容不能为空。
+                  </div>
+              {% endif %}
+              {% csrf_token %}
+              <h2 class="text-center">添加博文</h2>
+              <p class="form-group">
+                  {{ article_form.articletitle.label_tag}}
+              </p>
+              <p class="form-group">
+                  {{ article_form.articletitle}}
+              </p>
+              <div class="form-group">
+                  {{ article_form.articlecontent.label_tag}}
+                  {{ article_form.articlecontent}}
+              </div>
+              <button type="submit" class="btn btn-primary pull-right">提交</button>
+          </form>
+         {% elif articlekind == 1 %}
+            <form class='form-login' action="/articlemodify/" method="post">
+              {% if message == 1%}
+                  <div class="alert alert-success alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                        &times;
+                    </button>
+                    成功！标题为《{{ articletitle }}》的文章内容已修改。
+                  </div>
+              {% elif message == 0 %}
+                  <div class="alert alert-info alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                        &times;
+                    </button>
+                     信息！该标题文章不存在，已自动添加。
+                  </div>
+              {% elif message == 2 %}
+                  <div class="alert alert-danger alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                        &times;
+                    </button>
+                     错误！请检查填写内容，标题及内容不能为空。
+                  </div>
+              {% endif %}
+              {% csrf_token %}
+              <h2 class="text-center">修改内容</h2>
+              <p class="form-group">
+                  {{ article_form.articletitle.label_tag}}
+              </p>
+              <p class="form-group">
+                  {{ article_form.articletitle}}
+              </p>
+              <div class="form-group">
+                  {{ article_form.articlecontent.label_tag}}
+                  {{ article_form.articlecontent}}
+              </div>
+                <button type="submit" class="btn btn-primary pull-right">修改</button>
+          </form>
+        {% endif %}
+        </div>
+    </div>
+{% endblock %}

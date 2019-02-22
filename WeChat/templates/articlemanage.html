@@ -1,0 +1,89 @@
+{% extends 'superindex.html' %}
+{% load staticfiles %}
+{% block title %}文章管理{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/article.css' %}">
+    <link rel="stylesheet" href="{% static 'css/superindex.css' %}">
+{% endblock %}
+
+{% block maincontent %}
+    <div class="container">
+        <div class="col-md-10 col-md-offset-1">
+            <div class="row clearfix">
+                {% if managemodel == 0 %}
+                    <h2 class="text-center">文章列表</h2>
+                    <ul class="list-group">
+                        {% for artcile in article_list %}
+                            <li class="list-group-item">
+                                <a class="badge" href="/articledelete/?articletitle={{ artcile.title }}">删除</a>
+                                <a class="badge" href="/articlemodify/?articletitle={{ artcile.title }}">修改</a>
+                                <p class="badge">作者:{{ artcile.userid }}</p>
+		                        {{ artcile.title }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% elif managemodel == 1 %}
+                    <h2 class="text-center">恢复文章列表</h2>
+                    <ul class="list-group">
+                        {% for artcile in article_list %}
+                            <li class="list-group-item">
+                                <a class="badge" href="/articlerecover/?articletitle={{ artcile.title }}">恢复</a>
+                                <p class="badge">作者:{{ artcile.userid }}</p>
+		                        {{ artcile.title }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+            <HR>
+            <div class="row clearfix">
+                 <nav style="text-align: center">
+                        <ul class="pagination pagination-centered" id="pager">
+                                {#上一页按钮开始#}
+                                {# 如果当前页有上一页#}
+                            {% if article_list.has_previous %}
+                                {#  当前页的上一页按钮正常使用#}
+                                {% if managemodel == 0 %}
+                                    <li class="previous"><a href="/articlemanage/?page={{ article_list.previous_page_number }}">上一页</a></li>
+                                {% elif managemodel == 1 %}
+                                    <li class="previous"><a href="/articlerecoverlist/?page={{ article_list.previous_page_number }}">上一页</a></li>
+                                {% endif %}
+                            {% else %}
+                                {# 当前页的不存在上一页时,上一页的按钮不可用#}
+                                <li class="previous disabled"><a href="#">上一页</a></li>
+                            {% endif %}
+                                {#上一页按钮结束#}
+                                {# 页码开始#}
+                            {% for num in paginator.page_range %}
+                                {% if num == currentPage %}
+                                    {% if managemodel == 0 %}
+                                        <li class="item active"><a href="/articlemanage/?page={{ num }}">{{ num }}</a></li>
+                                    {% elif managemodel == 1 %}
+                                        <li class="item active"><a href="/articlerecoverlist/?page={{ num }}">{{ num }}</a></li>
+                                    {% endif %}
+                                {% else %}
+                                    {% if managemodel == 0 %}
+                                        <li class="item"><a href="/articlemanage/?page={{ num }}">{{ num }}</a></li>
+                                    {% elif managemodel == 1 %}
+                                        <li class="item"><a href="/articlerecoverlist/?page={{ num }}">{{ num }}</a></li>
+                                    {% endif %}
+                                {% endif %}
+                             {% endfor %}
+                            {#页码结束#}
+                            {# 下一页按钮开始#}
+                            {% if article_list.has_next %}
+                                {% if managemodel == 0 %}
+                                        <li class="next"><a href="/articlemanage/?page={{ article_list.next_page_number }}">下一页</a></li>
+                                    {% elif managemodel == 1 %}
+                                         <li class="next"><a href="/articlerecoverlist/?page={{ article_list.next_page_number }}">下一页</a></li>
+                                    {% endif %}
+                            {% else %}
+                                <li class="next disabled"><a href="#">下一页</a></li>
+                            {% endif %}
+                            {# 下一页按钮结束#}
+                        </ul>
+                 </nav>
+            </div>
+        </div>
+    </div>
+{% endblock %}
