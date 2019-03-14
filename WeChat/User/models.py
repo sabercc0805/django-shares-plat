@@ -7,6 +7,18 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 
+class CenterData(models.Model):
+    date = models.CharField(db_column='iddate',primary_key=True,max_length=8)  # Field name made lowercase.
+    trend = models.IntegerField(db_column='trend', default=0)
+    judge = models.TextField(db_column='judge', default='')
+    valueone = models.IntegerField(db_column='valueone', default=0)
+    valuetwo = models.IntegerField(db_column='valuetwo', default=0)
+    filepath = models.CharField(db_column='filepath', max_length=256)
+
+    class Meta:
+        managed = True
+        db_table = 'centerdata'
+
 class BlogTag(models.Model):
     name = models.CharField(db_column='tag', max_length=20)
 
