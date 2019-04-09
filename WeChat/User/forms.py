@@ -1,6 +1,16 @@
 from django import forms
 from captcha.fields import CaptchaField
 
+class CenterForm(forms.Form):
+    trend = forms.ChoiceField(label="今日走势",
+       choices=((1, '涨'), (2, '跌'),),  # 定义下拉框的选项，元祖第一个值为option的value值，后面为html里面的值
+        initial=1,  # 默认选中第二个option
+      widget=forms.RadioSelect  # 插件表现形式为单选按钮
+     )
+    judge = forms.CharField(label="今日点评",required=False, widget=forms.Textarea(attrs={'class': 'form-control','placeholder': "无点评可以为空",}))
+    valueone = forms.FloatField(label="上证指数",widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    valuetwo = forms.FloatField(label="模拟仓涨幅",widget=forms.NumberInput(attrs={'class': 'form-control'}))
+
 
 class UserForm(forms.Form):
     username = forms.CharField(label="用户名", max_length=128, widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -15,7 +25,7 @@ class UserInfoForm(forms.Form):
     level = forms.CharField(label="会员级别", max_length=128,
                                    widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'}))
     phonenum = forms.CharField(label="手机号", max_length=11,min_length=11,widget=forms.TextInput(attrs={'class': 'form-control'}))
-    email = forms.CharField(label="Email",widget=forms.TextInput(attrs={'class': 'form-control'}))
+    email = forms.EmailField(label="Email",widget=forms.EmailInput(attrs={'class': 'form-control'}))
 
 
 class ChangePwdForm(forms.Form):
@@ -51,7 +61,11 @@ class RegisterForm(forms.Form):
     username = forms.CharField(label="用户名", max_length=128, widget=forms.TextInput(attrs={'class': 'form-control'}))
     password1 = forms.CharField(label="密码", max_length=48, widget=forms.PasswordInput(attrs={'class': 'form-control'}))
     password2 = forms.CharField(label="确认密码", max_length=48,widget=forms.PasswordInput(attrs={'class': 'form-control'}))
-    phonenumber = forms.CharField(label="电话", min_length=11,max_length=11, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    phonenumber = forms.EmailField(label="Email", widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    agreement = forms.ChoiceField(label="用户注册协议",choices=((1, '用户注册协议'), ),  # 定义下拉框的选项，元祖第一个值为option的value值，后面为html里面的值
+                              widget=forms.CheckboxInput , # 插件表现形式为单选按钮
+                                required='true'
+                              )
     captcha = CaptchaField(label='验证码')
 
 class ArticleForm(forms.Form):

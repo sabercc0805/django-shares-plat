@@ -1,0 +1,78 @@
+{% extends 'superindex.html' %}
+{% load staticfiles %}
+{% block title %}核心数据管理{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/article.css' %}">
+    <link rel="stylesheet" href="{% static 'css/superindex.css' %}">
+{% endblock %}
+
+{% block maincontent %}
+
+    <div class="container">
+        <div class="col-md-10 col-md-offset-1">
+            <div class="row clearfix">
+                <h2 class="text-center">数据列表</h2>
+                <form class='form-login' action="/datamanage/" method="post">
+                    <label for="startdate">起始日期：</label>
+                    <input id="startdate" type="date" name="startdate" />
+                    <label for="enddate">终止日期：</label>
+                    <input id="enddate" type="date" name="enddate"/>
+                    <button type="submit" class="btn btn-primary">筛选</button>
+                </form>
+                    <ul class="list-group">
+                        {% for data in data_list %}
+                            <li class="list-group-item">
+                                <a class="badge" href="/datadelete/?datadelete={{ data.date }}">删除</a>
+                                <a class="badge" href="/showdata/?dateselect={{ data.date }}">查看</a>
+                                <a class="badge" href="/datamodify/?datamodify={{ data.date }}">修改</a>
+		                        {{ data.date }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+            </div>
+            <HR>
+            <div class="row clearfix">
+                 <nav style="text-align: center">
+                        <ul class="pagination pagination-centered" id="pager">
+                                {#上一页按钮开始#}
+                                {# 如果当前页有上一页#}
+                            {% if data_list.has_previous %}
+                                {#  当前页的上一页按钮正常使用#}
+                                <li class="previous"><a href="/datamanage/?page={{ data_list.previous_page_number }}">上一页</a></li>
+                            {% else %}
+                                {# 当前页的不存在上一页时,上一页的按钮不可用#}
+                                <li class="previous disabled"><a href="#">上一页</a></li>
+                            {% endif %}
+                                {#上一页按钮结束#}
+                                {# 页码开始#}
+                            {% for num in paginator.page_range %}
+                                {% if num == currentPage %}
+                                    <li class="item active"><a href="/datamanage/?page={{ num }}">{{ num }}</a></li>
+                                {% else %}
+                                    <li class="item"><a href="/datamanage/?page={{ num }}">{{ num }}</a></li>
+                                {% endif %}
+                             {% endfor %}
+                            {#页码结束#}
+                            {# 下一页按钮开始#}
+                            {% if data_list.has_next %}
+                                <li class="next"><a href="/datamanage/?page={{ data_list.next_page_number }}">下一页</a></li>
+                            {% else %}
+                                <li class="next disabled"><a href="#">下一页</a></li>
+                            {% endif %}
+                            {# 下一页按钮结束#}
+                        </ul>
+                 </nav>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+        var start="{{startdate}}" ;
+        var end="{{enddate}}";
+        document.getElementById("startdate").value = start;
+        document.getElementById("enddate").value = end;
+    </script>
+{% endblock %}
+

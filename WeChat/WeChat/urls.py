@@ -51,5 +51,13 @@ urlpatterns = [
     url(r'^articlerecoverlist/', super.articlerecoverlist),
     url(r'^articlerecover/', super.articlerecover),
     url(r'^articlemanage/', super.articlemanage),
+    url(r'^center/', super.center),
+    url(r'^datamanage/', super.centerdatamanage),
+    url(r'^datadelete/', super.centerdatadelete),
+    url(r'^datamodify/', super.centerdatamodify),
+    url(r'^showdata/', super.showdata),
+    url(r'^iframe/', super.iframe),
+    url(r'^showcommondata/', home.showdata),
+    url(r'^iframecommon/', super.iframe),
 ]
 

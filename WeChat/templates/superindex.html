@@ -11,10 +11,15 @@
             <div class="col-md-2">
                  <ul id="main-nav" class="main-nav nav nav-tabs nav-stacked" style="">
                     <li>
-                        <a href="#">
+                        <a href="#CenterSetting" class="nav-header collapsed" data-toggle="collapse">
                             <i class="glyphicon glyphicon-th-large"></i>
-                            预测数据管理
+                            核心数据管理
+                            <span class="pull-right glyphicon glyphicon-chevron-toggle"></span>
                         </a>
+                        <ul id="CenterSetting" class="nav nav-list secondmenu collapse" style="height: 0px;">
+                            <li><a href="/center/"><i class="glyphicon glyphicon-tags"></i>&nbsp;添加数据</a></li>
+                            <li><a href="/datamanage/"><i class="glyphicon glyphicon-align-justify"></i>&nbsp;核心数据列表</a></li>
+                        </ul>
                     </li>
                     <li>
                         <a href="#systemSetting" class="nav-header collapsed" data-toggle="collapse">
@@ -80,5 +85,5 @@
             </div>
         </div>
     </div>
-
+    {% block js %}{% endblock %}
 {% endblock %}

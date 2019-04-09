@@ -19,6 +19,63 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 @csrf_protect
 
 
+def iframe(request):
+    kind = 0
+
+    if not request.session.get('is_login', None):
+        return redirect('/index/')
+
+    model = request.session['model']
+    if model != 1000:
+        return redirect("/logout/")
+
+    keypath=articletitle = request.GET.get('key')
+
+    if not keypath:
+        raise Http404("html does not exist")
+
+    filepath=os.path.join("..\templates\centerdata", keypath)
+
+    return render(request, filepath)
+
+def showdata(request):
+    kind = 0
+
+    if not request.session.get('is_login', None):
+        return redirect('/index/')
+
+    model = request.session['model']
+    if model != 1000:
+        return redirect("/logout/")
+
+    message = 1
+    if request.method == "POST":
+        iddate = request.POST["inputdate"]
+        #后面根据用户级别显示相应日期数据********************************
+        if iddate:
+            try:
+                message = 2
+                centerdata = models.CenterData.objects.get(iddate=iddate)
+                trend=centerdata.trend
+                judge=centerdata.judge
+                valueone=centerdata.valueone
+                keypath=centerdata.filepath
+                dateinit=iddate
+                return render(request, 'showdatacommon.html', locals())
+            except:
+                message = 0
+
+    #选择日期当天无数据，或者刚进入Get，获取最近一天数据显示
+    centerdata = models.CenterData.objects.all().aggregate(Max('iddate'))
+    trend = centerdata.trend
+    judge = centerdata.judge
+    valueone = centerdata.valueone
+    keypath = centerdata.filepath
+    dateinit=centerdata.iddate
+
+    return render(request, 'showdatacommon.html', locals())
+
+
 def homepage(request):
     return render(request, "form.html")
 

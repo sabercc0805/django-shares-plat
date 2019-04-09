@@ -8,7 +8,7 @@
 from django.db import models
 
 class CenterData(models.Model):
-    date = models.CharField(db_column='iddate',primary_key=True,max_length=8)  # Field name made lowercase.
+    date = models.CharField(db_column='iddate',primary_key=True,max_length=16)  # Field name made lowercase.
     trend = models.IntegerField(db_column='trend', default=0)
     judge = models.TextField(db_column='judge', default='')
     valueone = models.IntegerField(db_column='valueone', default=0)

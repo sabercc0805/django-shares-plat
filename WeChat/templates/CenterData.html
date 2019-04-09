@@ -1,0 +1,72 @@
+{% extends 'superindex.html' %}
+{% load staticfiles %}
+{% block title %}核心数据添加{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/article.css' %}">
+    <link rel="stylesheet" href="{% static 'css/superindex.css' %}">
+{% endblock %}
+
+{% block maincontent %}
+    <div class="container">
+        <div class="col-md-10 col-md-offset-1">
+            <form class='form-login' enctype="multipart/form-data" action="/center/" method="post">
+                {% if message == 2%}
+                    <div class="alert alert-success alert-dismissable">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                            &times;
+                        </button>
+                        成功！核心数据已添加。
+                    </div>
+                {% elif message == 1 %}
+                  <div class="alert alert-info alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                        &times;
+                    </button>
+                        信息！该日期下核心数据已存在，请到核心数据列表管理中修改。
+                  </div>
+              {% elif message == -1 %}
+                  <div class="alert alert-danger alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                        &times;
+                    </button>
+                     错误！必须上传文件且为html文件。
+                  </div>
+                {% elif message == 0 %}
+                  <div class="alert alert-danger alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                        &times;
+                    </button>
+                     错误！数据填写有误请检查。
+                  </div>
+              {% endif %}
+              {% csrf_token %}
+                    <h2 class="text-center">添加核心数据</h2>
+
+                    <label for="inputdate">录入数据日期：</label>
+                    <input id="inputdate" type="date" name="inputdate"/>
+
+                    <p class="form-group">
+                        {{ CenterData_form.trend.label_tag}}
+                        {{ CenterData_form.trend}}
+                    </p>
+                   <p class="form-group">
+                        {{ CenterData_form.judge.label_tag}}
+                        {{ CenterData_form.judge}}
+                    </p>
+                    <p class="form-group">
+                        {{ CenterData_form.valueone.label_tag}}
+                        {{ CenterData_form.valueone}}
+                    </p>
+                     <p class="form-group">
+                        {{ CenterData_form.valuetwo.label_tag}}
+                        {{ CenterData_form.valuetwo}}
+                    </p>
+                   <p class="form-group">
+                        <label for="upload">选择模拟盘数据文件：</label>
+                        <input id="upload" type="file" name="myfile" />
+                    </p>
+                     <button type="submit" class="btn btn-primary center-block">新增数据</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

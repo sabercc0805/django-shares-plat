@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}分析数据{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock %}
+
+{{% block content %}
+    <div class="container">
+         {% if message == 0%}
+             <div class="alert alert-info alert-dismissable">
+                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                     &times;
+                 </button>
+                    信息！该日期下无数据，已显示最近一天数据。
+             </div>
+         {% elif message == 1 %}
+             <div class="alert alert-info alert-dismissable">
+                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                     &times;
+                 </button>
+                    信息！已显示最近一天数据。
+             </div>
+         {% endif %}
+        <div class="col-md-10 col-md-offset-1">
+             <form class='form-login center-block' action="/showdata/" method="post">
+                    <label for="inputdate">选择日期：</label>
+                    <input id="inputdate" type="date" name="inputdate"/>
+                    <button type="submit" class="btn btn-primary">筛选</button>
+             </form>
+            <h3 class="text-center">今日走势</h3>
+            {% if trend == 0 %}
+                <img src="{% static 'images/down.png' %}" class="center-block" alt="140x140" width="140px" height="140px"/>
+            {% elif trend == 1 %}
+                <img src="{% static 'images/up.png' %}" class="center-block" alt="140x140" width="140px" height="140px"/>
+            {% endif %}
+            {% if text %}
+                <h3 class="text-center">股市简评</h3>
+                <textarea class="form-control center-block" rows="3" readonly="readonly">{{ text }}</textarea>
+            {% endif %}
+            <h3 class="text-center">虚拟盘数据</h3>
+             <iframe src="http://127.0.0.1/iframecommon/?key={{ keypath }}" align="center" scrolling="no" class="center-block" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>
+        </div>
+    </div>
+{% endblock %}
+
+<script>
+    dateinput=document.getElementById("inputdate")
+    dateinput.val({{ dateinit }})
+</script>

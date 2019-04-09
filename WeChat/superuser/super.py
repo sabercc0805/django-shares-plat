@@ -1,4 +1,6 @@
 import os
+import re
+from django.db.models import Max
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render,redirect
@@ -8,7 +10,375 @@ from django.views.decorators.csrf import csrf_protect
 from User import models
 from User.forms import UserForm
 from User.forms import ArticleForm
+from User.forms import CenterForm
+from django.http import Http404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
+def iframe(request):
+    if not request.session.get('is_login', None):
+        # 如果本来就未登录，也就没有登出一说
+        return redirect("/superindex/")
+
+    model = request.session['model']
+    if model != 1001:
+        return redirect("/superlogout/")
+
+    keypath=articletitle = request.GET.get('key')
+
+    if not keypath:
+        raise Http404("html does not exist")
+
+    filepath=os.path.join("..\\templates\\centerdata", keypath)
+    return render(request, filepath)
+
+def showdata(request):
+    if not request.session.get('is_login', None):
+        # 如果本来就未登录，也就没有登出一说
+        return redirect("/superindex/")
+
+    model = request.session['model']
+    if model != 1001:
+        return redirect("/superlogout/")
+
+    kind = 1
+
+    message = 1
+
+    datelist=[]
+    SSEList=[]
+    trendlist=[]
+    SSEListOne = []
+    simSSElistOne=[]
+    SSEOne=1
+    simSSEOne=1
+    if request.method == "POST":
+        iddate = request.POST["inputdate"]
+        if iddate:
+            try:
+                message = 2
+                centerdata = models.CenterData.objects.get(date=iddate)
+                trend=centerdata.trend
+                judge=centerdata.judge
+                valueone=centerdata.valueone
+                valuetwo=centerdata.valuetwo
+                keypath=centerdata.filepath
+                dateinit=iddate
+                data_list = models.CenterData.objects.filter(date__lte=dateinit).order_by('-date')
+                size = len(data_list)
+                if size > 29:
+                    SSEOne = data_list[29].valueone
+                    simSSEOne = data_list[29].valuetwo
+                    for i in range(0,30):
+                        datelist.append(data_list[i].date)
+
+                        color = ""
+                        if data_list[i].trend < 2:
+                            color = "#FF0000"
+                        else:
+                            color = "#00FF00"
+
+                        ssedict = {'y': data_list[i].valueone, 'color': color}
+                        SSEList.append(ssedict)
+
+                        trendlist.append(data_list[i].trend)
+                        SSEListOne.append(round(data_list[i].valueone / SSEOne, 2))
+                        simSSElistOne.append(round(data_list[i].valuetwo / simSSEOne, 2))
+                else:
+                    SSEOne = data_list[size - 1].valueone
+                    simSSEOne = data_list[size - 1].valuetwo
+                    for i in range(size):
+                        datelist.append(data_list[i].date)
+                        color = ""
+                        if data_list[i].trend < 2:
+                            color = "#FF0000"
+                        else:
+                            color = "#00FF00"
+
+                        ssedict={'y':data_list[i].valueone,'color':color}
+                        SSEList.append(ssedict)
+                        trendlist.append(data_list[i].trend)
+                        SSEListOne.append(round(data_list[i].valueone / SSEOne,2))
+                        simSSElistOne.append(round(data_list[i].valuetwo / simSSEOne,2))
+
+                datelist.reverse();
+                SSEList.reverse();
+                trendlist.reverse();
+                SSEListOne.reverse();
+                simSSElistOne.reverse();
+
+                if len(judge) > 0:
+                    text = judge
+                    return render(request, 'showdata.html', locals())
+
+                return render(request, 'showdata.html', locals())
+            except:
+                message = 0
+
+    #选择日期当天无数据，或者刚进入Get，获取最近一天数据显示
+    datesel = request.GET.get('dateselect')
+    centerdata = models.CenterData.objects.get(date=datesel)
+   # else:
+       # centerdata = models.CenterData.objects.all().aggregate(Max('date'))
+
+    trend = centerdata.trend
+    judge = centerdata.judge
+    valueone = centerdata.valueone
+    valuetwo = centerdata.valuetwo
+    keypath = centerdata.filepath
+    dateinit=centerdata.date
+    data_list = models.CenterData.objects.filter(date__lte=dateinit).order_by('-date')
+    size = len(data_list)
+    if size > 29:
+        SSEOne = data_list[29].valueone
+        simSSEOne = data_list[29].valuetwo
+        for i in range(0, 30):
+            datelist.append(data_list[i].date)
+
+            color = ""
+            if data_list[i].trend < 2:
+                color = "#FF0000"
+            else:
+                color = "#00FF00"
+
+            ssedict = {'y': data_list[i].valueone, 'color': color}
+            SSEList.append(ssedict)
+
+            trendlist.append(data_list[i].trend)
+            SSEListOne.append(round(data_list[i].valueone / SSEOne, 2))
+            simSSElistOne.append(round(data_list[i].valuetwo / simSSEOne, 2))
+    else:
+        SSEOne = data_list[size - 1].valueone
+        simSSEOne = data_list[size - 1].valuetwo
+        for i in range(size):
+            datelist.append(data_list[i].date)
+
+            color = ""
+            if data_list[i].trend < 2:
+                color = "#FF0000"
+            else:
+                color = "#00FF00"
+
+            ssedict = {"y": data_list[i].valueone, "color": color}
+            SSEList.append(ssedict)
+
+            trendlist.append(data_list[i].trend)
+            SSEListOne.append(round(data_list[i].valueone / SSEOne, 2))
+            simSSElistOne.append(round(data_list[i].valuetwo / simSSEOne, 2))
+
+    datelist.reverse();
+    SSEList.reverse();
+    trendlist.reverse();
+    SSEListOne.reverse();
+    simSSElistOne.reverse();
+
+    message = 2
+
+    if len(judge) > 0:
+        text = judge
+        return render(request, 'showdata.html', locals())
+
+    return render(request, 'showdata.html', locals())
+
+
+def centerdatamanage(request):
+    if not request.session.get('is_login', None):
+        # 如果本来就未登录，也就没有登出一说
+        return redirect("/superindex/")
+
+    model = request.session['model']
+    if model != 1001:
+        return redirect("/superlogout/")
+
+    kind = 1
+    data_list = []
+    startdate = ""
+    enddate = ""
+    managemodel = 0
+
+    if request.method == "POST":
+    # 日期筛选
+        startdate = request.POST["startdate"]
+        enddate = request.POST["enddate"]
+        try:
+            data_list = models.CenterData.objects.filter(date__range=(startdate,enddate))
+        except:
+            managemodel = -1
+    else:
+        data_list = models.CenterData.objects.all()
+
+
+    paginator = Paginator(data_list, 15)
+    # 从前端获取当前的页码数,默认为1
+    page = request.GET.get('page', 1)
+
+    # if int(page) > article_list.count()/10:
+    # raise Http404("Page does not exist")
+    # 把当前的页码数转换成整数类型
+    currentPage = int(page)
+
+    try:
+        data_list = paginator.page(page)  # 获取当前页码的记录
+    except PageNotAnInteger:
+        data_list = paginator.page(1)  # 如果用户输入的页码不是整数时,显示第1页的内容
+    except EmptyPage:
+        data_list = paginator.page(paginator.num_pages)  # 如果用户输入的页数不在系统的页码列表中时,显示最后一页的内容
+
+    return render(request, 'centerdatamanage.html',locals())
+
+def centerdatadelete(request):
+    if not request.session.get('is_login', None):
+        # 如果本来就未登录，也就没有登出一说
+        return redirect("/superindex/")
+
+    model = request.session['model']
+    if model != 1001:
+        return redirect("/superlogout/")
+
+    kind = 1
+    centerdatadate = request.GET.get('datadelete')
+    models.CenterData.objects.filter(date=centerdatadate).delete()
+
+    return redirect("/datamanage/")
+
+
+
+
+def centerdatamodify(request):
+    if not request.session.get('is_login', None):
+        # 如果本来就未登录，也就没有登出一说
+        return redirect("/superindex/")
+
+    model = request.session['model']
+    if model != 1001:
+        return redirect("/superlogout/")
+
+    kind = 1
+
+    if request.method == "POST":
+        CenterData_form = CenterForm(request.POST)
+        message = 0
+
+        if CenterData_form.is_valid():
+
+            myFile = request.FILES.get("myfile", None)
+            if not myFile:
+                message = -2
+
+            if message != -2:
+                if not myFile.name.endswith(".html"):
+                    message = -2
+
+
+            iddate = request.POST["inputdate"]
+            trend = CenterData_form.cleaned_data['trend']
+            judge = CenterData_form.cleaned_data['judge']
+            valueone = CenterData_form.cleaned_data['valueone']
+            valuetwo = CenterData_form.cleaned_data['valuetwo']
+            try:
+                centerdata = models.CenterData.objects.get(date=iddate)
+
+                if message != -2:
+                    message = 1
+                    filename = iddate + ".html"
+                    destination = open(os.path.join("D:\\django-shares-plat\\WeChat\\templates\\centerdata", filename),
+                                       'wb+')  # 打开特定的文件进行二进制的写操作
+                    for chunk in myFile.chunks():  # 分块写入文件
+                        destination.write(chunk)
+                    destination.close()
+                    centerdata.filepath = filename
+                #os.remove(os.path.join("C:\\centerdata", filename))
+
+                centerdata.valueone = valueone
+                centerdata.valuetwo = valuetwo
+                centerdata.judge = judge
+                centerdata.trend = trend
+                centerdata.save()
+                CenterData_form = CenterForm(locals())
+                return render(request,  'centerdatamodify.html', locals())
+            except:
+
+
+                if message == -2:
+                    message = -3
+                    return render(request, 'centerdatamodify.html', locals())
+
+                filename = iddate + ".html"
+                destination = open(os.path.join("D:\\django-shares-plat\\WeChat\\templates\\centerdata", filename), 'wb+')  # 打开特定的文件进行二进制的写操作
+                for chunk in myFile.chunks():  # 分块写入文件
+                    destination.write(chunk)
+                destination.close()
+
+                message = 2
+
+                new_data = models.CenterData.objects.create(date=iddate, trend=trend, judge=judge, valueone=valueone,
+                                                            valuetwo=valuetwo, filepath=filename)
+                new_data.save()
+                CenterData_form = CenterForm(locals())
+                return render(request, 'centerdatamodify.html', locals())
+
+    #差一个填入
+    iddate = request.GET.get('datamodify')
+    centerdata = models.CenterData.objects.get(date=iddate)
+    trend = centerdata.trend
+    judge = centerdata.judge
+    valueone = centerdata.valueone
+    valuetwo =centerdata.valuetwo
+
+    CenterData_form = CenterForm(locals())
+    return render(request, 'centerdatamodify.html', locals())
+
+
+def center(request):
+    if not request.session.get('is_login', None):
+        # 如果本来就未登录，也就没有登出一说
+        return redirect("/superindex/")
+
+    model = request.session['model']
+    if model != 1001:
+        return redirect("/superlogout/")
+
+    kind = 1
+    if request.method == "POST":
+        CenterData_form = CenterForm(request.POST)
+        message = 0
+
+        if CenterData_form.is_valid():
+
+            myFile = request.FILES.get("myfile", None)
+            if not myFile:
+                message = -1
+                return render(request, 'CenterData.html', locals())
+
+            if not myFile.name.endswith(".html"):
+                message = -1
+                return render(request, 'CenterData.html', locals())
+
+            iddate = request.POST["inputdate"]
+            trend = CenterData_form.cleaned_data['trend']
+            judge = CenterData_form.cleaned_data['judge']
+            valueone = CenterData_form.cleaned_data['valueone']
+            valuetwo = CenterData_form.cleaned_data['valuetwo']
+            try:
+                centerdata = models.CenterData.objects.get(date=iddate)
+                message = 1
+                return render(request, 'CenterData.html', locals())
+            except:
+                message = 2
+
+                filename = iddate + ".html"
+                destination = open(os.path.join("D:\\django-shares-plat\\WeChat\\templates\\centerdata",filename), 'wb+')  # 打开特定的文件进行二进制的写操作
+                for chunk in myFile.chunks():  # 分块写入文件
+                    destination.write(chunk)
+                destination.close()
+
+                new_data = models.CenterData.objects.create(date=iddate, trend=trend,judge=judge,valueone=valueone,
+                    valuetwo=valuetwo,filepath=filename)
+                new_data.save()
+                CenterData_form = CenterForm()
+                return render(request, 'CenterData.html', locals())
+
+    CenterData_form = CenterForm()
+    return render(request, 'CenterData.html', locals())
 
 def superindex(request):
    kind = 1
