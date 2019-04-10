@@ -29,13 +29,12 @@ def iframe(request):
     if model != 1000:
         return redirect("/logout/")
 
-    keypath=articletitle = request.GET.get('key')
+    keypath = articletitle = request.GET.get('key')
 
     if not keypath:
         raise Http404("html does not exist")
 
-    filepath=os.path.join("..\templates\centerdata", keypath)
-
+    filepath = os.path.join("..\\templates\\centerdata", keypath)
     return render(request, filepath)
 
 def showdata(request):
@@ -48,30 +47,139 @@ def showdata(request):
     if model != 1000:
         return redirect("/logout/")
 
+#目前所有等级用户均可查看所有天数数据
     message = 1
+
+    datelist = []
+    SSEList = []
+    trendlist = []
+    SSEListOne = []
+    simSSElistOne = []
+    SSEOne = 1
+    simSSEOne = 1
     if request.method == "POST":
         iddate = request.POST["inputdate"]
-        #后面根据用户级别显示相应日期数据********************************
         if iddate:
             try:
                 message = 2
-                centerdata = models.CenterData.objects.get(iddate=iddate)
-                trend=centerdata.trend
-                judge=centerdata.judge
-                valueone=centerdata.valueone
-                keypath=centerdata.filepath
-                dateinit=iddate
+                centerdata = models.CenterData.objects.get(date=iddate)
+                trend = centerdata.trend
+                judge = centerdata.judge
+                valueone = centerdata.valueone
+                valuetwo = centerdata.valuetwo
+                keypath = centerdata.filepath
+                dateinit = iddate
+                data_list = models.CenterData.objects.filter(date__lte=dateinit).order_by('-date')
+                size = len(data_list)
+                if size > 29:
+                    SSEOne = data_list[29].valueone
+                    simSSEOne = data_list[29].valuetwo
+                    for i in range(0, 30):
+                        datelist.append(data_list[i].date)
+
+                        color = ""
+                        if data_list[i].trend < 2:
+                            color = "#FF0000"
+                        else:
+                            color = "#00FF00"
+
+                        ssedict = {'y': data_list[i].valueone, 'color': color}
+                        SSEList.append(ssedict)
+
+                        trendlist.append(data_list[i].trend)
+                        SSEListOne.append(round(data_list[i].valueone / SSEOne, 2))
+                        simSSElistOne.append(round(data_list[i].valuetwo / simSSEOne, 2))
+                else:
+                    SSEOne = data_list[size - 1].valueone
+                    simSSEOne = data_list[size - 1].valuetwo
+                    for i in range(size):
+                        datelist.append(data_list[i].date)
+                        color = ""
+                        if data_list[i].trend < 2:
+                            color = "#FF0000"
+                        else:
+                            color = "#00FF00"
+
+                        ssedict = {'y': data_list[i].valueone, 'color': color}
+                        SSEList.append(ssedict)
+                        trendlist.append(data_list[i].trend)
+                        SSEListOne.append(round(data_list[i].valueone / SSEOne, 2))
+                        simSSElistOne.append(round(data_list[i].valuetwo / simSSEOne, 2))
+
+                datelist.reverse();
+                SSEList.reverse();
+                trendlist.reverse();
+                SSEListOne.reverse();
+                simSSElistOne.reverse();
+
+                if len(judge) > 0:
+                    text = judge
+                    return render(request, 'showdatacommon.html', locals())
+
                 return render(request, 'showdatacommon.html', locals())
             except:
                 message = 0
 
-    #选择日期当天无数据，或者刚进入Get，获取最近一天数据显示
-    centerdata = models.CenterData.objects.all().aggregate(Max('iddate'))
+    # 选择日期当天无数据，或者刚进入Get，获取最近一天数据显示
+
+    centerdata = models.CenterData.objects.all().order_by("-date")[0]
+
     trend = centerdata.trend
     judge = centerdata.judge
     valueone = centerdata.valueone
+    valuetwo = centerdata.valuetwo
     keypath = centerdata.filepath
-    dateinit=centerdata.iddate
+    dateinit = centerdata.date
+    data_list = models.CenterData.objects.filter(date__lte=dateinit).order_by('-date')
+    size = len(data_list)
+    if size > 29:
+        SSEOne = data_list[29].valueone
+        simSSEOne = data_list[29].valuetwo
+        for i in range(0, 30):
+            datelist.append(data_list[i].date)
+
+            color = ""
+            if data_list[i].trend < 2:
+                color = "#FF0000"
+            else:
+                color = "#00FF00"
+
+            ssedict = {'y': data_list[i].valueone, 'color': color}
+            SSEList.append(ssedict)
+
+            trendlist.append(data_list[i].trend)
+            SSEListOne.append(round(data_list[i].valueone / SSEOne, 2))
+            simSSElistOne.append(round(data_list[i].valuetwo / simSSEOne, 2))
+    else:
+        SSEOne = data_list[size - 1].valueone
+        simSSEOne = data_list[size - 1].valuetwo
+        for i in range(size):
+            datelist.append(data_list[i].date)
+
+            color = ""
+            if data_list[i].trend < 2:
+                color = "#FF0000"
+            else:
+                color = "#00FF00"
+
+            ssedict = {"y": data_list[i].valueone, "color": color}
+            SSEList.append(ssedict)
+
+            trendlist.append(data_list[i].trend)
+            SSEListOne.append(round(data_list[i].valueone / SSEOne, 2))
+            simSSElistOne.append(round(data_list[i].valuetwo / simSSEOne, 2))
+
+    datelist.reverse();
+    SSEList.reverse();
+    trendlist.reverse();
+    SSEListOne.reverse();
+    simSSElistOne.reverse();
+
+    message = 2
+
+    if len(judge) > 0:
+        text = judge
+        return render(request, 'showdatacommon.html', locals())
 
     return render(request, 'showdatacommon.html', locals())
 
@@ -82,7 +190,16 @@ def homepage(request):
 
 def index(request):
    kind = 0
-   return render(request, 'index.html',locals())
+
+   if not request.session.get('is_login', None):
+       return render(request, 'index.html', locals())
+
+   model = request.session['model']
+   if model != 1000:
+       return redirect("/logout/")
+
+   return redirect("/showcommondata/")
+
 
 
 

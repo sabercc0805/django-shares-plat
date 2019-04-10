@@ -2,10 +2,10 @@
 {% load staticfiles %}
 {% block title %}分析数据{% endblock %}
 {% block css %}
-    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <link rel="stylesheet" href="{% static 'css/article.css' %}">
 {% endblock %}
 
-{{% block content %}
+{% block content %}
     <div class="container">
          {% if message == 0%}
              <div class="alert alert-info alert-dismissable">
@@ -23,28 +23,146 @@
              </div>
          {% endif %}
         <div class="col-md-10 col-md-offset-1">
-             <form class='form-login center-block' action="/showdata/" method="post">
-                    <label for="inputdate">选择日期：</label>
-                    <input id="inputdate" type="date" name="inputdate"/>
-                    <button type="submit" class="btn btn-primary">筛选</button>
-             </form>
+            <div class="row clearfix">
+                <div class="col-md-4 col-md-offset-4">
+                    <form class='form-login' action="/showcommondata/" method="post">
+                        <label for="inputdate">选择日期：</label>
+                        <input id="inputdate" type="date" name="inputdate"/>
+                        <button type="submit" class="btn btn-primary">筛选</button>
+                    </form>
+                </div>
+            </div>
+            <br/>
+             <div class="row clearfix">
+                    <button type="button" class="btn btn-default btn-primary center-block" data-toggle="modal" data-target="#curvemodel">显示相关指数曲线</button>
+             </div>
+             <!-- 模态框（Modal） -->
+                <div class="modal fade" id="curvemodel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                    &times;
+                                </button>
+                                <h4 class="modal-title" id="myModalLabel">
+                                    相关指数曲线
+                                </h4>
+                            </div>
+                            <div class="modal-body">
+                                <div id="SSEChart" style="width: 550px; height: 400px; margin: 0 auto"></div>
+                                <br/>
+                                <div id="simSSEChart" style="width: 550px; height: 400px; margin: 0 auto"></div>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal -->
+                </div>
             <h3 class="text-center">今日走势</h3>
-            {% if trend == 0 %}
+            {% if trend == 2 %}
                 <img src="{% static 'images/down.png' %}" class="center-block" alt="140x140" width="140px" height="140px"/>
             {% elif trend == 1 %}
                 <img src="{% static 'images/up.png' %}" class="center-block" alt="140x140" width="140px" height="140px"/>
             {% endif %}
             {% if text %}
-                <h3 class="text-center">股市简评</h3>
+                <h3 class="center-block">股市简评</h3>
                 <textarea class="form-control center-block" rows="3" readonly="readonly">{{ text }}</textarea>
             {% endif %}
             <h3 class="text-center">虚拟盘数据</h3>
-             <iframe src="http://127.0.0.1/iframecommon/?key={{ keypath }}" align="center" scrolling="no" class="center-block" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>
+             <iframe id="iframepage" src="http://127.0.0.1/iframecommon/?key={{ keypath }}" align="center" scrolling="yes" class="center-block" border="0" frameborder="no" framespacing="0" allowfullscreen="true" width="100%" height="300px"></iframe>
         </div>
     </div>
 {% endblock %}
 
-<script>
-    dateinput=document.getElementById("inputdate")
-    dateinput.val({{ dateinit }})
+{% block js %}
+    <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script type="text/javascript">
+    var date = "{{ dateinit }}";
+    dateinput=document.getElementById("inputdate").value = date;
+    </script>
+
+<script type="text/javascript">
+    var ssetitle = {
+      text: '上证指数'
+   };
+   var ssexAxis = {
+      categories: {{ datelist|safe }}
+   };
+   var sseyAxis = {
+      title: {
+         text: '指数'
+      }
+   };
+   var sseplotOptions = {
+      line: {
+         dataLabels: {
+            enabled: true
+         },
+         enableMouseTracking: false
+      }
+   };
+   var sseseries= [{
+         name: '上证指数涨幅',
+         data: {{ SSEList|safe }}
+      }
+   ];
+
+   var ssejson = {};
+
+   ssejson.title = ssetitle;
+   ssejson.xAxis = ssexAxis;
+   ssejson.yAxis = sseyAxis;
+   ssejson.series = sseseries;
+   ssejson.plotOptions = sseplotOptions;
+   $('#SSEChart').highcharts(ssejson);
+
+   var chart = {
+      type: 'spline'
+   };
+   var title = {
+      text: '盈利涨幅对比'
+   };
+   var xAxis = {
+      categories: {{ datelist|safe }}
+   };
+   var yAxis = {
+      title: {
+         text: '归一化值'
+      }
+   };
+
+   var tooltip = {
+      crosshairs: true,
+      shared: true
+   };
+
+  var plotOptions = {
+      spline: {
+         marker: {
+            radius: 4,
+            lineColor: '#666666',
+            lineWidth: 1
+         }
+      }
+   };
+
+   var series= [{
+         name: '上证指数涨幅',
+         data: {{ SSEListOne|safe }}
+      }, {
+         name: '模拟仓盈利涨幅',
+         data: {{ simSSElistOne|safe }}
+      }
+   ];
+
+   var json = {};
+   json.chart = chart;
+   json.title = title;
+   json.xAxis = xAxis;
+   json.yAxis = yAxis;
+   json.tooltip = tooltip;
+   json.series = series;
+   json.plotOptions = plotOptions;
+   $('#simSSEChart').highcharts(json);
+
 </script>
+{% endblock %}

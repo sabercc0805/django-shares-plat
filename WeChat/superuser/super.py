@@ -115,10 +115,15 @@ def showdata(request):
                 message = 0
 
     #选择日期当天无数据，或者刚进入Get，获取最近一天数据显示
-    datesel = request.GET.get('dateselect')
-    centerdata = models.CenterData.objects.get(date=datesel)
+
+    centerdata = models.CenterData.objects.all().order_by("-date")[0]
+
+    if message != 0:
+        datesel = request.GET.get('dateselect')
+        centerdata = models.CenterData.objects.get(date=datesel)
    # else:
        # centerdata = models.CenterData.objects.all().aggregate(Max('date'))
+
 
     trend = centerdata.trend
     judge = centerdata.judge
@@ -385,7 +390,7 @@ def superindex(request):
    if not request.session.get('is_login', None):
        return redirect("/superlogin/")
 
-   return render(request, 'superindex.html',locals())
+   return render(request, 'sindex.html',locals())
 
 def articleadd(request):
    if not request.session.get('is_login', None):
