@@ -58,6 +58,6 @@ urlpatterns = [
     url(r'^showdata/', super.showdata),
     url(r'^iframe/', super.iframe),
     url(r'^showcommondata/', home.showdata),
-    url(r'^iframecommon/', super.iframe),
+    url(r'^iframecommon/', home.iframe),
 ]
 
