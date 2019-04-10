@@ -15,7 +15,7 @@
                   <div class="alert alert-warning">{{ message }}</div>
               {% endif %}
               {% csrf_token %}
-               <h2 class="text-center">欢迎登录</h2>
+               <h2 id="ceshi" class="text-center">欢迎登录</h2>
               <p class="form-group">
                   {{ login_form.username.label_tag}}
               </p>
@@ -89,4 +89,15 @@
             {% endif %}
         </div>
     </div>
+{% endblock %}
+
+{% block js %}
+     <script>
+    $('.captcha').click(function(){
+         $.getJSON("/captcha/refresh/",
+                  function(result){
+             $('.captcha').attr('src', result['image_url']);
+             $('#id_captcha_0').val(result['key'])
+          });});
+    </script>
 {% endblock %}
