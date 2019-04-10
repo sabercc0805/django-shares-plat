@@ -263,18 +263,26 @@ def register(request):
             #if len(phonenumber) != 11:
             #message = "手机号码为11位！"
             #return render(request, 'register.html', locals())
+            agreement = request.POST.getlist('protocol')
+            if len(agreement) == 0:
+                message = "请先同意用户协议，在进行注册！"
+                register_form = RegisterForm(locals())
+                return render(request, 'register.html', locals())
 
             if password1 != password2:  # 判断两次密码是否相同
                 message = "两次输入的密码不同！"
+                register_form = RegisterForm(locals())
                 return render(request, 'register.html', locals())
             else:
                 same_name_user = models.Commonuser.objects.filter(userid=username)
                 if same_name_user:  # 用户名唯一
                     message = '用户已经存在，请重新选择用户名！'
+                    register_form = RegisterForm(locals())
                     return render(request, 'register.html', locals())
                 same_phone_user = models.Commonuser.objects.filter(identify=phonenumber)
                 if same_phone_user:  # 邮箱地址唯一
-                    message = '该手机已被注册，请更换手机！'
+                    message = '该邮箱已被注册，请更换邮箱！'
+                    register_form = RegisterForm(locals())
                     return render(request, 'register.html', locals())
 
                 # 当一切都OK的情况下，创建新用户

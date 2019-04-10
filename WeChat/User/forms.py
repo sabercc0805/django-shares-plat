@@ -62,10 +62,7 @@ class RegisterForm(forms.Form):
     password1 = forms.CharField(label="密码", max_length=48, widget=forms.PasswordInput(attrs={'class': 'form-control'}))
     password2 = forms.CharField(label="确认密码", max_length=48,widget=forms.PasswordInput(attrs={'class': 'form-control'}))
     phonenumber = forms.EmailField(label="Email", widget=forms.EmailInput(attrs={'class': 'form-control','placeholder': "目前唯一找回密码的验证方式，请认真填写！",}))
-    agreement = forms.ChoiceField(label="用户注册协议",choices=((1, '用户注册协议'), ),  # 定义下拉框的选项，元祖第一个值为option的value值，后面为html里面的值
-                              widget=forms.CheckboxInput , # 插件表现形式为单选按钮
-                                required='true'
-                              )
+
     captcha = CaptchaField(label='验证码')
 
 class ArticleForm(forms.Form):
