@@ -15,7 +15,7 @@ class CenterForm(forms.Form):
 class UserForm(forms.Form):
     username = forms.CharField(label="用户名", max_length=128, widget=forms.TextInput(attrs={'class': 'form-control'}))
     password = forms.CharField(label="密码", max_length=48, widget=forms.PasswordInput(attrs={'class': 'form-control'}))
-    captcha = CaptchaField(label='验证码')
+    captcha = CaptchaField(label='验证码',error_messages={'invalid': "验证码错误"})
 
 class UserInfoForm(forms.Form):
     username = forms.CharField(label="用户名", max_length=128, widget=forms.TextInput(attrs={'class': 'form-control','readonly': 'readonly'}))
@@ -63,7 +63,7 @@ class RegisterForm(forms.Form):
     password2 = forms.CharField(label="确认密码", max_length=48,widget=forms.PasswordInput(attrs={'class': 'form-control'}))
     phonenumber = forms.EmailField(label="Email", widget=forms.EmailInput(attrs={'class': 'form-control','placeholder': "目前唯一找回密码的验证方式，请认真填写！",}))
 
-    captcha = CaptchaField(label='验证码')
+    captcha = CaptchaField(label='验证码',error_messages={'invalid': "验证码错误"})
 
 class ArticleForm(forms.Form):
     articletitle = forms.CharField(label="文章标题",required = True, max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))

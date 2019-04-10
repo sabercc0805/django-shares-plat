@@ -124,6 +124,9 @@ def showdata(request):
 
     centerdata = models.CenterData.objects.all().order_by("-date")[0]
 
+    if not centerdata:
+        return redirect('/index/')
+
     trend = centerdata.trend
     judge = centerdata.judge
     valueone = centerdata.valueone
