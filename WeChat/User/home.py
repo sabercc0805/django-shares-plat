@@ -122,69 +122,69 @@ def showdata(request):
 
     # 选择日期当天无数据，或者刚进入Get，获取最近一天数据显示
 
-    centerdata = models.CenterData.objects.all().order_by("-date")[0]
+    try:
+        centerdata = models.CenterData.objects.all().order_by("-date")[0]
 
-    if not centerdata:
-        return render(request, 'index.html', locals())
+        trend = centerdata.trend
+        judge = centerdata.judge
+        valueone = centerdata.valueone
+        valuetwo = centerdata.valuetwo
+        keypath = centerdata.filepath
+        dateinit = centerdata.date
+        data_list = models.CenterData.objects.filter(date__lte=dateinit).order_by('-date')
+        size = len(data_list)
+        if size > 29:
+            SSEOne = data_list[29].valueone
+            simSSEOne = data_list[29].valuetwo
+            for i in range(0, 30):
+                datelist.append(data_list[i].date)
 
-    trend = centerdata.trend
-    judge = centerdata.judge
-    valueone = centerdata.valueone
-    valuetwo = centerdata.valuetwo
-    keypath = centerdata.filepath
-    dateinit = centerdata.date
-    data_list = models.CenterData.objects.filter(date__lte=dateinit).order_by('-date')
-    size = len(data_list)
-    if size > 29:
-        SSEOne = data_list[29].valueone
-        simSSEOne = data_list[29].valuetwo
-        for i in range(0, 30):
-            datelist.append(data_list[i].date)
+                color = ""
+                if data_list[i].trend < 2:
+                    color = "#FF0000"
+                else:
+                    color = "#00FF00"
 
-            color = ""
-            if data_list[i].trend < 2:
-                color = "#FF0000"
-            else:
-                color = "#00FF00"
+                ssedict = {'y': data_list[i].valueone, 'color': color}
+                SSEList.append(ssedict)
 
-            ssedict = {'y': data_list[i].valueone, 'color': color}
-            SSEList.append(ssedict)
+                trendlist.append(data_list[i].trend)
+                SSEListOne.append(round(data_list[i].valueone / SSEOne, 2))
+                simSSElistOne.append(round(data_list[i].valuetwo / simSSEOne, 2))
+        else:
+            SSEOne = data_list[size - 1].valueone
+            simSSEOne = data_list[size - 1].valuetwo
+            for i in range(size):
+                datelist.append(data_list[i].date)
 
-            trendlist.append(data_list[i].trend)
-            SSEListOne.append(round(data_list[i].valueone / SSEOne, 2))
-            simSSElistOne.append(round(data_list[i].valuetwo / simSSEOne, 2))
-    else:
-        SSEOne = data_list[size - 1].valueone
-        simSSEOne = data_list[size - 1].valuetwo
-        for i in range(size):
-            datelist.append(data_list[i].date)
+                color = ""
+                if data_list[i].trend < 2:
+                    color = "#FF0000"
+                else:
+                    color = "#00FF00"
 
-            color = ""
-            if data_list[i].trend < 2:
-                color = "#FF0000"
-            else:
-                color = "#00FF00"
+                ssedict = {"y": data_list[i].valueone, "color": color}
+                SSEList.append(ssedict)
 
-            ssedict = {"y": data_list[i].valueone, "color": color}
-            SSEList.append(ssedict)
+                trendlist.append(data_list[i].trend)
+                SSEListOne.append(round(data_list[i].valueone / SSEOne, 2))
+                simSSElistOne.append(round(data_list[i].valuetwo / simSSEOne, 2))
 
-            trendlist.append(data_list[i].trend)
-            SSEListOne.append(round(data_list[i].valueone / SSEOne, 2))
-            simSSElistOne.append(round(data_list[i].valuetwo / simSSEOne, 2))
+        datelist.reverse();
+        SSEList.reverse();
+        trendlist.reverse();
+        SSEListOne.reverse();
+        simSSElistOne.reverse();
 
-    datelist.reverse();
-    SSEList.reverse();
-    trendlist.reverse();
-    SSEListOne.reverse();
-    simSSElistOne.reverse();
+        message = 2
 
-    message = 2
+        if len(judge) > 0:
+            text = judge
+            return render(request, 'showdatacommon.html', locals())
 
-    if len(judge) > 0:
-        text = judge
         return render(request, 'showdatacommon.html', locals())
-
-    return render(request, 'showdatacommon.html', locals())
+    except:
+        return render(request, 'index.html', locals())
 
 
 def homepage(request):
