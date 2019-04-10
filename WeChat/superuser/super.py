@@ -1,4 +1,4 @@
-import os
+﻿import os
 import re
 from django.db.models import Max
 from django.http import HttpResponse
@@ -280,7 +280,7 @@ def centerdatamodify(request):
                 if message != -2:
                     message = 1
                     filename = iddate + ".html"
-                    destination = open(os.path.join("D:\\django-shares-plat\\WeChat\\templates\\centerdata", filename),
+                    destination = open(os.path.join("C:\\django-shares-plat\\WeChat\\templates\\centerdata", filename),
                                        'wb+')  # 打开特定的文件进行二进制的写操作
                     for chunk in myFile.chunks():  # 分块写入文件
                         destination.write(chunk)
@@ -303,7 +303,7 @@ def centerdatamodify(request):
                     return render(request, 'centerdatamodify.html', locals())
 
                 filename = iddate + ".html"
-                destination = open(os.path.join("D:\\django-shares-plat\\WeChat\\templates\\centerdata", filename), 'wb+')  # 打开特定的文件进行二进制的写操作
+                destination = open(os.path.join("C:\\django-shares-plat\\WeChat\\templates\\centerdata", filename), 'wb+')  # 打开特定的文件进行二进制的写操作
                 for chunk in myFile.chunks():  # 分块写入文件
                     destination.write(chunk)
                 destination.close()
@@ -366,7 +366,7 @@ def center(request):
                 message = 2
 
                 filename = iddate + ".html"
-                destination = open(os.path.join("D:\\django-shares-plat\\WeChat\\templates\\centerdata",filename), 'wb+')  # 打开特定的文件进行二进制的写操作
+                destination = open(os.path.join("C:\\django-shares-plat\\WeChat\\templates\\centerdata",filename), 'wb+')  # 打开特定的文件进行二进制的写操作
                 for chunk in myFile.chunks():  # 分块写入文件
                     destination.write(chunk)
                 destination.close()
