@@ -6,6 +6,8 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
+from DjangoUeditor.models import UEditorField
+
 
 class CenterData(models.Model):
     date = models.CharField(db_column='iddate',primary_key=True,max_length=16)  # Field name made lowercase.
@@ -29,13 +31,16 @@ class BlogTag(models.Model):
 class BlogArticle(models.Model):
     userid = models.CharField(db_column='UserID',max_length=16)  # Field name made lowercase.
     title = models.CharField(db_column='title', max_length=100)
-    content = models.TextField(db_column='content', default='')
+    content = UEditorField(db_column='content', default='')
     create_time = models.DateTimeField(db_column='createtime', auto_now = True)
     modify_time = models.DateTimeField(db_column='modifytime',auto_now = True)
     click_nums = models.IntegerField(db_column='clickrate', default=0)
     tag = models.CharField(db_column='tag', max_length=20,default='')
     delete_flag = models.IntegerField(db_column='deleteflag', default=0)
-
+    cost = models.IntegerField(db_column='cost', default=0)
+    user_right = models.IntegerField(db_column='right', default=1)
+    filepath = models.CharField(db_column='filepath', max_length=256,default="")
+    rightname = models.CharField(db_column='rightname', max_length=16,default='普通会员')
     class Meta:
         managed = True
         db_table = 'blogarticle'
@@ -96,11 +101,20 @@ class Commonuser(models.Model):
     currnetlogindate = models.DateTimeField(db_column='CurrnetLoginDate', blank=True, null=True)  # Field name made lowercase.
     isfree = models.IntegerField(db_column='IsFree', blank=True, null=True)  # Field name made lowercase.
     remark = models.CharField(db_column='Remark', max_length=32, blank=True, null=True)  # Field name made lowercase.
-
+    phonenum = models.CharField(db_column='PhoneNum', max_length=16, blank=True, null=True)
+    fengyacoin = models.IntegerField(db_column='FengYaCoin', blank=True,default=0)
     class Meta:
         managed = True
         db_table = 'commonuser'
 
+class Fileright(models.Model):
+    userid = models.CharField(db_column='UserID', max_length=128)
+    title = models.CharField(db_column='title', max_length=100)
+    buydate = models.DateTimeField(db_column='BuyDate',auto_now = True)  # Field name made lowercase.
+
+    class Meta:
+        managed = True
+        db_table = 'fileright'
 
 class Companymoney(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.

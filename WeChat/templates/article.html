@@ -13,7 +13,7 @@
             <HR>
             <div class="row clearfix">
                 {% for artcile in article_list %}
-                     <a class="center-block text-center" href="/articlecontent/?title={{ artcile.title }}">{{ artcile.title }}</a>
+                     <a class="center-block text-center" href="/articlecontent/?title={{ artcile.title }}&currentPage={{ currentPage }}">{{ artcile.title }}(会员等级：{{ artcile.rightname }})</a>
                  {% endfor %}
             </div>
             <HR>
