@@ -414,10 +414,10 @@ def articlecontent(request):
 
 def download(request):
     kind = 0
+    titlename = request.GET.get('title')
+    filename = request.GET.get('filename')
+    acticle = models.BlogArticle.objects.get(title=titlename)
     if not request.session.get('is_login', None):
-        titlename = request.GET.get('title')
-        filename = request.GET.get('filename')
-        acticle = models.BlogArticle.objects.get(title=titlename)
         if acticle.user_right == 0:
             savepath = "C:\\articlefile\\" + titlename
             file = open(os.path.join(savepath, filename), 'rb')
@@ -440,7 +440,7 @@ def download(request):
     userid = request.session['user_id']
 
     fileobj = models.Fileright.objects.filter(userid=userid, title=titlename)
-    if fileobj:
+    if fileobj | acticle.user_right == 0:
         savepath = "C:\\articlefile\\" + titlename
         file = open(os.path.join(savepath, filename), 'rb')
         response = FileResponse(file)
