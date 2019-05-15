@@ -341,17 +341,17 @@ def userinfo(request):
 
 def article(request):
     kind = 0
+    article_list = [];
     if not request.session.get('is_login',None):
-        return redirect('/index/')
+        article_list = models.BlogArticle.objects.filter(delete_flag=0,user_right=0)
+    else:
+        model = request.session['model']
+        if model != 1000:
+            return redirect("/logout/")
+        article_list = models.BlogArticle.objects.filter(delete_flag=0)
 
-    model = request.session['model']
-    if model != 1000:
-        return redirect("/logout/")
 
-    article_list = models.BlogArticle.objects.filter(delete_flag=0)
-
-
-    paginator = Paginator(article_list, 10)
+    paginator = Paginator(article_list, 20)
     # 从前端获取当前的页码数,默认为1
     page = request.GET.get('page', 1)
 
@@ -371,14 +371,20 @@ def article(request):
 
 def articlecontent(request):
     kind = 0
+    titlename = request.GET.get('title')
     if not request.session.get('is_login', None):
-        return redirect('/index/')
+        acticletran = models.BlogArticle.objects.get(title=titlename)
 
-    model = request.session['model']
-    if model != 1000:
-        return redirect("/logout/")
+        if not acticletran:
+            raise Http404("文章不存在")
+        else:
+            if acticletran.user_right != 0:
+                return redirect('/index/')
+    else:
+        model = request.session['model']
+        if model != 1000:
+            return redirect("/logout/")
 
-    titlename= request.GET.get('title')
     currentPage = request.GET.get('currentPage')
     if titlename:
         acticle = models.BlogArticle.objects.get(title=titlename)
@@ -391,24 +397,36 @@ def articlecontent(request):
         content =acticle.content
         filepath = acticle.filepath
 
-        nLevel = request.session['level']
-        if nLevel < right:
-            print(currentPage)
-            return render(request, 'articletran.html', {"currentPage":currentPage})
+        if acticle.user_right != 0:
+            nLevel = request.session['level']
+            if nLevel < right:
+                print(currentPage)
+                return render(request, 'articletran.html', {"currentPage": currentPage})
+
+        if (len(filepath) > 0):
+            cost = acticle.cost
+            filename = filepath
+            return render(request, 'articlecontent.html', locals())
         else:
-            if (len(filepath) > 0):
-                cost = acticle.cost
-                filename = filepath
-                return render(request, 'articlecontent.html', locals())
-            else:
-                return render(request, 'articlecontent.html', locals())
+            return render(request, 'articlecontent.html', locals())
     else:
         raise Http404("文章不存在")
 
 def download(request):
     kind = 0
     if not request.session.get('is_login', None):
-        return redirect('/index/')
+        titlename = request.GET.get('title')
+        filename = request.GET.get('filename')
+        acticle = models.BlogArticle.objects.get(title=titlename)
+        if acticle.user_right == 0:
+            savepath = "C:\\articlefile\\" + titlename
+            file = open(os.path.join(savepath, filename), 'rb')
+            response = FileResponse(file)
+            response['Content-Type'] = 'application/octet-stream'
+            response['Content-Disposition'] = 'attachment;filename="%s"' % (urlquote(filename))
+            return response
+        else:
+            return redirect('/index/')
 
     model = request.session['model']
     if model != 1000:

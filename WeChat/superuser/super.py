@@ -413,6 +413,8 @@ def articleadd(request):
            right = article_form.cleaned_data['right']
 
            rightname = ""
+           if right == "0":
+               rightname = "游客"
            if right == "1":
                rightname = "普通会员"
            elif right == "2":
@@ -473,6 +475,8 @@ def articlemodify(request):
            right = article_form.cleaned_data['right']
 
            rightname = ""
+           if right == "0":
+               rightname = "游客"
            if right == "1":
                rightname = "普通会员"
            elif right == "2":

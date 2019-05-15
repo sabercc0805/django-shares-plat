@@ -70,7 +70,7 @@ class ArticleForm(forms.Form):
     articletitle = forms.CharField(label="文章标题",required = True, max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
     articlecontent = UEditorField(label="文章内容",required = True,width=925, height=250)
     right = forms.ChoiceField(label="可查看会员权限",
-                              choices=((1, '普通会员'), (2, '超级会员'),(3, '白金会员'),(4, '钻石会员'),),  # 定义下拉框的选项，元祖第一个值为option的value值，后面为html里面的值
+                              choices=((0, '游客'),(1, '普通会员'), (2, '超级会员'),(3, '白金会员'),(4, '钻石会员'),),  # 定义下拉框的选项，元祖第一个值为option的value值，后面为html里面的值
                               initial=1,  # 默认选中第二个option
                               widget=forms.RadioSelect  # 插件表现形式为单选按钮
                               )
