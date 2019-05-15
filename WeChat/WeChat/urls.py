@@ -44,6 +44,7 @@ urlpatterns = [
     url(r'^userinfo/', home.userinfo),
     url(r'^article/', home.article),
     url(r'^articlecontent/', home.articlecontent),
+    url(r'^download/', home.download),
     url(r'^changepassword/', home.changepassword),
     url(r'^articleadd/', super.articleadd),
     url(r'^articlemodify/', super.articlemodify),
@@ -59,5 +60,6 @@ urlpatterns = [
     url(r'^iframe/', super.iframe),
     url(r'^showcommondata/', home.showdata),
     url(r'^iframecommon/', home.iframe),
+    url(r'^ueditor/', include('DjangoUeditor.urls')),
 ]
 

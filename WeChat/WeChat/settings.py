@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'captcha',
     'superuser',
     'account',
+    "DjangoUeditor",
     #'werkzeug_debugger_runserver',证书到时候直接域名使用
    # 'django_extensions',
 ]
@@ -133,11 +134,15 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+MEDIA_URL = '/static/uepload/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static/uepload')
 STATICFILES_DIRS = (
     ('css', os.path.join(STATIC_ROOT, 'css').replace('\\', '/')),
     ('js', os.path.join(STATIC_ROOT, 'js').replace('\\', '/')),
     ('images', os.path.join(STATIC_ROOT, 'images').replace('\\', '/')),
     ('bootstrap', os.path.join(STATIC_ROOT, 'bootstrap').replace('\\', '/')),
+    ('uepload', os.path.join(MEDIA_ROOT).replace('\\', '/')),
 )
 #HERE = os.path.dirname(os.path.abspath(__file__))
 #HERE = os.path.join(HERE, '../')

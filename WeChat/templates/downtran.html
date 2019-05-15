@@ -1,0 +1,35 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Trans</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+    </head>
+    <body>
+        {% if errortype == 1 %}
+            <p>很抱歉，缝芽币扣除失败，请您返回文章重新下载附件！还有<span id="sp">5</span>秒跳转到文章界面...</p>
+        {% elif errortype == 2 %}
+            <p>很抱歉，你的缝芽币余额为{{ coin }}，无法支付此次下载，请您充值后重试！还有<span id="sp">5</span>秒跳转到文章界面...</p>
+        {% endif %}
+
+<script>
+    onload=function () {
+        setInterval(go,1000)
+    };
+    var x=4;
+    function go() {
+
+        if (x>=0){
+            document.getElementById("sp").innerText=x;
+        }else {
+            location.href="/articlecontent/?currentPage={{ currentPage }}&title={{ titlename }}";
+        }
+        x--;
+    }
+</script>
+    </body>
+</html>

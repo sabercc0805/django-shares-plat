@@ -1,4 +1,5 @@
 import os
+from django.http import FileResponse
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render,redirect
@@ -14,6 +15,7 @@ from .forms import RegisterForm
 from django.forms.models import model_to_dict
 from django.http import Http404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.utils.http import urlquote
 
 @csrf_exempt
 @csrf_protect
@@ -212,6 +214,8 @@ def login(request):
         model = request.session['model']
         if model != 1000:
             return redirect('/logout/')
+        else:
+            return redirect('/index/')
 
     if request.method == "POST":
         login_form = UserForm(request.POST)
@@ -322,6 +326,15 @@ def userinfo(request):
     else:
         level = "付费会员"
 
+
+    if request.method == "POST":
+        UserInfo_form = UserInfoForm(request.POST)
+        if UserInfo_form.is_valid():
+            User = models.Commonuser.objects.filter(userid=username)
+            ChangePwd_form = ChangePwdForm()
+            return render(request, 'userinfo.html', locals())
+
+    User = models.Commonuser.objects.filter(userid=username)
     UserInfo_form = UserInfoForm(locals())
     ChangePwd_form = ChangePwdForm()
     return render(request, 'userinfo.html',locals())
@@ -366,18 +379,78 @@ def articlecontent(request):
         return redirect("/logout/")
 
     titlename= request.GET.get('title')
-
+    currentPage = request.GET.get('currentPage')
     if titlename:
         acticle = models.BlogArticle.objects.get(title=titlename)
         userid = acticle.userid
         createtime = acticle.create_time
         clickrate = acticle.click_nums
+        right = acticle.user_right
         clickrate += 1
         models.BlogArticle.objects.filter(title=titlename).update(click_nums=clickrate)
         content =acticle.content
-        return render(request, 'articlecontent.html', locals())
+        filepath = acticle.filepath
+
+        nLevel = request.session['level']
+        if nLevel < right:
+            print(currentPage)
+            return render(request, 'articletran.html', {"currentPage":currentPage})
+        else:
+            if (len(filepath) > 0):
+                cost = acticle.cost
+                filename = filepath
+                return render(request, 'articlecontent.html', locals())
+            else:
+                return render(request, 'articlecontent.html', locals())
     else:
         raise Http404("文章不存在")
+
+def download(request):
+    kind = 0
+    if not request.session.get('is_login', None):
+        return redirect('/index/')
+
+    model = request.session['model']
+    if model != 1000:
+        return redirect("/logout/")
+
+    # 还要建一张表如果用户已下载该资源则下次再下载无需花费积分
+    titlename = request.GET.get('title')
+    filename = request.GET.get('filename')
+    cost = request.GET.get('cost')
+    currentPage = request.GET.get('currentPage')
+    userid = request.session['user_id']
+
+    fileobj = models.Fileright.objects.filter(userid=userid, title=titlename)
+    if fileobj:
+        savepath = "C:\\articlefile\\" + titlename
+        file = open(os.path.join(savepath, filename), 'rb')
+        response = FileResponse(file)
+        response['Content-Type'] = 'application/octet-stream'
+        response['Content-Disposition'] = 'attachment;filename="%s"' % (urlquote(filename))
+        return response
+    else:
+        userinfo = models.Commonuser.objects.get(userid=userid)
+        fengyacoin = userinfo.fengyacoin
+        userbalance = fengyacoin - int(cost)
+        if userbalance >= 0:
+            if models.Commonuser.objects.filter(userid=userid).update(fengyacoin=userbalance):
+                models.Fileright.objects.create(userid=userid, title=titlename)
+                savepath = "C:\\articlefile\\" + titlename
+                file = open(os.path.join(savepath, filename), 'rb')
+                response = FileResponse(file)
+                response['Content-Type'] = 'application/octet-stream'
+                response['Content-Disposition'] =  'attachment;filename="%s"'%(urlquote(filename))
+                return response
+            else:
+                return render(request, 'downtran.html',
+                              {"errortype": 1, "titlename": titlename, "currentPage": currentPage})
+        else:
+            return render(request, 'downtran.html',
+                          {"errortype": 2, "titlename": titlename, "currentPage": currentPage, "coin": fengyacoin})
+
+
+
 
 
 def changepassword(request):
@@ -397,8 +470,12 @@ def changepassword(request):
 
     if nlevel == 1:
         level = "普通会员"
-    else:
-        level = "付费会员"
+    elif nlevel == 2:
+        level = "超级会员"
+    elif nlevel == 3:
+        level = "白金会员"
+    elif nlevel == 4:
+        level = "钻石会员"
 
     errortype = -1
     if request.method == "POST":

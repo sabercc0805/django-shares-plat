@@ -16,9 +16,23 @@
             </div>
             <BR>
             <div class="row clearfix">
-                <p>{{ content }}</p>
+                <input id='temp' type='hidden'  value='{{content}}' />
+                <p id="Uedit"></p>
+                {% if filename %}
+                    <HR>
+                    <p>附件下载：</p>
+                    <a href="/download/?title={{ titlename }}&currentPage={{ currentPage }}&cost={{ cost }}&filename={{ filename }}">{{ filename }}</a>
+                    <p>下载花费缝芽币：{{ cost }}</p>
+                {% endif %}
             </div>
         </div>
      </div>
+{% endblock %}
 
+{% block js %}
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $("#Uedit").append($("#temp").val());
+    })
+    </script>
 {% endblock %}

@@ -1,4 +1,4 @@
-﻿import os
+import os
 import re
 from django.db.models import Max
 from django.http import HttpResponse
@@ -14,6 +14,7 @@ from User.forms import CenterForm
 from django.http import Http404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
+
 def iframe(request):
     if not request.session.get('is_login', None):
         # 如果本来就未登录，也就没有登出一说
@@ -28,7 +29,7 @@ def iframe(request):
     if not keypath:
         raise Http404("html does not exist")
 
-    filepath=os.path.join("..\\templates\\centerdata", keypath)
+    filepath=os.path.join("C:\\centerdata", keypath)
     return render(request, filepath)
 
 def showdata(request):
@@ -285,7 +286,7 @@ def centerdatamodify(request):
                 if message != -2:
                     message = 1
                     filename = iddate + ".html"
-                    destination = open(os.path.join("C:\\django-shares-plat\\WeChat\\templates\\centerdata", filename),
+                    destination = open(os.path.join("D:\\django-shares-plat\\WeChat\\templates\\centerdata", filename),
                                        'wb+')  # 打开特定的文件进行二进制的写操作
                     for chunk in myFile.chunks():  # 分块写入文件
                         destination.write(chunk)
@@ -308,7 +309,7 @@ def centerdatamodify(request):
                     return render(request, 'centerdatamodify.html', locals())
 
                 filename = iddate + ".html"
-                destination = open(os.path.join("C:\\django-shares-plat\\WeChat\\templates\\centerdata", filename), 'wb+')  # 打开特定的文件进行二进制的写操作
+                destination = open(os.path.join("D:\\django-shares-plat\\WeChat\\templates\\centerdata", filename), 'wb+')  # 打开特定的文件进行二进制的写操作
                 for chunk in myFile.chunks():  # 分块写入文件
                     destination.write(chunk)
                 destination.close()
@@ -328,7 +329,6 @@ def centerdatamodify(request):
     judge = centerdata.judge
     valueone = centerdata.valueone
     valuetwo =centerdata.valuetwo
-
     CenterData_form = CenterForm(locals())
     return render(request, 'centerdatamodify.html', locals())
 
@@ -371,7 +371,7 @@ def center(request):
                 message = 2
 
                 filename = iddate + ".html"
-                destination = open(os.path.join("C:\\django-shares-plat\\WeChat\\templates\\centerdata",filename), 'wb+')  # 打开特定的文件进行二进制的写操作
+                destination = open(os.path.join("C:\\centerdata",filename), 'wb+')  # 打开特定的文件进行二进制的写操作
                 for chunk in myFile.chunks():  # 分块写入文件
                     destination.write(chunk)
                 destination.close()
@@ -409,20 +409,47 @@ def articleadd(request):
        if article_form.is_valid():
            articletitle = article_form.cleaned_data['articletitle']
            articlecontent = article_form.cleaned_data['articlecontent']
+           cost = article_form.cleaned_data['cost']
+           right = article_form.cleaned_data['right']
+
+           rightname = ""
+           if right == "1":
+               rightname = "普通会员"
+           elif right == "2":
+               rightname = "超级会员"
+           elif right == "3":
+               rightname = "白金会员"
+           elif right == "4":
+               rightname = "钻石会员"
+
            try:
                article = models.BlogArticle.objects.get(title=articletitle)
                message = 0
                article_form = ArticleForm(locals())
                return render(request, 'articleadd.html', locals())
            except:
+               filepath = ""
+               myFile = request.FILES.get("myfile", None)
+               if myFile:
+                   filepath = myFile.name
+                   savepath = "C:\\articlefile\\" + articletitle
+                   print(filepath)
+                   if not os.path.exists(savepath):
+                       os.makedirs(savepath)
+                   destination = open(os.path.join(savepath, filepath), 'wb+')  # 打开特定的文件进行二进制的写操作
+
+                   for chunk in myFile.chunks():  # 分块写入文件
+                       destination.write(chunk)
+                   destination.close()
+
                userid = request.session['user_id']
                message = 1
-               new_article = models.BlogArticle.objects.create(title=articletitle, content=articlecontent,userid=userid)
+               new_article = models.BlogArticle.objects.create(title=articletitle, content=articlecontent,userid=userid,filepath=filepath,cost=cost,user_right=right,rightname=rightname)
                new_article.save()
-               article_form = ArticleForm()
+               article_form = ArticleForm({"cost":0,"right":1})
                return render(request, 'articleadd.html', locals())
 
-   article_form = ArticleForm()
+   article_form = ArticleForm({"cost":0,"right":1})
    return render(request, 'articleadd.html',locals())
 
 def articlemodify(request):
@@ -442,16 +469,66 @@ def articlemodify(request):
        if article_form.is_valid():
            articletitle = article_form.cleaned_data['articletitle']
            articlecontent = article_form.cleaned_data['articlecontent']
+           cost = article_form.cleaned_data['cost']
+           right = article_form.cleaned_data['right']
+
+           rightname = ""
+           if right == "1":
+               rightname = "普通会员"
+           elif right == "2":
+               rightname = "超级会员"
+           elif right == "3":
+               rightname = "白金会员"
+           elif right == "4":
+               rightname = "钻石会员"
+
+           filepath = ""
+           myFile = request.FILES.get("myfile", None)
+           if myFile:
+               filepath = myFile.name
+
+           userid = request.session['user_id']
            try:
                article = models.BlogArticle.objects.get(title=articletitle)
                article.content = articlecontent
+               article.cost = cost
+               article.user_right = right
+               article.rightname = rightname
+               if len(filepath) > 0:
+                   savepath = "C:\\articlefile\\" + articletitle
+                   article.filepath = filepath
+                   if not os.path.exists(savepath):
+                       os.makedirs(savepath)
+                   else:
+                       orginfilepath = article.filepath  # 获取原来路径删除文件
+                       wholeorginfilepath = os.path.join(savepath, orginfilepath)
+                       os.remove(wholeorginfilepath)
+
+                   destination = open(os.path.join(savepath, filepath), 'wb+')  # 打开特定的文件进行二进制的写操作
+
+                   for chunk in myFile.chunks():  # 分块写入文件
+                       destination.write(chunk)
+                   destination.close()
+
                article.save()
                message = 1
                article_form = ArticleForm(locals())
                return render(request, 'articleadd.html', locals())
            except:
                message = 0
-               new_article = models.BlogArticle.objects.create(title=articletitle, content=articlecontent)
+
+               if len(filepath) > 0:
+                   savepath = "C:\\articlefile\\" + articletitle
+
+                   if not os.path.exists(savepath):
+                       os.makedirs(savepath)
+                   destination = open(os.path.join(savepath, filepath), 'wb+')  # 打开特定的文件进行二进制的写操作
+
+                   for chunk in myFile.chunks():  # 分块写入文件
+                       destination.write(chunk)
+                   destination.close()
+
+               new_article = models.BlogArticle.objects.create(title=articletitle, content=articlecontent,userid=userid,filepath=filepath,cost=cost,user_right=right,rightname=rightname)
                new_article.save()
                article_form = ArticleForm()
                return render(request, 'articleadd.html', locals())
@@ -459,6 +536,8 @@ def articlemodify(request):
    articletitle = request.GET.get('articletitle')
    article = models.BlogArticle.objects.get(title=articletitle)
    articlecontent = article.content
+   cost = article.cost
+   right = article.user_right
    article_form = ArticleForm(locals())
    return render(request, 'articleadd.html',locals())
 

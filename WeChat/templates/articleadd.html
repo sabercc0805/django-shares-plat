@@ -10,7 +10,7 @@
     <div class="container">
         <div class="col-md-10 col-md-offset-1">
         {% if articlekind == 0 %}
-          <form class='form-login' action="/articleadd/" method="post">
+          <form class='form-login' enctype="multipart/form-data" action="/articleadd/" method="post">
               {% if message == 1%}
                   <div class="alert alert-success alert-dismissable">
                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
@@ -41,11 +41,26 @@
               <p class="form-group">
                   {{ article_form.articletitle}}
               </p>
-              <div class="form-group">
+              <p class="form-group">
                   {{ article_form.articlecontent.label_tag}}
+              </p>
+              <div class="form-group">
                   {{ article_form.articlecontent}}
               </div>
+              <p class="form-group">
+                 <label for="upload">选择上传附件文件：</label>
+                 <input id="upload" type="file" name="myfile" />
+              </p>
+              <p class="form-group">
+                  {{ article_form.right.label_tag}}
+                  {{ article_form.right}}
+              </p>
+              <p class="form-group">
+                  {{ article_form.cost.label_tag}}
+                  {{ article_form.cost}}
+              </p>
               <button type="submit" class="btn btn-primary pull-right">提交</button>
+
           </form>
          {% elif articlekind == 1 %}
             <form class='form-login' action="/articlemodify/" method="post">
@@ -79,10 +94,24 @@
               <p class="form-group">
                   {{ article_form.articletitle}}
               </p>
-              <div class="form-group">
+              <p class="form-group">
                   {{ article_form.articlecontent.label_tag}}
+              </p>
+              <div class="form-group">
                   {{ article_form.articlecontent}}
               </div>
+            <p class="form-group">
+                <label for="upload">选择上传附件文件：</label>
+                <input id="upload" type="file" name="myfile" />
+            </p>
+            <p class="form-group">
+                {{ article_form.right.label_tag}}
+                {{ article_form.right}}
+            </p>
+             <p class="form-group">
+                 {{ article_form.cost.label_tag}}
+                 {{ article_form.cost}}
+             </p>
                 <button type="submit" class="btn btn-primary pull-right">修改</button>
           </form>
         {% endif %}
