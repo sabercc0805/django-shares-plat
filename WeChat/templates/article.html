@@ -13,13 +13,13 @@
             <HR>
             <div class="row clearfix">
                 {% for artcile in article_list %}
-                     <a class="center-block text-center" href="/articlecontent/?title={{ artcile.title }}&currentPage={{ currentPage }}">{{ artcile.title }}(会员等级：{{ artcile.rightname }})</a>
+                     <a class="center-block text-left" style="font-size:20px;" href="/articlecontent/?title={{ artcile.title }}&currentPage={{ currentPage }}">{{ artcile.title }}(会员等级：{{ artcile.rightname }})</a>
                  {% endfor %}
             </div>
             <HR>
             <div class="row clearfix">
                  <nav style="text-align: center">
-                        <ul class="pagination pagination-centered" id="pager">
+                        <ul class="pagination pagination-center" id="pager">
                                 {#上一页按钮开始#}
                                 {# 如果当前页有上一页#}
                             {% if article_list.has_previous %}

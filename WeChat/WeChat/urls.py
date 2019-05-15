@@ -30,7 +30,7 @@ from account import account
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^$',home.login),
+    url(r'^$',home.index),
     url(r'^index/', home.index),
     url(r'^login/', home.login),
     url(r'^register/', home.register),
