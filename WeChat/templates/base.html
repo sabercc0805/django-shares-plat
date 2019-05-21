@@ -16,9 +16,10 @@
     {% block css %}{% endblock %}
   </head>
   <body>
-  <div class="navbar-wrapper">
-    <div class="container-fulid">
-      <div class="navbar navbar-inverse">
+  <div class="container-fulid" style="margin-left:0px; margin-right:0px;">
+  <div class="navbar-wrapper" style="margin-left:0px; margin-right:0px;">
+
+      <div class="navbar navbar-inverse" style="margin-left:0px; margin-right:0px;">
         <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#my-nav" aria-expanded="false">
@@ -29,13 +30,15 @@
                 </button>
                 {% if kind == 0 %}
                     <a class="navbar-brand" href="/index/">主页</a>
+                    <a class="navbar-brand" href="/showcommondata/">数据预测</a>
+                    <a class="navbar-brand" href="/article/">技术文章</a>
+                    <!--a class="navbar-brand" href="/about/">关于我们</a-->
                 {% elif kind == 1 %}
                     <a class="navbar-brand" href="/superindex/">主页</a>
                 {% elif kind == 2 %}
                 {% endif %}
                 {% if request.session.is_login %}
                     {% if kind == 0 %}
-                        <a class="navbar-brand" href="/article/">技术文章</a>
                         <a class="navbar-brand" href="/userinfo/">我的天地</a>
                     {% endif %}
               {% endif %}
@@ -56,7 +59,6 @@
                      {% endif %}
                 {% else %}
                     {% if kind == 0 %}
-                        <li><a href="/article/">游客试看</a></li>
                       <li><a href="/login/">登录</a></li>
                       <li><a href="/register/">注册</a></li>
                     {% endif %}

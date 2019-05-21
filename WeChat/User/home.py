@@ -24,12 +24,12 @@ from django.utils.http import urlquote
 def iframe(request):
     kind = 0
 
-    if not request.session.get('is_login', None):
-        return redirect('/index/')
+    #if not request.session.get('is_login', None):
+       # return redirect('/index/')
 
-    model = request.session['model']
-    if model != 1000:
-        return redirect("/logout/")
+  #  model = request.session['model']
+   # if model != 1000:
+       # return redirect("/logout/")
 
     keypath = articletitle = request.GET.get('key')
 
@@ -42,12 +42,12 @@ def iframe(request):
 def showdata(request):
     kind = 0
 
-    if not request.session.get('is_login', None):
-        return redirect('/index/')
+    #if not request.session.get('is_login', None):
+       # return redirect('/index/')
 
-    model = request.session['model']
-    if model != 1000:
-        return redirect("/logout/")
+  #  model = request.session['model']
+   # if model != 1000:
+     #   return redirect("/logout/")
 
 #目前所有等级用户均可查看所有天数数据
     message = 1
@@ -203,9 +203,11 @@ def index(request):
    if model != 1000:
        return redirect("/logout/")
 
-   return redirect("/showcommondata/")
+   return render(request, 'index.html', locals())
 
-
+def about(request):
+   kind = 0
+   return render(request, 'about.html', locals())
 
 
 def login(request):
@@ -341,14 +343,14 @@ def userinfo(request):
 
 def article(request):
     kind = 0
-    article_list = [];
-    if not request.session.get('is_login',None):
-        article_list = models.BlogArticle.objects.filter(delete_flag=0,user_right=0)
-    else:
-        model = request.session['model']
-        if model != 1000:
-            return redirect("/logout/")
-        article_list = models.BlogArticle.objects.filter(delete_flag=0)
+    #article_list = [];
+    #if not request.session.get('is_login',None):
+      #  article_list = models.BlogArticle.objects.filter(delete_flag=0,user_right=0)
+   # else:
+        #model = request.session['model']
+        #if model != 1000:
+            #return redirect("/logout/")
+    article_list = models.BlogArticle.objects.filter(delete_flag=0)
 
 
     paginator = Paginator(article_list, 20)
@@ -372,6 +374,7 @@ def article(request):
 def articlecontent(request):
     kind = 0
     titlename = request.GET.get('title')
+    currentPage = request.GET.get('currentPage')
     if not request.session.get('is_login', None):
         acticletran = models.BlogArticle.objects.get(title=titlename)
 
@@ -379,13 +382,13 @@ def articlecontent(request):
             raise Http404("文章不存在")
         else:
             if acticletran.user_right != 0:
-                return redirect('/index/')
+                return render(request, 'articletran.html', {"currentPage": currentPage})
     else:
         model = request.session['model']
         if model != 1000:
             return redirect("/logout/")
 
-    currentPage = request.GET.get('currentPage')
+
     if titlename:
         acticle = models.BlogArticle.objects.get(title=titlename)
         userid = acticle.userid
@@ -400,7 +403,6 @@ def articlecontent(request):
         if acticle.user_right != 0:
             nLevel = request.session['level']
             if nLevel < right:
-                print(currentPage)
                 return render(request, 'articletran.html', {"currentPage": currentPage})
 
         if (len(filepath) > 0):

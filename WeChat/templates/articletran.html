@@ -10,7 +10,11 @@
         <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
     </head>
     <body>
-     <p>您的用户级别无法浏览该文章，请您提升用户级别后再查看！还有<span id="sp">5</span>秒跳转到文章列表界面...</p>
+    {% if request.session.is_login %}
+        <p>您的用户级别无法浏览该文章，请您提升用户级别后再查看！还有<span id="sp">5</span>秒跳转到文章列表界面...</p>
+    {% else %}
+        <p>您尚未登录，只能浏览游客权限的文章，请您注册登陆后再查看！还有<span id="sp">5</span>秒跳转到文章列表界面...</p>
+    {% endif %}
 <script>
     onload=function () {
         setInterval(go,1000)
