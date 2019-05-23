@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}广告合作{% endblock %}
+
+{% block css %}
+    <style>
+    .bg {
+            background:url({% static 'images/bk.png' %}) no-repeat center;
+            background-size:cover;
+    }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <header class="jumbotron masthead bg" style="height: 300px">
+    <div class="container">
+        <br/>
+        <br/>
+      <h1 style="color: white">广告合作</h1>
+      <p class="lead" style="color: white">石缝芽数据专注于股市投资量化策略研究与自动化投资系统开发。</p>
+    </div>
+  </header>
+    <div class="container-fluid">
+        <div class="col-md-6 col-md-offset-3">
+            <br/>
+            <h2>广告招商</h2>
+            <hr/>
+            <p class="lead">广告位正在招商中，欢迎您咨询。</p>
+            <br/>
+            <h2>融资合作</h2>
+            <hr/>
+            <p class="lead">石缝芽数据平台融资进行中，欢迎您投资或咨询。</p>
+             <br/>
+            <h2>联系我们</h2>
+            <hr/>
+              <p class="lead">版权所属公司：广西缝芽科技有限公司</p>
+             <p class="lead">真诚的欢迎您加入我们，请通过邮箱联系我们(其他联系方式敬请期待)，在邮件中请注明投资或广告投放，并附加上您所在机构及联系方式。</p>
+            <p class="lead">Mail： <a href="mailto:admin@940420.hzqiye.ntesmail.com">admin@940420.hzqiye.ntesmail.com</a></p>
+        </div>
+    </div>
+
+
+    <footer class="footer bs-docs-footer">
+  <div class="container">
+      <br/>
+      <br/>
+      <hr/>
+    <div class="row footer-top">
+      <div class="col-md-6 col-lg-6">
+        <h5>
+          <img src="{% static 'images/logo.png' %}" style="height: 72px;width: 150px">
+        </h5>
+        <p>我们一直致力于为广大股票投资者提供更多的优质量化策略及自动化投资技术！</p>
+      </div>
+      <div class="col-md-6  col-lg-5 col-lg-offset-1">
+        <div class="row about">
+          <div class="col-sm-6">
+            <h4>关于</h4>
+            <ul class="list-unstyled">
+              <li><a href="/about/">关于我们</a></li>
+              <li><a href="/ad/">广告合作</a></li>
+            </ul>
+          </div>
+          <div class="col-sm-6">
+            <h4>联系方式</h4>
+            <ul class="list-unstyled">
+              <li><a href="mailto:admin@940420.hzqiye.ntesmail.com">admin@940420.hzqiye.ntesmail.com</a></li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <hr/>
+    <div class="row footer-bottom">
+        <p class="text-center">声明：本站仅提供计算机程序开发、数据处理算法、编程培训服务，不提供资本市场具体个股，具体标的的投资咨询服务，敬请留意！</p>
+      <ul class="list-inline text-center">
+        <li><a href="http://www.miibeian.gov.cn/" target="_blank">ICP备案编号:桂ICP备19000645号</a></li><!--li>京公网安备</li-->
+      </ul>
+    </div>
+  </div>
+</footer>
+{% endblock %}
