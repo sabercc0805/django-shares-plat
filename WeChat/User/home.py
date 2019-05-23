@@ -192,6 +192,10 @@ def showdata(request):
 def homepage(request):
     return render(request, "form.html")
 
+def advertisement(request):
+    kind = 0
+    return render(request, "ad.html", locals())
+
 
 def index(request):
    kind = 0

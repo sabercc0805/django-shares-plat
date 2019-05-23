@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
-{% block title %}分析数据{% endblock %}
+{% block title %}数据中心{% endblock %}
 {% block css %}
     <link rel="stylesheet" href="{% static 'css/article.css' %}">
 {% endblock %}
@@ -25,6 +25,7 @@
         <div class="col-md-10 col-md-offset-1">
             <div class="row clearfix">
                 <div class="col-md-4 col-md-offset-4">
+                     <br/>
                     <form class='form-login' action="/showcommondata/" method="post">
                         <label for="inputdate">选择日期：</label>
                         <input id="inputdate" type="date" name="inputdate"/>

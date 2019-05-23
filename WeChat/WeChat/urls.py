@@ -61,6 +61,7 @@ urlpatterns = [
     url(r'^showcommondata/', home.showdata),
     url(r'^iframecommon/', home.iframe),
     url(r'^about/', home.about),
+    url(r'^ad/', home.advertisement),
     url(r'^ueditor/', include('DjangoUeditor.urls')),
 ]
 

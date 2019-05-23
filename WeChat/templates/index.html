@@ -1,25 +1,117 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block title %}缝芽网{% endblock %}
+
+{% block css %}
+    <style>
+    .bg {
+            background:url({% static 'images/bk.png' %}) no-repeat center;
+            background-size:cover;
+    }
+    .sign-button{
+        background-color:rgba(0,0,0,0);
+        outline: none;
+        color: whitesmoke;
+        border-width: 3px;
+        border-color:whitesmoke;
+    }
+    .sign-button:hover{
+        background-color:white;
+        outline: none;
+        color: darkred;
+       border-width: 3px;
+        border-color:whitesmoke;
+    }
+
+    .common-button{
+        background-color:rgba(0,0,0,0);
+        border-color:rebeccapurple ;
+        outline: none;
+        color: rebeccapurple;
+        border-width: 3px;
+    }
+    .common-button:hover{
+        background-color:rebeccapurple;
+        outline: none;
+        color: white;
+    }
+    </style>
+{% endblock %}
+
+
 {% block content %}
-    <div class="container-fluid">
+    <header class="jumbotron masthead bg" style="height: 350px">
+    <div class="container">
+        <br/>
+        <br/>
+      <h1 class="text-center" style="color: white">石缝芽数据</h1>
+      <p class="lead text-center" style="color: white">专注于数据处理软件的开发，股市数据的量化，是股票量化计算的引路人。</p>
+       <p class="lead text-center">
+      <a type="button" class="btn btn-default btn-lg sign-button" href="/article/"><strong>股市量化计算方法分享</strong></a>
+    </p>
+    </div>
+  </header>
+    <!--div class="container-fluid">
         <div class="col-md-8 col-md-offset-2">
             <br/>
             <img  src="{% static 'images/logo.png' %}" class="img-responsive center-block" />
-            <p>石缝芽数据专注于数据处理软件的开发，特别是对股市数据的量化研究颇有心得，也取得了一定成绩。针对广大非软件专业的股民，没有编程基础，石缝芽数据推出了EXCEL电子表格+VBA宏语言的处理模式。即便完全没接触过编程的股民，通过本平台分享的教程、资料、代码也能构建自己的量化炒股系统：把整个系统程序挂载在云服务器上，能实现读取行情数据——分析判断——自动下单——发送结果至主人手机上等一系列自动化运行，实现炒股的程序化、机械化，排除人为情绪的干扰，达到稳定的盈利。通过本站提供的运行框架、回测框架，量化研究爱好者，还能把自己的炒股策用程序表达实现，且通过回测来衡量算法的优越性，或优化策略。你也可以通过本站有尝分享你的策略代码，实现额外的收益。</p>
-            <p>本站主要提供如下服务：</p>
-            <p>1、分享石缝芽研究的整个自动化炒股VBA宏代码（分析策略除外）。即如何自动下载数据，如何自动导入数据，策略分析的代码框架，如何自动下单，如何发送结果到手机，如何组建炒股云服务器等。</p>
-             <p>2、对EXCEL的VBA编程提供培训指导。</p>
-            <p>3、对客户提供的炒股策略编程实现，并提供回测。</p>
-            </p>4、对客户提供有偿分享策略代码的平台。</p>
-            <p>声明：本站仅提供计算机程序开发、数据处理算法、编程培训服务，不提供资本市场具体个股，具体标的的投资咨询服务，敬请留意！</p>
+        </div>
+    </div-->
+
+    <div class="bs-docs-featurette">
+        <div class="container">
+            <br/>
+            <br/>
+            <br/>
+            <h2 class="bs-docs-featurette-title text-center">为所有股票投资者、所有应用场景而设计。</h2>
+             <p class="lead text-center">石缝芽数据针对股市量化进行深入研究、设计了相关数据处理软件，即便完全没接触过编程的股民，也能通过本平台分享的教程、资料、代码也能构建自己的量化炒股系统。</p>
+            <hr/>
+             <div class="row">
+        <div class="col-sm-3">
+            <img src="{% static 'images/less.png' %}" alt="Sass and Less support" class="img-responsive">
+        <h3 class="text-center">自动化炒股</h3>
+        <p>如何自动下载数据，如何自动导入数据，策略分析的代码框架，如何自动下单，如何发送结果到手机，如何组建炒股云服务器等。</p>
+      </div>
+      <div class="col-sm-3">
+        <img src="{% static 'images/devices.png' %}" alt="Responsive across devices" class="img-responsive">
+        <h3 class="text-center">EXCEL的VBA编程指导</h3>
+        <p>针对初级零基础的股票投资者，可以通过石缝芽数据平台，学习EXCEL的VBA编程，使您的投资之路更加智能更加方便，实时获取大盘动态，不错过任何一个机会。</p>
+      </div>
+      <div class="col-sm-3">
+        <img src="{% static 'images/components.png' %}" alt="Components" class="img-responsive">
+        <h3 class="text-center">炒股策略编程实现回测</h3>
+        <p>您是资深投资者，有自己的投资策略，但苦于没有编程基础，或者自己不愿花费时间进行编程，石缝芽数据平台会为您提供深度定制服务，并提供数据对您的策略进行验证。</p>
+      </div>
+      <div class="col-sm-3">
+        <img src="{% static 'images/meony.png' %}" alt="Components" class="img-responsive">
+        <h3 class="text-center">有偿的代码分享平台</h3>
+        <p>无论是您提供策略由我们进行编程实现，或者是您自己的投资实现代码，均可以上传到石缝芽数据平台，有偿提供给其他投资者，实现额外收益。</p>
+      </div>
+    </div>
+            <br/>
+            <br/>
+            <hr style="width: 30%;"/>
+            <p class="lead text-center">石缝芽数据有一套完整的股票投资量化策略及编程教程，满足您从零开始的需求，也为高端技术型投资者提供更强大的技术服务。</p>
+            <p class="text-center">
+                <a href="\article\" class="btn btn-outline btn-lg common-button"><strong>查看缝芽网技术分享</strong></a>
+            </p>
+             <hr/>
+             <br/>
+            <br/>
+            <br/>
+            <h2 class="bs-docs-featurette-title text-center">基于石缝芽数据股票投资量化策略的虚拟盘数据</h2>
+             <p class="lead text-center">石缝芽数据基于自身的股票投资量化策略，编写了相应的程序，长时间进行虚拟盘跟投，开盘日进行大盘攻守趋势预测，您可以查看我们以往的辉煌战果以及最新大盘预测情报。</p>
+            <br/>
+            <br/>
+            <hr style="width: 30%;"/>
+            <p class="lead text-center">数据中心展示了以往的辉煌战果、最新大盘预测情报。</p>
+            <p class="text-center">
+                <a href="\showcommondata\" class="btn btn-outline btn-lg common-button"><strong>数据中心</strong></a>
+            </p>
         </div>
     </div>
 
-
-
-
-    <footer class="footer">
+    <!--footer>
         <div class="container-fluid">
             <div class="col-md-8 col-md-offset-2">
                 <h5 class="text-center">石缝芽数据 版权所有</h5>
@@ -27,5 +119,46 @@
                 <h5 class="text-center">联系方式：admin@940420.hzqiye.ntesmail.com</h5>
             </div>
         </div>
-    </footer>
+    </footer-->
+      <footer class="footer bs-docs-footer">
+  <div class="container">
+      <br/>
+      <br/>
+      <hr/>
+    <div class="row footer-top">
+      <div class="col-md-6 col-lg-6">
+        <h5>
+          <img src="{% static 'images/logo.png' %}" style="height: 72px;width: 150px">
+        </h5>
+        <p>我们一直致力于为广大股票投资者提供更多的优质量化策略及自动化投资技术！</p>
+      </div>
+      <div class="col-md-6  col-lg-5 col-lg-offset-1">
+        <div class="row about">
+          <div class="col-sm-6">
+            <h4>关于</h4>
+            <ul class="list-unstyled">
+              <li><a href="/about/">关于我们</a></li>
+              <li><a href="/ad/">广告合作</a></li>
+            </ul>
+          </div>
+          <div class="col-sm-6">
+            <h4>联系方式</h4>
+            <ul class="list-unstyled">
+              <li><a href="mailto:admin@940420.hzqiye.ntesmail.com">admin@940420.hzqiye.ntesmail.com</a></li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <hr/>
+    <div class="row footer-bottom">
+        <p class="text-center">声明：本站仅提供计算机程序开发、数据处理算法、编程培训服务，不提供资本市场具体个股，具体标的的投资咨询服务，敬请留意！</p>
+      <ul class="list-inline text-center">
+        <li><a href="http://www.miibeian.gov.cn/" target="_blank">ICP备案编号:桂ICP备19000645号</a></li><!--li>京公网安备</li-->
+      </ul>
+    </div>
+  </div>
+</footer>
+
 {% endblock %}
