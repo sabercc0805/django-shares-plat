@@ -445,33 +445,41 @@ def download(request):
     currentPage = request.GET.get('currentPage')
     userid = request.session['user_id']
 
-    fileobj = models.Fileright.objects.filter(userid=userid, title=titlename)
-    if fileobj | acticle.user_right == 0:
+    try:
+        fileobj = models.Fileright.objects.filter(userid=userid, title=titlename)
         savepath = "C:\\articlefile\\" + titlename
         file = open(os.path.join(savepath, filename), 'rb')
         response = FileResponse(file)
         response['Content-Type'] = 'application/octet-stream'
         response['Content-Disposition'] = 'attachment;filename="%s"' % (urlquote(filename))
         return response
-    else:
-        userinfo = models.Commonuser.objects.get(userid=userid)
-        fengyacoin = userinfo.fengyacoin
-        userbalance = fengyacoin - int(cost)
-        if userbalance >= 0:
-            if models.Commonuser.objects.filter(userid=userid).update(fengyacoin=userbalance):
-                models.Fileright.objects.create(userid=userid, title=titlename)
-                savepath = "C:\\articlefile\\" + titlename
-                file = open(os.path.join(savepath, filename), 'rb')
-                response = FileResponse(file)
-                response['Content-Type'] = 'application/octet-stream'
-                response['Content-Disposition'] =  'attachment;filename="%s"'%(urlquote(filename))
-                return response
+    except:
+        if acticle.user_right == 0:
+            savepath = "C:\\articlefile\\" + titlename
+            file = open(os.path.join(savepath, filename), 'rb')
+            response = FileResponse(file)
+            response['Content-Type'] = 'application/octet-stream'
+            response['Content-Disposition'] = 'attachment;filename="%s"' % (urlquote(filename))
+            return response
+        else:
+            userinfo = models.Commonuser.objects.get(userid=userid)
+            fengyacoin = userinfo.fengyacoin
+            userbalance = fengyacoin - int(cost)
+            if userbalance >= 0:
+                if models.Commonuser.objects.filter(userid=userid).update(fengyacoin=userbalance):
+                    models.Fileright.objects.create(userid=userid, title=titlename)
+                    savepath = "C:\\articlefile\\" + titlename
+                    file = open(os.path.join(savepath, filename), 'rb')
+                    response = FileResponse(file)
+                    response['Content-Type'] = 'application/octet-stream'
+                    response['Content-Disposition'] = 'attachment;filename="%s"' % (urlquote(filename))
+                    return response
+                else:
+                    return render(request, 'downtran.html',
+                                  {"errortype": 1, "titlename": titlename, "currentPage": currentPage})
             else:
                 return render(request, 'downtran.html',
-                              {"errortype": 1, "titlename": titlename, "currentPage": currentPage})
-        else:
-            return render(request, 'downtran.html',
-                          {"errortype": 2, "titlename": titlename, "currentPage": currentPage, "coin": fengyacoin})
+                              {"errortype": 2, "titlename": titlename, "currentPage": currentPage, "coin": fengyacoin})
 
 
 
