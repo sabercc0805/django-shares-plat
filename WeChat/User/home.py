@@ -447,12 +447,13 @@ def download(request):
 
     try:
         fileobj = models.Fileright.objects.filter(userid=userid, title=titlename)
-        savepath = "C:\\articlefile\\" + titlename
-        file = open(os.path.join(savepath, filename), 'rb')
-        response = FileResponse(file)
-        response['Content-Type'] = 'application/octet-stream'
-        response['Content-Disposition'] = 'attachment;filename="%s"' % (urlquote(filename))
-        return response
+        if fileobj:
+            savepath = "C:\\articlefile\\" + titlename
+            file = open(os.path.join(savepath, filename), 'rb')
+            response = FileResponse(file)
+            response['Content-Type'] = 'application/octet-stream'
+            response['Content-Disposition'] = 'attachment;filename="%s"' % (urlquote(filename))
+            return response
     except:
         if acticle.user_right == 0:
             savepath = "C:\\articlefile\\" + titlename
