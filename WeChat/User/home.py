@@ -445,16 +445,9 @@ def download(request):
     currentPage = request.GET.get('currentPage')
     userid = request.session['user_id']
 
-    try:
-        fileobj = models.Fileright.objects.filter(userid=userid, title=titlename)
-        if fileobj:
-            savepath = "C:\\articlefile\\" + titlename
-            file = open(os.path.join(savepath, filename), 'rb')
-            response = FileResponse(file)
-            response['Content-Type'] = 'application/octet-stream'
-            response['Content-Disposition'] = 'attachment;filename="%s"' % (urlquote(filename))
-            return response
-    except:
+
+    fileobj = models.Fileright.objects.filter(userid=userid, title=titlename)
+    if fileobj.count() == 0:
         if acticle.user_right == 0:
             savepath = "C:\\articlefile\\" + titlename
             file = open(os.path.join(savepath, filename), 'rb')
@@ -481,6 +474,13 @@ def download(request):
             else:
                 return render(request, 'downtran.html',
                               {"errortype": 2, "titlename": titlename, "currentPage": currentPage, "coin": fengyacoin})
+    else:
+        savepath = "C:\\articlefile\\" + titlename
+        file = open(os.path.join(savepath, filename), 'rb')
+        response = FileResponse(file)
+        response['Content-Type'] = 'application/octet-stream'
+        response['Content-Disposition'] = 'attachment;filename="%s"' % (urlquote(filename))
+        return response
 
 
 
