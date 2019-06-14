@@ -278,7 +278,7 @@ def register(request):
             #return render(request, 'register.html', locals())
             agreement = request.POST.getlist('protocol')
             if len(agreement) == 0:
-                message = "请先同意用户协议，在进行注册！"
+                message = "请先同意用户协议，再进行注册！"
                 register_form = RegisterForm(locals())
                 return render(request, 'register.html', locals())
 
@@ -287,12 +287,12 @@ def register(request):
                 register_form = RegisterForm(locals())
                 return render(request, 'register.html', locals())
             else:
-                same_name_user = models.Commonuser.objects.filter(userid=username)
+                same_name_user = models.Commonuser.objects.get(userid=username)
                 if same_name_user:  # 用户名唯一
                     message = '用户已经存在，请重新选择用户名！'
                     register_form = RegisterForm(locals())
                     return render(request, 'register.html', locals())
-                same_phone_user = models.Commonuser.objects.filter(identify=phonenumber)
+                same_phone_user = models.Commonuser.objects.get(identify=phonenumber)
                 if same_phone_user:  # 邮箱地址唯一
                     message = '该邮箱已被注册，请更换邮箱！'
                     register_form = RegisterForm(locals())
@@ -329,18 +329,28 @@ def userinfo(request):
 
     if nlevel == 1:
         level = "普通会员"
-    else:
-        level = "付费会员"
+    elif nlevel == 2:
+        level = "超级会员"
+    elif nlevel == 3:
+        level = "白金会员"
+    elif nlevel == 4:
+        level = "钻石会员"
 
 
     if request.method == "POST":
         UserInfo_form = UserInfoForm(request.POST)
         if UserInfo_form.is_valid():
-            User = models.Commonuser.objects.filter(userid=username)
+            User = models.Commonuser.objects.get(userid=username)
+            phonenum = User.phonenum
+            email = User.identify
+            coin = User.fengyacoin
             ChangePwd_form = ChangePwdForm()
             return render(request, 'userinfo.html', locals())
 
-    User = models.Commonuser.objects.filter(userid=username)
+    User = models.Commonuser.objects.get(userid=username)
+    phonenum = User.phonenum
+    email = User.identify
+    coin = User.fengyacoin
     UserInfo_form = UserInfoForm(locals())
     ChangePwd_form = ChangePwdForm()
     return render(request, 'userinfo.html',locals())
@@ -354,10 +364,40 @@ def article(request):
         #model = request.session['model']
         #if model != 1000:
             #return redirect("/logout/")
-    article_list = models.BlogArticle.objects.filter(delete_flag=0)
+    article_list = []
+    search = ''
+    if request.method == "POST":
+        search = request.POST["searchinfo"]
+    else:
+        search = request.GET.get("searchinfo", '')
 
+    tag = request.GET.get('tag',None)
 
-    paginator = Paginator(article_list, 20)
+    if len(search) == 0:
+        if not tag:
+            article_list = models.BlogArticle.objects.filter(delete_flag=0)
+            tag = '全部'
+        else:
+            if tag == '全部':
+                article_list = models.BlogArticle.objects.filter(delete_flag=0)
+            else:
+                tag = request.GET.get('tag')
+                article_list = models.BlogArticle.objects.filter(delete_flag=0, tag=tag)
+    else:
+        if not tag:
+            article_list = models.BlogArticle.objects.filter(delete_flag=0, title__icontains=search)
+            tag = '全部'
+        else:
+            if tag == '全部':
+                article_list = models.BlogArticle.objects.filter(delete_flag=0, title__icontains=search)
+            else:
+                tag = request.GET.get('tag')
+                article_list = models.BlogArticle.objects.filter(delete_flag=0, tag=tag, title__icontains=search)
+
+    currentPage = request.GET.get('currentPage')
+    tag_list = models.BlogTag.objects.filter()
+
+    paginator = Paginator(article_list, 15)
     # 从前端获取当前的页码数,默认为1
     page = request.GET.get('page', 1)
 
@@ -373,7 +413,7 @@ def article(request):
     except EmptyPage:
         article_list = paginator.page(paginator.num_pages)  # 如果用户输入的页数不在系统的页码列表中时,显示最后一页的内容
 
-    return render(request, 'article.html',locals())
+    return render(request, 'articlenew.html',locals())
 
 def articlecontent(request):
     kind = 0

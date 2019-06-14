@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'User.templatetags',
     'User',
     'captcha',
     'superuser',
@@ -127,6 +128,10 @@ USE_L10N = True
 USE_TZ = True
 
 
+# session 设置
+SESSION_COOKIE_AGE = 60 * 30 # 设置过期时间10分钟，默认为两周
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # 设置关闭浏览器时失效
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 

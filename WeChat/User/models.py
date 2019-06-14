@@ -35,12 +35,17 @@ class BlogArticle(models.Model):
     create_time = models.DateTimeField(db_column='createtime', auto_now = True)
     modify_time = models.DateTimeField(db_column='modifytime',auto_now = True)
     click_nums = models.IntegerField(db_column='clickrate', default=0)
-    tag = models.CharField(db_column='tag', max_length=20,default='')
+    tag = models.CharField(db_column='tag', max_length=20,default='其他')
     delete_flag = models.IntegerField(db_column='deleteflag', default=0)
+    filecosttype = models.IntegerField(db_column='filecosttype', default=0)#0:免费；1、积分；2、缝芽币
     cost = models.IntegerField(db_column='cost', default=0)
     user_right = models.IntegerField(db_column='right', default=1)
     filepath = models.CharField(db_column='filepath', max_length=256,default="")
     rightname = models.CharField(db_column='rightname', max_length=16,default='普通会员')
+    articlecosttype = models.IntegerField(db_column='articlecosttype', default=0)#0:免费；1、积分；2、缝芽币
+    articlecost = models.IntegerField(db_column='articlecost', default=0)
+    score = models.IntegerField(db_column='score', default=50)#为方便且节省资源，防止出错，所有涉及到小数的全部以整数代替，/10.0为真实的数值
+    scorernumber = models.IntegerField(db_column='scorernumber', default=0)#评分人数
     class Meta:
         managed = True
         db_table = 'blogarticle'
@@ -186,3 +191,16 @@ class Usercharge(models.Model):
     class Meta:
         managed = True
         db_table = 'usercharge'
+
+#教程用户评论及收藏评分等
+class ArticleContain(models.Model):
+    userid = models.CharField(db_column='UserID', max_length=128)
+    title = models.CharField(db_column='title', max_length=100)
+    firstreaddate = models.DateTimeField(db_column='ReadDate',auto_now = True)  # Field name made lowercase.
+    score = models.IntegerField(db_column='score', default=0)#评分，0默认为未评分
+    comment = models.CharField(db_column='comment', max_length=500,default='')  # Field name made lowercase.
+    collect = models.IntegerField(db_column='collect', default=0)#是否收藏
+
+    class Meta:
+        managed = True
+        db_table = 'articlecontain'

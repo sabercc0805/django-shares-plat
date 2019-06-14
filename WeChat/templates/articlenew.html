@@ -1,0 +1,267 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load templatefilter %}
+{% block title %}技术中心{% endblock %}
+
+{% block css %}
+    <style xmlns="http://www.w3.org/1999/html">
+    .bg {
+            background:url({% static 'images/bk.png' %}) no-repeat center;
+            background-size:cover;
+    }
+
+    .sign-button{
+        background-color:rgba(0,0,0,0);
+        outline: none;
+        color: whitesmoke;
+        border-width: 3px;
+    }
+    .sign-button:hover{
+        background-color:white;
+        outline: none;
+        color: darkred;
+       border-width: 3px;
+        border-color:whitesmoke;
+    }
+
+    .class-button{
+        background-color:rgba(0,0,0,0);
+        outline: none;
+        color: darkred;
+        border-width: 1px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:0px;
+        font-size: 15px;
+    }
+    .class-button:hover{
+        background-color:red;
+        outline: none;
+        color: white;
+       border-width: 1px;
+        border-color:whitesmoke;
+        border-Radius:0px;
+        font-size: 15px;
+    }
+
+    .class-button:focus{
+        background-color:red;
+        outline: none;
+        color: white;
+       border-width: 1px;
+        border-color:whitesmoke;
+        border-Radius:0px;
+        font-size: 15px;
+    }
+
+    .btn-primary:active{
+        background-color:red!important;
+        outline: none;
+        color: white;
+       border-width: 1px;
+        border-color:whitesmoke;
+        border-Radius:0px;
+        font-size: 15px;
+    }
+
+    .article-a:link{color:black}
+     .article-a:visited{color:black}
+    .article-a:hover{color:darkred;
+        text-decoration: none;
+    }
+
+    ul li{list-style: none}
+
+    #find{
+        background-color: rgba(0,0,0,0);
+        border: none;
+        font-size: 17px;
+    }
+
+    #find:focus{
+        outline: none;
+    }
+
+    </style>
+{%  endblock %}
+
+{% block content %}
+    <header class="jumbotron masthead bg" style="height: 300px">
+    <div class="container">
+        <br/>
+      <h1 class="text-center" style="color: white">石缝芽数据教程</h1>
+      <p class="lead text-center" style="color: white">专注于数据处理软件的开发，股市数据的量化，是股票量化计算的引路人。</p>
+       <p class="lead text-center">
+        <form method="post"  action="/article/?tag={{ tag }}">
+            <div class="input-group col-md-6 col-md-offset-3">
+                <input name="searchinfo" type="text" class="form-control input-lg" autocomplete="off" placeholder="请输入您想搜索的教程" value={{ search }}>
+                <span class="input-group-addon btn btn-outline sign-button"><input type="submit" value="搜索教程" id="find"></span>
+            </div>
+        </form>
+    </p>
+    </div>
+  </header>
+
+    <div class="row">
+        <div class="col-md-3" id="classbar">
+            <div class="pull-right" style="width: 150px;height: 360px;float: left;left: 0;">
+                <ul class="pull-right" style="margin:0; padding:0;width:122px;border-color:red;border-width: 1px;border-style: solid">
+                    {% if tag == '全部' %}
+                        <li><a  class="btn btn-danger class-button active" style="width:120px" href="/article/?tag=全部&searchinfo={{ search }}">全部</a></li>
+                    {% else %}
+                         <li><a  class="btn btn-danger class-button" style="width:120px" href="/article/?tag=全部&searchinfo={{ search }}">全部</a></li>
+                    {% endif %}
+                    {% for tagscript in tag_list %}
+                        {% if tagscript.name == tag %}
+                            <li><a  class="btn btn-danger class-button active" style="width:120px" href="/article/?tag={{ tagscript.name  }}&searchinfo={{ search }}">{{ tagscript.name }}</a></li>
+                        {% else %}
+                            <li><a class="btn btn-danger class-button" style="width:120px" href="/article/?tag={{ tagscript.name  }}&searchinfo={{ search }}">{{ tagscript.name }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if tag == '其他' %}
+                         <li><a  class="btn btn-danger class-button active" style="width:120px" href="/article/?tag=其他&searchinfo={{ search }}">其他</a></li>
+                    {% else %}
+                         <li><a  class="btn btn-danger class-button" style="width:120px" href="/article/?tag=其他&searchinfo={{ search }}">其他</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-7">
+            <div class="row clearfix">
+                <ul class="list-group">
+                        {% for artcile in article_list %}
+                            <li class="list-group-item">
+                                <div>
+                                    <h2>
+                                        <a class="center-block text-left article-a" href="/articlecontent/?title={{ artcile.title }}&currentPage={{ currentPage }}">{{ artcile.title }}</a>
+                                    </h2>
+                                </div>
+                                <div class="row">
+                                    {% if artcile.right == 0 %}
+                                        <p class="pull-left">&nbsp;&nbsp;&nbsp;&nbsp;浏览权限:游客</p>
+                                    {% else %}
+                                        <p class="pull-left">&nbsp;&nbsp;&nbsp;&nbsp;浏览权限:会员</p>
+                                    {% endif %}
+                                    <p class="pull-left" style="color: lightgray">&nbsp;|</p>
+                                    {% if artcile.articlecosttype == 0 %}
+                                        <p class="pull-left">&nbsp;免费</p>
+                                    {% elif artcile.articlecosttype == 1 %}
+                                        <p class="pull-left">&nbsp;积分:{{ artcile.articlecost }}</p>
+                                    {% elif artcile.articlecosttype == 2 %}
+                                        <p class="pull-left">&nbsp;缝芽币:{{ artcile.articlecost }}</p>
+                                    {% endif %}
+                                    <p class="pull-left" style="color: lightgray">&nbsp;|</p>
+                                    <p class="pull-left">&nbsp;作者:{{ artcile.userid }}</p>
+                                <p class="pull-left" style="color: lightgray">&nbsp;|</p>
+                                    <p class="pull-left">&nbsp;{{ artcile.tag }}</p>
+                                <p class="pull-left" style="color: lightgray">&nbsp;|</p>
+                                    <p class="pull-left">&nbsp;{{ artcile.create_time | date:'Y-m-d' }}</p>
+
+                                <p class="pull-right">&nbsp;点击率:{{ artcile.click_nums }}&nbsp;&nbsp;&nbsp;&nbsp;</p>
+                                <p class="pull-right" style="color: lightgray">&nbsp;|</p>
+                                <p class="pull-right">综合评分:{{ artcile.score|division }}</p>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+            </div>
+            <div class="row clearfix">
+                 <nav style="text-align: center">
+                        <ul class="pagination pagination-center" id="pager">
+                                {#上一页按钮开始#}
+                                {# 如果当前页有上一页#}
+                            {% if article_list.has_previous %}
+                                {#  当前页的上一页按钮正常使用#}
+                                <li class="previous"><a href="/article/?page={{ article_list.previous_page_number }}&tag={{ tag }}&searchinfo={{ search }}">上一页</a></li>
+                            {% else %}
+                                {# 当前页的不存在上一页时,上一页的按钮不可用#}
+                                <li class="previous disabled"><a href="#">上一页</a></li>
+                            {% endif %}
+                                {#上一页按钮结束#}
+                                {# 页码开始#}
+                            {% for num in paginator.page_range %}
+                                {% if num == currentPage %}
+                                     <li class="item active"><a href="/article/?page={{ num }}&tag={{ tag }}&searchinfo={{ search }}">{{ num }}</a></li>
+                                {% else %}
+                                     <li class="item"><a href="/article/?page={{ num }}&tag={{ tag }}&searchinfo={{ search }}">{{ num }}</a></li>
+                                {% endif %}
+                             {% endfor %}
+                            {#页码结束#}
+                            {# 下一页按钮开始#}
+                            {% if article_list.has_next %}
+                                <li class="next"><a href="/article/?page={{ article_list.next_page_number }}&tag={{ tag }}&searchinfo={{ search }}">下一页</a></li>
+                            {% else %}
+                                <li class="next disabled"><a href="#">下一页</a></li>
+                            {% endif %}
+                            {# 下一页按钮结束#}
+                        </ul>
+                 </nav>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer bs-docs-footer" id="foot">
+  <div class="container">
+      <br/>
+      <br/>
+      <hr/>
+    <div class="row footer-top">
+      <div class="col-md-6 col-lg-6">
+        <h5>
+          <img src="{% static 'images/logo.png' %}" style="height: 58px;width: 169px">
+        </h5>
+        <p>我们一直致力于为广大股票投资者提供更多的优质量化策略及自动化投资技术！</p>
+      </div>
+      <div class="col-md-6  col-lg-5 col-lg-offset-1">
+        <div class="row about">
+          <div class="col-sm-6">
+            <h4>关于</h4>
+            <ul class="list-unstyled">
+              <li><a href="/about/">关于我们</a></li>
+              <li><a href="/ad/">广告合作</a></li>
+            </ul>
+          </div>
+          <div class="col-sm-6">
+            <h4>联系方式</h4>
+            <ul class="list-unstyled">
+              <li><a href="mailto:admin@940420.hzqiye.ntesmail.com">admin@940420.hzqiye.ntesmail.com</a></li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <hr/>
+    <div class="row footer-bottom">
+        <p class="text-center">声明：本站仅提供计算机程序开发、数据处理算法、编程培训服务，不提供资本市场具体个股，具体标的的投资咨询服务，敬请留意！</p>
+      <ul class="list-inline text-center">
+        <li><a href="http://gx.beian.miit.gov.cn/" target="_blank" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;"><p style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393;">ICP备案编号:桂ICP备19000645号</p></a></li>
+          <li><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=45010702001199" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;"><img src="{% static 'images/gh.png' %}" style="float:left;"/><p style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393;">桂公网安备 45010702001199号</p></a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+{% endblock %}
+
+{% block js %}
+    <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+    <script type="text/javascript">
+        window.onscroll = function() {
+            var t = document.documentElement.scrollTop || document.body.scrollTop;
+            var b = document.documentElement.scrollHeight || document.body.scrollHeight;
+            var top_div = document.getElementById("classbar");
+            var foot_top = document.getElementById("foot").offsetTop;
+            var top_div_height = top_div.height;
+
+            if (t >= 330) {
+                var divt = t - 330;
+                top_div.style.top = divt + 'px';
+            } else {
+                  top_div.style.top = '0px';
+            }
+        }
+
+    </script>
+{% endblock %}
+
