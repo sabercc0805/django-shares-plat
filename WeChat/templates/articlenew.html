@@ -136,7 +136,7 @@
                                     </h2>
                                 </div>
                                 <div class="row">
-                                    {% if artcile.right == 0 %}
+                                    {% if artcile.user_right == 0 %}
                                         <p class="pull-left">&nbsp;&nbsp;&nbsp;&nbsp;浏览权限:游客</p>
                                     {% else %}
                                         <p class="pull-left">&nbsp;&nbsp;&nbsp;&nbsp;浏览权限:会员</p>
@@ -158,7 +158,7 @@
 
                                 <p class="pull-right">&nbsp;点击率:{{ artcile.click_nums }}&nbsp;&nbsp;&nbsp;&nbsp;</p>
                                 <p class="pull-right" style="color: lightgray">&nbsp;|</p>
-                                <p class="pull-right">综合评分:{{ artcile.score|division }}</p>
+                                <p class="pull-right">点赞数:{{ artcile.scorernumber }}</p>
                                 </div>
                             </li>
                         {% endfor %}

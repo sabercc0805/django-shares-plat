@@ -45,7 +45,8 @@ class BlogArticle(models.Model):
     articlecosttype = models.IntegerField(db_column='articlecosttype', default=0)#0:免费；1、积分；2、缝芽币
     articlecost = models.IntegerField(db_column='articlecost', default=0)
     score = models.IntegerField(db_column='score', default=50)#为方便且节省资源，防止出错，所有涉及到小数的全部以整数代替，/10.0为真实的数值
-    scorernumber = models.IntegerField(db_column='scorernumber', default=0)#评分人数
+    scorernumber = models.IntegerField(db_column='scorernumber', default=0)#评分人数（目前无评分为点赞人数）
+    cancommit = models.IntegerField(db_column='cancommit', default=0)#是否可以评论0：不可以；1、可以
     class Meta:
         managed = True
         db_table = 'blogarticle'
@@ -108,6 +109,7 @@ class Commonuser(models.Model):
     remark = models.CharField(db_column='Remark', max_length=32, blank=True, null=True)  # Field name made lowercase.
     phonenum = models.CharField(db_column='PhoneNum', max_length=16, blank=True, null=True)
     fengyacoin = models.IntegerField(db_column='FengYaCoin', blank=True,default=0)
+    integrate = models.IntegerField(db_column='integrate', blank=True, default=0)
     class Meta:
         managed = True
         db_table = 'commonuser'
@@ -200,6 +202,8 @@ class ArticleContain(models.Model):
     score = models.IntegerField(db_column='score', default=0)#评分，0默认为未评分
     comment = models.CharField(db_column='comment', max_length=500,default='')  # Field name made lowercase.
     collect = models.IntegerField(db_column='collect', default=0)#是否收藏
+    finger = models.IntegerField(db_column='finger', default=0)  # 点赞
+    commentflag = models.IntegerField(db_column='commentflag', default=0)  # 评论显示/是否评论/评论是否通过 0：未评论；1：已评论还未通过；2：评论且通过；3、不通过重新评论（显示一次后置0，并在消息中心中显示）
 
     class Meta:
         managed = True

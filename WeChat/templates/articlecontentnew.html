@@ -1,0 +1,504 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}{{ titlename}}{% endblock %}
+
+{% block css %}
+    <style xmlns="http://www.w3.org/1999/html">
+    .bg {
+           background:url({% static 'images/bk.png' %}) no-repeat center;
+           background-size:100% 100%;
+           background-repeat:no-repeat;
+    }
+
+     ul li{
+         list-style: none;
+         border-width: 1px;
+         border-bottom-color: red;
+         border-bottom-width: thin;
+     }
+
+     .showlongtext{
+         white-space:nowrap;
+        text-overflow:ellipsis;
+        overflow: hidden;
+     }
+    .imgback{
+        border: 2px solid darkred;
+        border-radius: 50%;//圆角百分比
+    }
+
+     .article-a:link{color:black}
+     .article-a:visited{color:black}
+    .article-a:hover{color:darkred;
+        text-decoration: none;
+    }
+
+    .class-button{
+        background-color:#FFFFFF;
+        outline: none;
+        color: black;
+        border-width: 1px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:0px;
+        font-size: 15px;
+        display: flex;
+        justify-content: center;
+        text-align: center;
+    }
+    .class-button:hover{
+        background-color:lightgrey;
+        outline: none;
+        color: red;
+       border-width: 1px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:0px;
+        font-size: 15px;
+    }
+
+    .class-button:focus{
+        background-color:lightgrey;
+        outline: none;
+        color: red;
+       border-width: 1px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:0px;
+        font-size: 15px;
+        text-align: center;
+    }
+
+    .class-button:active{
+        background-color:red;
+        outline: none;
+        color: red;
+        border-width: 1px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:0px;
+        font-size: 15px;
+    }
+    </style>
+{%  endblock %}
+
+{% block content %}
+
+     <div class="row bg">
+     <div class="col-md-12">
+     <BR>
+        <div class="col-md-1" id="classbar" style="top: 110px;">
+            <!--div class="pull-right" style="width: 150px;height: 360px;float: right;left: 0;right: 0;"-->
+                <ul class="pull-right" style="margin:0; padding:0;width:42px;height:198px;border-color:red;border-width: 1px;border-style: solid;margin-right: -15px;">
+                    <li><a  id="totop" class="btn class-button center-block glyphicon glyphicon-chevron-up" style="width:40px;height: 40px;margin-top: -1px" data-toggle="tooltip" data-original-title="tooltip提示" title="回到顶部" data-placement="left"></a></li>
+                    {% if  request.session.is_login %}
+                         {% if finger == 1 %}
+                              <li><a  id = "finger" class="btn btn-danger class-button active glyphicon glyphicon-thumbs-up " style="width:40px;height: 40px;margin-top: -1px" data-toggle="tooltip" data-original-title="tooltip提示" title="点赞" data-placement="left"></a></li>
+                        {% elif finger == 0 %}
+                              <li><a  id = "finger" class="btn btn-danger class-button glyphicon glyphicon-thumbs-up" style="width:40px;height: 40px;margin-top: -1px" data-toggle="tooltip" data-original-title="tooltip提示" title="点赞" data-placement="left"></a></li>
+                        {% endif %}
+
+                        {% if bcollect == 1 %}
+                            <li><a  id="collect" class="btn btn-danger class-button glyphicon glyphicon-star active" style="width:40px;height: 40px;margin-top: -1px" data-toggle="tooltip" data-original-title="tooltip提示" title="收藏" data-placement="left"></a></li>
+                        {% elif bcollect == 0 %}
+                            <li><a  id="collect" class="btn btn-danger class-button glyphicon glyphicon-star-empty" style="width:40px;height: 40px;margin-top: -1px" data-toggle="tooltip" data-original-title="tooltip提示" title="收藏" data-placement="left"></a></li>
+                        {% endif %}
+                    {% else %}
+                        <li><a  id = "finger" class="btn class-button glyphicon glyphicon-thumbs-up" style="width:40px;height: 40px;margin-top: -1px" data-toggle="tooltip" data-original-title="tooltip提示" title="点赞" data-placement="left"></a></li>
+                        <li><a  id="collect" class="btn class-button glyphicon glyphicon-star-empty" style="width:40px;height: 40px;margin-top: -1px" data-toggle="tooltip" data-original-title="tooltip提示" title="收藏" data-placement="left"></a></li>
+                    {% endif %}
+                    <li><a  id="tocommit" class="btn class-button glyphicon glyphicon-pencil" style="width:40px;height: 40px;;margin-top: -1px" data-toggle="tooltip" data-original-title="tooltip提示" title="写评论" data-placement="left"></a></li>
+                    <li><a  id="torecommand" class="btn class-button glyphicon glyphicon-link" style="width:40px;height: 40px;margin-top: -1px" data-toggle="tooltip" data-original-title="tooltip提示" title="看推荐" data-placement="left"></a></li>
+                </ul>
+        </div>
+        <div class="col-md-8" style="background-color:#FFFFFF">
+            <div style="padding: 20px">
+            <div class="row clearfix">
+                <h2 class="text-center">{{ titlename}}</h2>
+            </div>
+            <HR style="width:50%"/>
+            <div class="row clearfix">
+                <nav style="text-align: center">
+                    <div class="div-inline">作者:{{ userid }}&nbsp;  时间:{{ createtime | date:'Y-m-d H:i:s' }}  &nbsp;点击率:{{ clickrate }}</div>
+                </nav>
+            </div>
+            <BR>
+            <div class="row clearfix">
+                <input id='temp' type='hidden'  value='{{content}}' />
+                <p id="Uedit"></p>
+                {% if filename %}
+                    <HR>
+                    <p>附件下载：</p>
+                    <a href="/download/?title={{ titlename }}&currentPage={{ currentPage }}&filename={{ filename }}">{{ filename }}</a>
+                    {% if filecosttype == 1 %}
+                        <p>下载花费积分：{{ cost }}</p>
+                    {% elif filecosttype == 2 %}
+                        <p>下载花费缝芽币：{{ cost }}</p>
+                    {% endif %}
+                {% endif %}
+                <HR>
+            </div>
+            <div class="row clearfix" id="Commit">
+                <h3 style="margin-left: 15px;">评论</h3>
+            </div>
+            <div style="margin-top: 3px">
+             <ul class="list-group" style="border-left: 0;border-right: 0;">
+                {% for commitlast in  commitlist%}
+                    <li class="list-group-item" style="border-left: 0;border-right: 0;border-radius: 0%;border-color: red">
+                        <div>
+                            <h5 style="margin-top: -3px;margin-bottom: -3px">
+                                {{ commitlast.userid }}:{{ commitlast.comment }}
+                            </h5>
+                        </div>
+                    </li>
+                {% endfor %}
+             </ul>
+            <!-- 可以设置无法评论-->
+                {% if cancommit == 1 %}
+                    {% if request.session.is_login %}
+                        {% if commitflag == 0 %}
+                             <div id="nocommit" class="row clearfix">
+                            <form class='form-login'  action="#">
+                                <p class="form-group">
+                                    {{ commit_form.commitcontent}}
+                                </p>
+                                <button  class="btn btn-primary pull-right" type="button" id="ajaxcommit">提交评论</button>
+                            </form>
+                             </div>
+                            <div id="alreadycommit" class="row clearfix hidden" style="background-color:lightslategray">
+                                <h5 class="text-center">您已评论正在审核中...</h5>
+                             </div>
+                        {% elif commitflag == 1 %}
+                            <div class="row clearfix" style="background-color:lightslategray">
+                                <h5 class="text-center">您已评论正在审核中...</h5>
+                             </div>
+                        {% elif commitflag == 2 %}
+                            <div class="row clearfix" style="background-color:lightslategray">
+                                <h5 class="text-center">您已评论过该文章！</h5>
+                             </div>
+                        {% elif commitflag == 3 %}
+                            <div class="row clearfix" id="refusecommit" style="background-color:lightslategray">
+                                <h5 class="text-center">很抱歉！您的评论未通过审核，可以重新评论！</h5>
+                             </div>
+                            <div id="nocommit" class="row clearfix">
+                            <form class='form-login'  action="#">
+                                <p class="form-group">
+                                    {{ commit_form.commitcontent}}
+                                </p>
+                                <button  class="btn btn-primary pull-right" type="button" id="ajaxcommit">提交评论</button>
+                            </form>
+                            </div>
+                            <div id="alreadycommit" class="row clearfix hidden" style="background-color:lightslategray">
+                                <h5 class="text-center">您已评论正在审核中...</h5>
+                             </div>
+                             </div>
+                        {% endif %}
+                    {% else %}
+                    <!--登录后才能评论-->
+                    <div class="row clearfix" style="background-color:lightslategray">
+                        <a class="article-a text-center" href="/login/"><h5>请登录后进行评论！</h5></a>
+                     </div>
+                    {% endif %}
+                {% else %}
+                    <div class="row clearfix" style="background-color:lightslategray">
+                        <h5 class="text-center">该文章不能评论！</h5>
+                     </div>
+                {% endif %}
+            </div>
+            <!--推荐-->
+            <div  id="Recommend" class="row clearfix" id="recommend">
+                <h3 style="margin-left: 15px;">推荐</h3>
+            </div>
+
+            <div class="row clearfix">
+                <ul class="list-group" style="border-left: 0;border-right: 0;">
+                        {% for recommend in recommendlist %}
+                            <li class="list-group-item" style="border-left: 0;border-right: 0;border-radius: 0%">
+                                <div>
+                                    <h4>
+                                        <a class="center-block text-left article-a" href="/articlecontent/?title={{ recommend.title }}">{{ recommend.title }}</a>
+                                    </h4>
+                                </div>
+                                <div class="row">
+                                    {% if recommend.user_right == 0 %}
+                                        <p class="pull-left">&nbsp;&nbsp;&nbsp;&nbsp;浏览权限:游客</p>
+                                    {% else %}
+                                        <p class="pull-left">&nbsp;&nbsp;&nbsp;&nbsp;浏览权限:会员</p>
+                                    {% endif %}
+                                    <p class="pull-left" style="color: lightgray">&nbsp;|</p>
+                                    {% if recommend.articlecosttype == 0 %}
+                                        <p class="pull-left">&nbsp;免费</p>
+                                    {% elif recommend.articlecosttype == 1 %}
+                                        <p class="pull-left">&nbsp;积分:{{ recommend.articlecost }}</p>
+                                    {% elif recommend.articlecosttype == 2 %}
+                                        <p class="pull-left">&nbsp;缝芽币:{{ recommend.articlecost }}</p>
+                                    {% endif %}
+                                    <p class="pull-left" style="color: lightgray">&nbsp;|</p>
+                                    <p class="pull-left">&nbsp;作者:{{ recommend.userid }}</p>
+                                <p class="pull-left" style="color: lightgray">&nbsp;|</p>
+                                    <p class="pull-left">&nbsp;{{ recommend.tag }}</p>
+                                <p class="pull-left" style="color: lightgray">&nbsp;|</p>
+                                    <p class="pull-left">&nbsp;{{ recommend.create_time | date:'Y-m-d' }}</p>
+
+                                <p class="pull-right">&nbsp;点击率:{{ recommend.click_nums }}&nbsp;&nbsp;&nbsp;&nbsp;</p>
+                                <p class="pull-right" style="color: lightgray">&nbsp;|</p>
+                                <p class="pull-right">点赞数:{{ recommend.scorernumber }}</p>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+            </div>
+            </div>
+        </div>
+     <div class="col-md-2" >
+     <div id="userbar">
+        <div  style="background-color:#FFFFFF;width:300px;margin-left: -4px">
+            <div style="width:300px;padding: 10px">
+            <div class="row">
+            <div class="col-md-5">
+                {% if request.session.is_login  %}
+                    {% if imgpath %}
+                        <img class="pull-left img-circle imgback" src="{{ imgpath }}" class="" alt="100x100" width="100px" height="100px"/>
+                    {% else %}
+                        <img class="pull-left img-circle imgback" src="{% static 'images/login.jpg' %}" alt="100x100" width="100px" height="100px"/>
+                    {% endif %}
+                {% else %}
+                    <img class="pull-left img-circle imgback" src="{% static 'images/login.jpg' %}" alt="100x100" width="100px" height="100px"/>
+                {% endif %}
+            </div>
+            <div class="col-md-7">
+                <BR>
+                 {% if request.session.is_login  %}
+                      <a class="article-a" href="/userinfo/"><h4>{{ request.session.user_name }}</h4></a>
+                {% else %}
+                     <a class="article-a" href="/login/"><h4>未登录</h4></a>
+                {% endif %}
+            </div>
+            </div>
+            </div>
+            <HR style="width: 90%">
+            <div class="row" style="margin-top: -10px">
+                {% if request.session.is_login  %}
+                    <div class="col-md-6">
+                    <h5 class="pull-left" style="margin-left: 10px">缝芽币：{{ coin }}</h5>
+                </div>
+                <div class="col-md-6">
+                    <h5 class="pull-left" >评论数：{{ commitnum }}</h5>
+                </div>
+                {% else %}
+                    <div class="col-md-6">
+                    <h5 class="pull-left" style="margin-left: 10px">缝芽币：-</h5>
+                </div>
+                <div class="col-md-6">
+                    <h5 class="pull-left" >评论数：-</h5>
+                </div>
+                {% endif %}
+            </div>
+            <div class="row">
+                {% if request.session.is_login  %}
+                    <div class="col-md-6">
+                    <h5 class="pull-left" style="margin-left: 10px">积分：{{ integral }}</h5>
+                </div>
+                <div class="col-md-6">
+                   <h5 class="pull-left" >连续登陆天数：{{ days }}</h5>
+                </div>
+                {% else %}
+                    <div class="col-md-6">
+                        <h5 class="pull-left" style="margin-left: 10px">积分：-</h5>
+                    </div>
+                    <div class="col-md-6" >
+                        <h5 class="pull-left" >连续登陆天数：-</h5>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <BR>
+        {% if request.session.is_login  %}
+         <div style="background-color:#FFFFFF;width:300px;margin-left:-4px;margin-top:-10px;">
+             <div class="row" style="margin-left: 0px">
+                <h4 class="pull-left" style="margin-left: 10px">我的收藏</h4>
+             </div>
+                {% if collectcount == 0 %}
+                    <HR style="width: 90%">
+                    <div class="row" style="margin-left: 20px;margin-top:-20px;">
+                    <h4>还未收藏</h4>
+                    </div>
+                {% else %}
+                    <div class="row" style="margin-left: 10px;margin-right:10px;">
+                    <ul class="list-group" style="border-left: 0;border-right: 0;">
+                    {% for collect in  collectlist%}
+                        <li class="list-group-item" style="border-left: 0;border-right: 0;border-radius: 0%">
+                                <div>
+                                    <h5 class="showlongtext">
+                                        <a class="center-block text-left article-a" href="/articlecontent/?title={{ collect.title }}">{{ collect.title }}</a>
+                                    </h5>
+                                </div>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                    </div>
+                {% endif %}
+
+             </div>
+         </div>
+            <BR>
+            {% else %}
+            <div tyle="background-color:#FFFFFF;width:300px;margin-left:-4px;margin-top:-10px;">
+            <div class="row" style="margin-left: 0px">
+                <h4 class="pull-left" style="margin-left: 10px;margin-bottom: -10px;">我的收藏</h4>
+             </div>
+                <HR style="width: 90%">
+             <div class="row" style="margin-left: 20px;margin-top:-20px;">
+                <a class="article-a" href="/login/"><h4>未登录</h4></a>
+             </div>
+            </div>
+            <BR>
+        {% endif %}
+        <div style="background-color:#FFFFFF;width:300px;margin-left:-4px;margin-top:-20px;">
+             <div class="row" style="margin-left: -20px;margin-top: 10px;margin-bottom: -15px;padding: 20px">
+                <img class="center-block" src="{% static 'images/QRCodeWeb.png' %}" alt="200x200" width="200px" height="200px"/>
+             </div>
+            <HR style="width: 90%">
+            <div class="row" style="margin-left: 10px;margin-top: -15px;margin-bottom: -15px;">
+                <div class="col-md-6">
+                        <a class="article-a center-block" href="/ad/"><h4>广告招商</h4></a>
+                    </div>
+                    <div class="col-md-6" >
+                         <a class="article-a center-block" href="/about/"><h4>关于我们</h4></a>
+                    </div>
+            </div>
+            <div class="row center-block" style="margin-left: 10px;margin-top: -15px;margin-bottom: -15px;">
+                <div class="col-md-12" style="margin-left: 15px;">
+                 <a class="article-a center-block" href="mailto:fengyadata@163.com"><h5>联系方式:fengyadata@163.com</h5></a>
+                </div>
+            </div>
+            <HR style="width: 90%">
+            <div class="row" style="margin-left: 10px;margin-top: -15px;margin-bottom: -15px;">
+                <a href="http://gx.beian.miit.gov.cn/" target="_blank" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;"><p style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393;">ICP备案编号:桂ICP备19000645号</p></a>
+            </div>
+            <div class="row" style="margin-left: 10px;margin-top: 15px;">
+                <a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=45010702001199" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;"><img src="{% static 'images/gh.png' %}" style="float:left;"/><p style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393;">桂公网安备 45010702001199号</p></a>
+            </div>
+         </div>
+            <BR>
+     </div>
+     </div>
+     </div>
+     </div>
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $("#Uedit").append($("#temp").val());
+
+        $("#totop").click(function (){
+                $('html, body').animate({
+                    scrollTop: 0
+                }, 500);
+            });
+
+        $("#tocommit").click(function (){
+                $('html, body').animate({
+                    scrollTop: $("#Commit").offset().top
+                }, 500);
+            });
+
+        $("#torecommand").click(function (){
+                $('html, body').animate({
+                    scrollTop: $("#Recommend").offset().top
+                }, 500);
+            });
+
+         $("#finger").click(function(){
+        $.get("/finger/?title={{ titlename }}",{}, function(ret){
+            if(ret == -1)
+            {
+                alert("您提交的信息不对，请重新登录后重试！")
+            }
+            else if(ret == -2)
+            {
+                alert("您尚未登录无法使用点赞功能，请登录后重试！")
+            }
+            else if(ret == 0)
+            {
+                $("#finger").removeClass("active");
+            }
+            else if(ret == 1)
+            {
+                $("#finger").addClass("active")
+            }
+        })
+      });
+
+   $("#collect").click(function(){
+        $.get("/collect/?title={{ titlename }}",{}, function(ret){
+            if(ret == -1)
+            {
+                alert("您提交的信息不对，请重新登录后重试！")
+            }
+            else if(ret == -2)
+            {
+                alert("您尚未登录无法使用收藏功能，请登录后重试！")
+            }
+            else if(ret == 0)
+            {
+                $("#collect").removeClass("glyphicon-star active");
+                $("#collect").addClass("glyphicon glyphicon-star-empty")
+            }
+            else if(ret == 1)
+            {
+                $("#collect").removeClass("glyphicon-star-empty");
+                $("#collect").addClass("glyphicon-star active");
+            }
+        })
+      });
+
+        $('#ajaxcommit').click(function () {
+
+             var commitcontent = $("#commitcontent").val();
+
+        $.ajax({
+            url: '/commit/',
+            type: 'POST',
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                commitcontent: commitcontent,
+                title:'{{ titlename }}'
+            },
+            success: function (ret) {
+               if(ret == -1)
+            {
+                alert("您提交的信息不对，请重新登录后重试！")
+            }
+            else if(ret == -2)
+            {
+                alert("您尚未登录无法使用评论功能，请登录后重试！")
+            }
+            else if(ret == 1)
+            {
+                $("#alreadycommit").removeClass("hidden");
+                $("#nocommit").addClass("hidden");
+                 $("#refusecommit").addClass("hidden");
+            }
+            }
+        })
+    });
+
+        window.onscroll = function() {
+            var t = document.documentElement.scrollTop || document.body.scrollTop;
+            var b = document.documentElement.scrollHeight || document.body.scrollHeight;
+            var top_div = document.getElementById("classbar");
+
+            if (t >= 70) {
+                var divt = t - 70;
+                top_div.style.top = divt + 'px';
+            } else {
+                  top_div.style.top = '110px';
+            }
+        }
+    })
+
+    $("[data-toggle='tooltip']").tooltip({
+        //指定显示时延迟和消失时延迟
+        delay: {show: 100, hide: 300}
+    });
+
+    </script>
+{% endblock %}

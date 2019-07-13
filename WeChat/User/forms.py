@@ -1,6 +1,8 @@
 from django import forms
 from captcha.fields import CaptchaField
 from DjangoUeditor.forms import UEditorField
+from django.forms import widgets
+from User import models
 
 class CenterForm(forms.Form):
     trend = forms.ChoiceField(label="今日走势",
@@ -72,8 +74,50 @@ class ArticleForm(forms.Form):
     articletitle = forms.CharField(label="文章标题",required = True, max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
     articlecontent = UEditorField(label="文章内容",required = True,width=925, height=250)
     right = forms.ChoiceField(label="可查看会员权限",
-                              choices=((0, '游客'),(1, '普通会员'), (2, '超级会员'),(3, '白金会员'),(4, '钻石会员'),),  # 定义下拉框的选项，元祖第一个值为option的value值，后面为html里面的值
+                              choices=((0, '游客'),(1, '普通会员'),), #(2, '超级会员'),(3, '白金会员'),(4, '钻石会员'),),  # 定义下拉框的选项，元祖第一个值为option的value值，后面为html里面的值
                               initial=1,  # 默认选中第二个option
                               widget=forms.RadioSelect  # 插件表现形式为单选按钮
                               )
-    cost = forms.IntegerField(label="消耗缝芽币",widget=forms.NumberInput(attrs={'class': 'form-control','defalut':'0'}))
+    articlecosttype = forms.ChoiceField(label="阅读文章消费类型",
+                              choices=((0, '免费'), (1, '积分'),(2, '缝芽币'),),
+                              # (2, '超级会员'),(3, '白金会员'),(4, '钻石会员'),),  # 定义下拉框的选项，元祖第一个值为option的value值，后面为html里面的值
+                              initial=2,  # 默认选中第二个option
+                              widget=forms.RadioSelect  # 插件表现形式为单选按钮
+                              )
+    articlecost = forms.IntegerField(label="阅读文章消费金额",widget=forms.NumberInput(attrs={'class': 'form-control','defalut':'0'}))
+    downloadcosttype = forms.ChoiceField(label="下载附件消费类型",
+                                    choices=((0, '免费'), (1, '积分'), (2, '缝芽币'),),
+                                    # (2, '超级会员'),(3, '白金会员'),(4, '钻石会员'),),  # 定义下拉框的选项，元祖第一个值为option的value值，后面为html里面的值
+                                    initial=2,  # 默认选中第二个option
+                                    widget=forms.RadioSelect  # 插件表现形式为单选按钮
+                                    )
+    cost = forms.IntegerField(label="下载附件消耗缝芽币", widget=forms.NumberInput(attrs={'class': 'form-control', 'defalut': '0'}))
+    cancommit = forms.ChoiceField(label="是否可以评论",
+                                     choices=((0, '否'), (1, '是'),),
+                                     # (2, '超级会员'),(3, '白金会员'),(4, '钻石会员'),),  # 定义下拉框的选项，元祖第一个值为option的value值，后面为html里面的值
+                                     initial=1,  # 默认选中第二个option
+                                     widget=forms.RadioSelect  # 插件表现形式为单选按钮
+                                     )
+    #标签
+    tag = forms.IntegerField(label="教程标签",widget=widgets.RadioSelect(),initial=0)
+    articletag = forms.CharField(label="标签", max_length=20,
+                                   widget=forms.TextInput(attrs={'class': 'form-control'}))
+    # 保证每次访问重新获取最新数据
+    def __init__(self, *args, **kwargs):
+        super(ArticleForm, self).__init__(*args, **kwargs)
+        choicelist = []
+        listadd = [("0","添加标签")]
+        choicelist.extend(listadd)
+        taglist =  models.BlogTag.objects.values_list("id","name")
+        choicelist.extend(taglist)
+        size = taglist.count()
+        size += 1
+        listother = [(str(size),"其他")]
+        choicelist.extend(listother)
+        print(choicelist)
+        self.fields["tag"].widget.choices = choicelist
+
+
+class Commitform(forms.Form):
+    commitcontent = forms.CharField(label="评论内容", required=True, min_length=10,max_length=500,widget=forms.Textarea(attrs={
+                              'id':"commitcontent",'style': 'height: 60px;width:100%;resize:none','placeholder': "评论请大于10字符小于500字符，并且请您的评论遵循国家相关法律法规！",}))

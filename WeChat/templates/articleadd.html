@@ -52,12 +52,35 @@
                  <input id="upload" type="file" name="myfile" />
               </p>
               <p class="form-group">
-                  {{ article_form.right.label_tag}}
-                  {{ article_form.right}}
+                {{ article_form.right.label_tag}}
+                {{ article_form.right}}
+              </p>
+              <p class="form-group">
+                  {{ article_form.articlecosttype.label_tag}}
+                  {{ article_form.articlecosttype}}
+              </p>
+              <p class="form-group">
+                  {{ article_form.articlecost.label_tag}}
+                  {{ article_form.articlecost}}
+              </p>
+              <p class="form-group">
+                  {{ article_form.downloadcosttype.label_tag}}
+                  {{ article_form.downloadcosttype}}
               </p>
               <p class="form-group">
                   {{ article_form.cost.label_tag}}
                   {{ article_form.cost}}
+              </p>
+              <p class="form-group">
+                  {{ article_form.cancommit.label_tag}}
+                  {{ article_form.cancommit}}
+              </p>
+              <p class="form-group">
+                  {{ article_form.tag.label_tag}}
+                  {{ article_form.tag}}
+              </p>
+              <p class="form-group">
+                  {{ article_form.articletag}}
               </p>
               <button type="submit" class="btn btn-primary pull-right">提交</button>
 
@@ -109,9 +132,32 @@
                 {{ article_form.right}}
             </p>
              <p class="form-group">
-                 {{ article_form.cost.label_tag}}
-                 {{ article_form.cost}}
-             </p>
+                  {{ article_form.articlecosttype.label_tag}}
+                  {{ article_form.articlecosttype}}
+              </p>
+              <p class="form-group">
+                  {{ article_form.articlecost.label_tag}}
+                  {{ article_form.articlecost}}
+              </p>
+              <p class="form-group">
+                  {{ article_form.downloadcosttype.label_tag}}
+                  {{ article_form.downloadcosttype}}
+              </p>
+              <p class="form-group">
+                  {{ article_form.cost.label_tag}}
+                  {{ article_form.cost}}
+              </p>
+              <p class="form-group">
+                  {{ article_form.cancommit.label_tag}}
+                  {{ article_form.cancommit}}
+              </p>
+            <p class="form-group">
+                  {{ article_form.tag.label_tag}}
+                  {{ article_form.tag}}
+              </p>
+              <p class="form-group">
+                  {{ article_form.articletag}}
+              </p>
                 <button type="submit" class="btn btn-primary pull-right">修改</button>
           </form>
         {% endif %}

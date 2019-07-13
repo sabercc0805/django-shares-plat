@@ -12,14 +12,16 @@ from .forms import UserForm
 from .forms import UserInfoForm
 from .forms import ChangePwdForm
 from .forms import RegisterForm
+from .forms import Commitform
 from django.forms.models import model_to_dict
 from django.http import Http404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils.http import urlquote
+from django.http import JsonResponse
+from django.db.models import Q
 
 @csrf_exempt
 @csrf_protect
-
 
 def iframe(request):
     kind = 0
@@ -417,13 +419,28 @@ def article(request):
 
 def articlecontent(request):
     kind = 0
+    coin = 0
+    integral = 0
+    days = 0
+    commitnum = 0
+    collectcount = 0
+    commitflag = 0
+    cancommit = 0
+    finger = 0
+    bcollect = 0
+    filecosttype = 0
     titlename = request.GET.get('title')
     currentPage = request.GET.get('currentPage')
+
+    if not currentPage:
+        currentPage = 1
+
     if not request.session.get('is_login', None):
         acticletran = models.BlogArticle.objects.get(title=titlename)
 
         if not acticletran:
-            raise Http404("文章不存在")
+            situation = 1
+            return render(request, 'articletran.html', {"currentPage": currentPage, 'situation': situation})
         else:
             if acticletran.user_right != 0:
                 return render(request, 'articletran.html', {"currentPage": currentPage})
@@ -431,6 +448,66 @@ def articlecontent(request):
         model = request.session['model']
         if model != 1000:
             return redirect("/logout/")
+
+        situation = 0
+        username = request.session['user_id']
+        #判断是否需要积分或者缝芽币# 0免费
+        if titlename:
+            try:
+                acticlejudge = models.BlogArticle.objects.get(title=titlename)
+                userinfo = models.Commonuser.objects.get(userid=username)
+                coin = userinfo.fengyacoin
+                integral = userinfo.integrate
+                filecosttype = acticlejudge.filecosttype
+                #查找一下在已有列表中是否存在如果存在不再重复扣费
+                try:
+                    arcticlecontain = models.ArticleContain.objects.get(title=titlename,userid=username)
+                    finger = arcticlecontain.finger
+                    bcollect = arcticlecontain.collect
+                    commitflag = arcticlecontain.commentflag
+                except:
+                    if acticlejudge.articlecosttype == 1:
+                        integrate = acticlejudge.articlecost
+                        if userinfo.integrate < integrate:
+                            situation = 2
+                            return render(request, 'articletran.html',
+                                          {"currentPage": currentPage, 'situation': situation})
+                        else:
+                            integrate = userinfo.integrate - integrate
+                            models.Commonuser.objects.filter(userid=username).update(integrate=integrate)
+                            integral = integrate
+
+                    elif acticlejudge.articlecosttype == 2:
+                        fengyacoin = acticlejudge.articlecost
+                        if userinfo.fengyacoin < fengyacoin:
+                            situation = 3
+                            return render(request, 'articletran.html',
+                                          {"currentPage": currentPage, 'situation': situation})
+                        else:
+                            fengyacoin = userinfo.fengyacoin - fengyacoin
+                            models.Commonuser.objects.filter(userid=username).update(fengyacoin=fengyacoin)
+                            coin = fengyacoin
+                    new_data = models.ArticleContain.objects.create(title=titlename,userid=username)
+                    new_data.save()
+            except:
+                situation = 1
+                return render(request, 'articletran.html', {"currentPage": currentPage,'situation':situation})
+
+         #获取用户收藏列表#
+        collectlist = models.ArticleContain.objects.filter(userid=username, collect=1).order_by('-firstreaddate')[:10]
+
+        if not collectlist:
+            collectcount = 0
+        else:
+            collectcount = collectlist.count()
+        #获取用户评论文章数
+        commitUserList = models.ArticleContain.objects.filter(userid=username,commentflag=2)
+
+        if commitUserList:
+            commitnum = commitUserList.count()
+
+    #获取该文章评论列表
+    commitlist = models.ArticleContain.objects.filter(title=titlename,commentflag=2).order_by('firstreaddate')
 
 
     if titlename:
@@ -443,20 +520,31 @@ def articlecontent(request):
         models.BlogArticle.objects.filter(title=titlename).update(click_nums=clickrate)
         content =acticle.content
         filepath = acticle.filepath
-
+        tag = acticle.tag
+        cancommit = acticle.cancommit
+        commit_form = Commitform()
         if acticle.user_right != 0:
             nLevel = request.session['level']
             if nLevel < right:
                 return render(request, 'articletran.html', {"currentPage": currentPage})
 
+        recommendlist = models.BlogArticle.objects.filter(tag=tag).order_by('-create_time')[:10]
+
+        if recommendlist.count() < 10:
+            size = 10 - recommendlist.count()
+            addlist = models.BlogArticle.objects.filter(~Q(tag=tag)).order_by('-create_time')[:size]
+            recommendlist.extend(addlist)
+
         if (len(filepath) > 0):
             cost = acticle.cost
             filename = filepath
-            return render(request, 'articlecontent.html', locals())
+            return render(request, 'articlecontentnew.html', locals())
         else:
-            return render(request, 'articlecontent.html', locals())
+            return render(request, 'articlecontentnew.html', locals())
     else:
-        raise Http404("文章不存在")
+        situation = 1
+        return render(request, 'articletran.html', {"currentPage": currentPage, 'situation': situation})
+
 
 def download(request):
     kind = 0
@@ -481,7 +569,6 @@ def download(request):
     # 还要建一张表如果用户已下载该资源则下次再下载无需花费积分
     titlename = request.GET.get('title')
     filename = request.GET.get('filename')
-    cost = request.GET.get('cost')
     currentPage = request.GET.get('currentPage')
     userid = request.session['user_id']
 
@@ -498,9 +585,25 @@ def download(request):
         else:
             userinfo = models.Commonuser.objects.get(userid=userid)
             fengyacoin = userinfo.fengyacoin
-            userbalance = fengyacoin - int(cost)
+            intergrate = userinfo.integrate
+            articleblog = models.BlogArticle.objects.get(title=titlename)
+            filecosttype = articleblog.filecosttype
+            cost = articleblog.cost
+            userbalance = 0
+            if filecosttype == 1:
+                userbalance = intergrate - int(cost)
+            elif filecosttype == 2:
+                userbalance = fengyacoin - int(cost)
+
             if userbalance >= 0:
-                if models.Commonuser.objects.filter(userid=userid).update(fengyacoin=userbalance):
+                try:
+                    if filecosttype == 1:
+                        userinfo.integrate = userbalance
+                        userinfo.save()
+                    elif filecosttype == 2:
+                        userinfo.fengyacoin = userbalance
+                        userinfo.save()
+
                     models.Fileright.objects.create(userid=userid, title=titlename)
                     savepath = "C:\\articlefile\\" + titlename
                     file = open(os.path.join(savepath, filename), 'rb')
@@ -508,12 +611,21 @@ def download(request):
                     response['Content-Type'] = 'application/octet-stream'
                     response['Content-Disposition'] = 'attachment;filename="%s"' % (urlquote(filename))
                     return response
-                else:
+                except:
                     return render(request, 'downtran.html',
                                   {"errortype": 1, "titlename": titlename, "currentPage": currentPage})
             else:
+                last = 0
+                errortype = 1
+                if filecosttype == 1:
+                    errortype = 2
+                    last = userinfo.integrate
+                elif filecosttype == 2:
+                    errortype = 3
+                    last = userinfo.fengyacoin
+
                 return render(request, 'downtran.html',
-                              {"errortype": 2, "titlename": titlename, "currentPage": currentPage, "coin": fengyacoin})
+                              {"errortype": errortype, "titlename": titlename, "currentPage": currentPage, "last": last})
     else:
         savepath = "C:\\articlefile\\" + titlename
         file = open(os.path.join(savepath, filename), 'rb')
@@ -572,3 +684,91 @@ def changepassword(request):
     UserInfo_form = UserInfoForm(locals())
     ChangePwd_form = ChangePwdForm()
     return render(request, 'userinfo.html', locals())
+
+################ajax返回#############################
+#####用户点赞#########
+
+def ajax_finger(request):
+    figer = 0
+    if not request.session.get('is_login', None):
+        figer = -2
+        return JsonResponse(figer, safe=False)
+
+    title=request.GET.get('title')
+    username = request.session['user_id']
+
+
+    try:
+        article = models.ArticleContain.objects.filter(userid=username,title=title)
+        articleblog = models.BlogArticle.objects.get(title=title)
+        scorenum = articleblog.scorernumber
+        if article[0].finger == 1:
+            figer = 0
+            scorenum -= 1
+            models.ArticleContain.objects.filter(userid=username, title=title).update(finger=0)
+            models.BlogArticle.objects.filter(title=title).update(scorernumber=scorenum)
+        elif article[0].finger == 0:
+            figer = 1
+            scorenum += 1
+            models.ArticleContain.objects.filter(userid=username, title=title).update(finger=1)
+            models.BlogArticle.objects.filter(title=title).update(scorernumber=scorenum)
+
+        return JsonResponse(figer, safe=False)
+    except:
+        figer = -1
+        return JsonResponse(figer, safe=False)
+
+
+#####用户收藏#########
+def ajax_collect(request):
+    bcollect = 0
+    if not request.session.get('is_login', None):
+        bcollect = -2
+        return JsonResponse(bcollect, safe=False)
+
+    title=request.GET.get('title')
+    username = request.session['user_id']
+
+
+    try:
+        article = models.ArticleContain.objects.filter(userid=username,title=title)
+        if article[0].collect == 1:
+            bcollect = 0
+            models.ArticleContain.objects.filter(userid=username, title=title).update(collect=0)
+        elif article[0].collect == 0:
+            bcollect = 1
+            models.ArticleContain.objects.filter(userid=username, title=title).update(collect=1)
+
+        return JsonResponse(bcollect, safe=False)
+    except:
+        bcollect = -1
+        return JsonResponse(bcollect, safe=False)
+
+##########提交评论###########################
+def ajax_commit(request):
+    bcommit = 0
+    if not request.session.get('is_login', None):
+        return redirect('/index/')
+
+    model = request.session['model']
+    if model != 1000:
+        return redirect("/logout/")
+
+    if request.method == "POST":
+        title = request.POST.get('title')
+        username = request.session['user_id']
+        commitcontent = request.POST.get("commitcontent")
+
+        try:
+            bcommit = 1
+            article = models.ArticleContain.objects.get(userid=username, title=title)
+            article.comment = commitcontent
+            article.commentflag = 1
+            article.save()
+            return JsonResponse(bcommit, safe=False)
+        except:
+            bcommit = -1
+            return JsonResponse(bcommit, safe=False)
+    else:
+        return redirect("/logout/")
+
