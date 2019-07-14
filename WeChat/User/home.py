@@ -528,11 +528,11 @@ def articlecontent(request):
             if nLevel < right:
                 return render(request, 'articletran.html', {"currentPage": currentPage})
 
-        recommendlist = models.BlogArticle.objects.filter(tag=tag).order_by('-create_time')[:10]
+        recommendlist = models.BlogArticle.objects.filter(tag=tag,delete_flag=0).order_by('-create_time')[:10]
 
         if recommendlist.count() < 10:
             size = 10 - recommendlist.count()
-            addlist = models.BlogArticle.objects.filter(~Q(tag=tag)).order_by('-create_time')[:size]
+            addlist = models.BlogArticle.objects.filter(~Q(tag=tag),delete_flag=0).order_by('-create_time')[:size]
             try:
                 if addlist:
                     recommendlist.extend(addlist)
