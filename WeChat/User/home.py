@@ -534,7 +534,8 @@ def articlecontent(request):
             size = 10 - recommendlist.count()
             addlist = models.BlogArticle.objects.filter(~Q(tag=tag)).order_by('-create_time')[:size]
             try:
-                recommendlist.extend(addlist)
+                if addlist:
+                    recommendlist.extend(addlist)
             except:
                 recommendlist = addlist
 
