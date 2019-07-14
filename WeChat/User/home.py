@@ -533,7 +533,10 @@ def articlecontent(request):
         if recommendlist.count() < 10:
             size = 10 - recommendlist.count()
             addlist = models.BlogArticle.objects.filter(~Q(tag=tag)).order_by('-create_time')[:size]
-            recommendlist.extend(addlist)
+            try:
+                recommendlist.extend(addlist)
+            except:
+                recommendlist = addlist
 
         if (len(filepath) > 0):
             cost = acticle.cost
