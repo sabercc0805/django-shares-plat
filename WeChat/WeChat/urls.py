@@ -63,5 +63,10 @@ urlpatterns = [
     url(r'^about/', home.about),
     url(r'^ad/', home.advertisement),
     url(r'^ueditor/', include('DjangoUeditor.urls')),
+    url(r'^finger/', home.ajax_finger),
+    url(r'^collect/', home.ajax_collect),
+    url(r'^commit/', home.ajax_commit),
+    url(r'^commitlist/', super.articlecommit),
+    url(r'^commitmanage/', super.commitmanage),
 ]
 

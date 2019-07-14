@@ -1,0 +1,82 @@
+{% extends 'superindex.html' %}
+{% load staticfiles %}
+{% block title %}{{ titlename }}{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/article.css' %}">
+    <link rel="stylesheet" href="{% static 'css/superindex.css' %}">
+    <style xmlns="http://www.w3.org/1999/html">
+    .article-a:link{color:black}
+     .article-a:visited{color:black}
+    .article-a:hover{color:darkred;
+        text-decoration: none;
+    }
+   </style>
+{% endblock %}
+
+{% block maincontent %}
+    <div class="container">
+        <div class="col-md-10 col-md-offset-1">
+            <div class="row clearfix">
+                    <h2 class="text-center">评论列表</h2>
+                    <ul class="list-group" style="border-left: 0;border-right: 0;">
+                        {% for commit in commit_list %}
+                            <li class="list-group-item">
+                                <div>
+                                    <h5>
+                                        {{ commit.comment }}
+                                    </h5>
+                                </div>
+                                <div class="row">
+                                    <p class="pull-left">&nbsp;&nbsp;&nbsp;&nbsp;用户:{{ commit.userid }}</p>
+                                    <p class="pull-left" style="color: lightgray">&nbsp;|</p>
+                                    {% if commit.commentflag == 1 %}
+                                        <p class="pull-left">&nbsp;状态:待审批</p>
+                                        <a class="pull-right article-a" href="/commitmanage/?articletitle={{ commit.title }}&page={{ currentPage }}&userid={{ commit.userid }}&manage=2">&nbsp;通过&nbsp;&nbsp;&nbsp;&nbsp;</a>
+                                        <p class="pull-right" style="color: lightgray">&nbsp;|</p>
+                                        <a class="pull-right article-a" href="/commitmanage/?articletitle={{ commit.title }}&page={{ currentPage }}&userid={{ commit.userid }}&manage=3">不通过</a>
+                                    {% elif commit.commentflag == 2 %}
+                                        <p class="pull-left">&nbsp;状态:已通过</p>
+                                        <a class="pull-right article-a" href="/commitmanage/?articletitle={{ commit.title }}&page={{ currentPage }}&userid={{ commit.userid }}&manage=0">&nbsp;删除&nbsp;&nbsp;&nbsp;&nbsp;</a>
+                                    {% endif %}
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+
+            </div>
+            <HR>
+            <div class="row clearfix">
+                 <nav style="text-align: center">
+                        <ul class="pagination pagination-centered" id="pager">
+                                {#上一页按钮开始#}
+                                {# 如果当前页有上一页#}
+                            {% if commit_list.has_previous %}
+                                {#  当前页的上一页按钮正常使用#}
+                                <li class="previous"><a href="/commitlist/?page={{ commit_list.previous_page_number }}">上一页</a></li>
+                            {% else %}
+                                {# 当前页的不存在上一页时,上一页的按钮不可用#}
+                                <li class="previous disabled"><a href="#">上一页</a></li>
+                            {% endif %}
+                                {#上一页按钮结束#}
+                                {# 页码开始#}
+                            {% for num in paginator.page_range %}
+                                {% if num == currentPage %}
+                                    <li class="item active"><a href="/commitlist/?page={{ num }}">{{ num }}</a></li>
+                                {% else %}
+                                    <li class="item"><a href="/commitlist/?page={{ num }}">{{ num }}</a></li>
+                                {% endif %}
+                             {% endfor %}
+                            {#页码结束#}
+                            {# 下一页按钮开始#}
+                            {% if commit_list.has_next %}
+                                <li class="next"><a href="/commitlist/?page={{ commit_list.next_page_number }}">下一页</a></li>
+                            {% else %}
+                                <li class="next disabled"><a href="#">下一页</a></li>
+                            {% endif %}
+                            {# 下一页按钮结束#}
+                        </ul>
+                 </nav>
+            </div>
+        </div>
+    </div>
+{% endblock %}

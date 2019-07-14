@@ -4,6 +4,13 @@
 {% block css %}
     <link rel="stylesheet" href="{% static 'css/article.css' %}">
     <link rel="stylesheet" href="{% static 'css/superindex.css' %}">
+    <style xmlns="http://www.w3.org/1999/html">
+    .article-a:link{color:black}
+     .article-a:visited{color:black}
+    .article-a:hover{color:darkred;
+        text-decoration: none;
+    }
+   </style>
 {% endblock %}
 
 {% block maincontent %}
@@ -15,9 +22,13 @@
                     <ul class="list-group">
                         {% for artcile in article_list %}
                             <li class="list-group-item">
-                                <a class="badge" href="/articledelete/?articletitle={{ artcile.title }}">删除</a>
-                                <a class="badge" href="/articlemodify/?articletitle={{ artcile.title }}">修改</a>
-                                <p class="badge">作者:{{ artcile.userid }}</p>
+                                <a class="article-a pull-right" href="/commitlist/?articletitle={{ artcile.title }}">查看评论</a>
+                                <p class="pull-right" style="color: lightgray">&nbsp;|</p>
+                                <a class="article-a pull-right" href="/articledelete/?articletitle={{ artcile.title }}">删除</a>
+                                <p class="pull-right" style="color: lightgray">&nbsp;|</p>
+                                <a class="article-a pull-right" href="/articlemodify/?articletitle={{ artcile.title }}">修改</a>
+                                <p class="pull-right" style="color: lightgray">&nbsp;|</p>
+                                <p class="pull-right">作者:{{ artcile.userid }}</p>
                                 {{ artcile.title }}
                             </li>
                         {% endfor %}
@@ -27,8 +38,9 @@
                     <ul class="list-group">
                         {% for artcile in article_list %}
                             <li class="list-group-item">
-                                <a class="badge" href="/articlerecover/?articletitle={{ artcile.title }}">恢复</a>
-                                <p class="badge">作者:{{ artcile.userid }}</p>
+                                <a class="article-a pull-right" href="/articlerecover/?articletitle={{ artcile.title }}">恢复</a>
+                                <p class="pull-right" style="color: lightgray">&nbsp;|</p>
+                                <p class="pull-right">作者:{{ artcile.userid }}</p>
 		                        {{ artcile.title }}
                             </li>
                         {% endfor %}

@@ -409,8 +409,34 @@ def articleadd(request):
        if article_form.is_valid():
            articletitle = article_form.cleaned_data['articletitle']
            articlecontent = article_form.cleaned_data['articlecontent']
-           cost = article_form.cleaned_data['cost']
            right = article_form.cleaned_data['right']
+           articlecosttype = article_form.cleaned_data['articlecosttype']
+           articlecost= article_form.cleaned_data['articlecost']
+           downloadcosttype = article_form.cleaned_data['downloadcosttype']
+           cost = article_form.cleaned_data['cost']
+           cancommit = article_form.cleaned_data['cancommit']
+           tag = article_form.cleaned_data['tag']
+           articletag = article_form.cleaned_data['articletag']
+
+           if tag == 0:
+               if len(articletag) != 0:
+                 try:
+                    models.BlogTag.objects.get(name=articletag)
+                 except:
+                     new_tag = models.BlogTag.objects.create(name=articletag)
+                     new_tag.save()
+               else:
+                   articletag = "其他"
+           else:
+               try:
+                   taglist = models.BlogTag.objects.filter()
+                   size = taglist.count()
+                   if int(tag) > size:
+                       articletag = "其他"
+                   else:
+                       articletag = taglist[int(tag) - 1].name
+               except:
+                   articletag = "其他"
 
            rightname = ""
            if right == "0":
@@ -446,12 +472,15 @@ def articleadd(request):
 
                userid = request.session['user_id']
                message = 1
-               new_article = models.BlogArticle.objects.create(title=articletitle, content=articlecontent,userid=userid,filepath=filepath,cost=cost,user_right=right,rightname=rightname)
+               new_article = models.BlogArticle.objects.create(title=articletitle, content=articlecontent,userid=userid,
+                                                               filepath=filepath,cost=cost,user_right=right,rightname=rightname,
+                                                               articlecosttype=articlecosttype,articlecost=articlecost,
+                                                               filecosttype=downloadcosttype,cancommit=cancommit,tag=articletag)
                new_article.save()
-               article_form = ArticleForm({"cost":0,"right":1})
+               article_form = ArticleForm({"cost":0,"right":1,"articlecosttype":2,"articlecost":0,"downloadcosttype":2,"cancommit":1,"tag":1})
                return render(request, 'articleadd.html', locals())
 
-   article_form = ArticleForm({"cost":0,"right":1})
+   article_form = ArticleForm({"cost":0,"right":1,"articlecosttype":2,"articlecost":0,"downloadcosttype":2,"cancommit":1,"tag":1})
    return render(request, 'articleadd.html',locals())
 
 def articlemodify(request):
@@ -471,8 +500,34 @@ def articlemodify(request):
        if article_form.is_valid():
            articletitle = article_form.cleaned_data['articletitle']
            articlecontent = article_form.cleaned_data['articlecontent']
-           cost = article_form.cleaned_data['cost']
            right = article_form.cleaned_data['right']
+           articlecosttype = article_form.cleaned_data['articlecosttype']
+           articlecost = article_form.cleaned_data['articlecost']
+           downloadcosttype = article_form.cleaned_data['downloadcosttype']
+           cost = article_form.cleaned_data['cost']
+           cancommit = article_form.cleaned_data['cancommit']
+           tag = article_form.cleaned_data['tag']
+           articletag = article_form.cleaned_data['articletag']
+
+           if tag == 0:
+               if len(articletag) != 0:
+                   try:
+                       models.BlogTag.objects.get(name=articletag)
+                   except:
+                       new_tag = models.BlogTag.objects.create(name=articletag)
+                       new_tag.save()
+               else:
+                   articletag = "其他"
+           else:
+               try:
+                   taglist = models.BlogTag.objects.filter()
+                   size = taglist.count()
+                   if int(tag) > size:
+                       articletag = "其他"
+                   else:
+                       articletag = taglist[int(tag) - 1].name
+               except:
+                   articletag = "其他"
 
            rightname = ""
            if right == "0":
@@ -498,6 +553,11 @@ def articlemodify(request):
                article.cost = cost
                article.user_right = right
                article.rightname = rightname
+               article.articlecosttype = articlecosttype
+               article.articlecost = articlecost
+               article.filecosttype = downloadcosttype
+               article.cancommit = cancommit
+               article.tag = articletag
                if len(filepath) > 0:
                    savepath = "C:\\articlefile\\" + articletitle
                    article.filepath = filepath
@@ -532,9 +592,14 @@ def articlemodify(request):
                        destination.write(chunk)
                    destination.close()
 
-               new_article = models.BlogArticle.objects.create(title=articletitle, content=articlecontent,userid=userid,filepath=filepath,cost=cost,user_right=right,rightname=rightname)
+               new_article = models.BlogArticle.objects.create(title=articletitle, content=articlecontent,
+                                                               userid=userid,
+                                                               filepath=filepath, cost=cost, user_right=right,
+                                                               rightname=rightname,
+                                                               articlecosttype=articlecosttype, articlecost=articlecost,
+                                                               filecosttype=downloadcosttype, cancommit=cancommit,tag=articletag)
                new_article.save()
-               article_form = ArticleForm()
+               article_form = ArticleForm({"cost":0,"right":1,"articlecosttype":2,"articlecost":0,"downloadcosttype":2,"cancommit":1,"tag":1})
                return render(request, 'articleadd.html', locals())
 
    articletitle = request.GET.get('articletitle')
@@ -542,6 +607,23 @@ def articlemodify(request):
    articlecontent = article.content
    cost = article.cost
    right = article.user_right
+   articlecosttype = article.articlecosttype
+   articlecost = article.articlecost
+   downloadcosttype = article.filecosttype
+   cancommit = article.cancommit
+   articletag = article.tag
+   tag = 1
+   try:
+       tagget = models.BlogTag.objects.get(name=articletag)
+       tag = int(tagget.id)
+   except:
+       try:
+          taglist = models.BlogTag.objects.filter()
+          size = taglist.count()
+          tag = size + 1
+       except:
+           tag = 0
+
    article_form = ArticleForm(locals())
    return render(request, 'articleadd.html',locals())
 
@@ -684,3 +766,102 @@ def articlerecover(request):
     article.save()
 
     return redirect("/articlerecoverlist/")
+
+def articlecommit(request):
+    if not request.session.get('is_login', None):
+        # 如果本来就未登录，也就没有登出一说
+        return redirect("/superindex/")
+
+    model = request.session['model']
+    if model != 1001:
+        return redirect("/superlogout/")
+
+    titlename = request.GET.get("articletitle")
+    kind = 1
+
+    try:
+        commit_list = models.ArticleContain.objects.filter(title=titlename,commentflag=1).order_by('-firstreaddate')
+        already_list = models.ArticleContain.objects.filter(title=titlename,commentflag=2).order_by('-firstreaddate')
+        try:
+            if already_list:
+                commit_list.extend(already_list)
+        except:
+            commit_list = already_list
+
+        paginator = Paginator(commit_list, 15)
+        # 从前端获取当前的页码数,默认为1
+        page = request.GET.get('page', 1)
+
+
+        # 把当前的页码数转换成整数类型
+        currentPage = int(page)
+
+        try:
+            commit_list = paginator.page(page)  # 获取当前页码的记录
+        except PageNotAnInteger:
+            commit_list = paginator.page(1)  # 如果用户输入的页码不是整数时,显示第1页的内容
+        except EmptyPage:
+            commit_list = paginator.page(paginator.num_pages)  # 如果用户输入的页数不在系统的页码列表中时,显示最后一页的内容
+
+        return render(request, 'articlecommitmanage.html', locals())
+    except:
+        return redirect("/superindex/")
+
+def commitmanage(request):
+    if not request.session.get('is_login', None):
+        # 如果本来就未登录，也就没有登出一说
+        return redirect("/superindex/")
+
+    model = request.session['model']
+    if model != 1001:
+        return redirect("/superlogout/")
+
+    titlename = request.GET.get("articletitle")
+    userid = request.GET.get("userid")
+    manage = request.GET.get("manage")
+    kind = 1
+
+    articlecontain = models.ArticleContain.objects.get(userid=userid,title=titlename)
+
+    if articlecontain:
+        if int(manage) == 0:
+            articlecontain.comment = ""
+            articlecontain.commentflag = 0
+            articlecontain.save()
+        elif int(manage) == 2:
+            articlecontain.commentflag = 2
+            articlecontain.save()
+        elif int(manage) == 3:
+            articlecontain.comment = ""
+            articlecontain.commentflag = 3
+            articlecontain.save()
+
+    try:
+        commit_list = models.ArticleContain.objects.filter(title=titlename,commentflag=1).order_by('-firstreaddate')
+        already_list = models.ArticleContain.objects.filter(title=titlename,commentflag=2).order_by('-firstreaddate')
+        try:
+            commit_list.extend(already_list)
+        except:
+            commit_list = already_list
+
+        paginator = Paginator(commit_list, 15)
+        # 从前端获取当前的页码数,默认为1
+        page = request.GET.get('page', 1)
+
+
+        # 把当前的页码数转换成整数类型
+        currentPage = int(page)
+
+        try:
+            commit_list = paginator.page(page)  # 获取当前页码的记录
+        except PageNotAnInteger:
+            commit_list = paginator.page(1)  # 如果用户输入的页码不是整数时,显示第1页的内容
+        except EmptyPage:
+            commit_list = paginator.page(paginator.num_pages)  # 如果用户输入的页数不在系统的页码列表中时,显示最后一页的内容
+
+        return render(request, 'articlecommitmanage.html', locals())
+    except:
+        return redirect("/superindex/")
+
+
+
