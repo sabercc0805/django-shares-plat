@@ -1,0 +1,46 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>微信扫码支付</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="{% static 'js/jquery-3.3.1.min.js' %}">
+        </script>
+        <style>
+             .bg {
+            background:url({% static 'images/wechatpay.png' %}) no-repeat center;
+    }
+        </style>
+    </head>
+    <body>
+        <div class="row center-block bg" style="height: 724px">
+            <div class="row center-block"style="text-align: center;">
+                <img src="{% static qrcodepath %}" style="height:200px;width:200px;margin-top: 340px;">
+            </div>
+        </div>
+<script>
+    onload=function () {
+        setInterval(go,1000)
+    };
+
+    function go() {
+
+            $.get("/checkorder/?orderid={{ orderid }}",{}, function(ret){
+            if(ret == 1)
+            {
+                var url = "/chargeresult/?result=1&orderid=" + {{ orderid }};
+                location.href=url;
+            }
+            else if(ret == 0)
+            {
+                var url = "/chargeresult/?result=0&orderid=" + {{ orderid }};
+               location.href=url;
+            }
+        })
+    }
+</script>
+    </body>
+</html>

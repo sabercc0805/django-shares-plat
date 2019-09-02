@@ -1,0 +1,163 @@
+{% extends 'userinfonew.html' %}
+{% load staticfiles %}
+{% block title %}缝芽币充值{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/userinfo.css' %}">
+
+    <style>
+         .class-button{
+        background-color:white;
+        outline: none;
+        color: black;
+        border-width: 1px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:0px;
+        font-size: 18px;
+    }
+
+         .class-button.active{
+        background-color:white;
+        outline: none;
+        color: darkred;
+       border-width: 0px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:0px;
+        font-size: 18px;
+        box-shadow: none;
+    }
+
+    .class-button:hover{
+        background-color:white;
+        outline: none;
+        color: darkred;
+       border-width: 0px;
+        border-color:whitesmoke;
+        border-Radius:0px;
+        font-size: 18px;
+    }
+
+    .class-button:focus{
+        background-color:white;
+        outline: none;
+        color: darkred;
+       border-width: 0px;
+        border-color:whitesmoke;
+        border-Radius:0px;
+        font-size: 18px;
+    }
+
+    .class-h4{
+        background-color:white;
+        outline: none;
+        color: black;
+        border-width: 1px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:0px;
+        font-size: 20px;
+        font-weight:bold;
+    }
+     ul li{list-style: none}
+
+    .article-a:link{color:black}
+     .article-a:visited{color:black}
+    .article-a:hover{color:darkred;
+        text-decoration: none;
+    }
+    </style>
+{% endblock %}
+
+{% block exchangecontent %}
+    <div class="row clearfix">
+           <div class="row clearfix">
+                <h2 class="text-center">缝芽币充值</h2>
+           </div>
+            <div class="row clearfix" style="text-align: center;">
+                <form class='form-login' enctype="multipart/form-data" action="/wxpay/" method="post">
+                   <div class="row">
+                           {{ coin_form.chargetype.label_tag}}
+                   </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p class="pull-left">
+                            {{ coin_form.chargetype.0}}
+                            </p>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="pull-left">
+                            {{ coin_form.chargetype.1}}
+                            </p>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="pull-left">
+                            {{ coin_form.chargetype.2}}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p class="pull-left">
+                            {{ coin_form.chargetype.3}}
+                            </p>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="pull-left">
+                            {{ coin_form.chargetype.4}}
+                            </p>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="pull-left">
+                            {{ coin_form.chargetype.5}}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p class="pull-left">
+                            {{ coin_form.chargetype.6}}
+                            </p>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="pull-left">
+                            {{ coin_form.chargetype.7}}
+                            </p>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="pull-left">
+                            {{ coin_form.chargetype.8}}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 col-md-offset-4">
+                            <p class="pull-left">
+                                {{ coin_form.chargetype.9}}
+                            </p>
+                        </div>
+                         <p>
+                            {{ coin_form.charge}}
+                        </p>
+                    </div>
+                    <div class="row">
+                        <button type="submit" class="btn btn-primary">充值</button>
+                    </div>
+                     <br/>
+                    <div class="row">
+                        <div class="row">
+                        <h4 class="pull-left">充值说明：</h4>
+                        </div>
+                        <div class="row">
+                        <h5 class="pull-left">1、1元人民币可充值1缝芽币；</h5>
+                        <h5 class="pull-left">2、目前无法进行反向折现，即缝芽币无法兑换现金；</h5>
+                        <h5 class="pull-left">3、不同账号之间不支持缝芽币交易，请注意；</h5>
+                        <h5 class="pull-left">4、充值后无正当理由，无法进行退款，请注意；</h5>
+                        <h5 class="pull-left">5、目前仅开通微信支付，给您带来的便，请谅解；</h5>
+                        <h5 class="pull-left">6、如订单出现问题，请到<a herf="#">充值订单</a>中申诉；</h5>
+                        <h5 class="pull-left">7、您充值后即表明您同意以上条款；</h5>
+                        <h5 class="pull-left">8、以上条款最终解释权归缝芽网所有.</h5>
+                        </div>
+                    </div>
+                </form>
+            </div>
+    </div>
+{% endblock %}

@@ -30,6 +30,13 @@
                   {{ register_form.phonenumber }}
               </div>
               <div class="form-group">
+                  {{ register_form.code.label_tag }}
+                  <p>
+                      {{ register_form.code }}
+                      <button id="getcode" type="button">获取激活码</button>
+                  </p>
+              </div>
+              <div class="form-group">
                   {{ register_form.captcha.errors}}
                   {{ register_form.captcha.label_tag}}
                   {{ register_form.captcha}}
@@ -115,6 +122,24 @@
                     </div><!-- /.modal -->
                 </div>
 
+                <div class="modal fade" id="errorinfomodel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	                        <div class="modal-dialog">
+		                        <div class="modal-content">
+			                        <div class="modal-header">
+				                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					                                                                &times;
+                                        </button>
+				                        <h4 class="modal-title" id="myModalLabel">
+					                               提示
+                                        </h4>
+			                        </div>
+			                        <div class="modal-body">
+                                        <h4 id="errorinfo" class="text-center"></h4>
+			                        </div>
+		                        </div><!-- /.modal-content -->
+	                        </div><!-- /.modal -->
+                 </div>
+
         </div>
     </div> <!-- /container -->
 {% endblock %}
@@ -127,5 +152,77 @@
              $('.captcha').attr('src', result['image_url']);
              $('#id_captcha_0').val(result['key'])
           });});
+
+    var time = 60;
+    var mytime;
+     $('#getcode').click(function(){
+         var email = $("#email").val();
+
+         if(email.length == 0)
+         {
+             $("#errorinfo").text("请填写邮箱后重试！");
+             $('#errorinfomodel').modal('show');
+             return;
+         }
+         else if(email.length > 48)
+         {
+             $("#errorinfo").text("邮箱长度太长，请保证在48个字符以内！");
+             $('#errorinfomodel').modal('show');
+             return;
+         }
+
+         var myReg=/^[a-zA-Z0-9_-]+@([a-zA-Z0-9]+\.)+(com|cn|net|org)$/;
+
+　　     if(!myReg.test(email)){
+　　　　     $("#errorinfo").text("请填写正确的邮箱后重试！");
+             $('#errorinfomodel').modal('show');
+             return;
+　　      }
+
+            $.ajax({
+            url: '/getcode/',
+            type: 'POST',
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                email: email
+            },
+            success: function (ret) {
+                if(ret == 1)
+            {
+                $("#errorinfo").text("发送成功，请登录邮箱获取，5分钟内有效！");
+                $('#errorinfomodel').modal('show');
+            }
+            else if(ret == 0)
+            {
+                 $("#errorinfo").text("发送失败，请更换邮箱或稍后再试！");
+                $('#errorinfomodel').modal('show');
+            }
+            else if(ret == -1)
+            {
+                 $("#errorinfo").text("该邮箱已经注册，请更换邮箱后重试！");
+                $('#errorinfomodel').modal('show');
+            }
+            }
+        })
+
+            mytime = setInterval(go,1000);
+            $("#getcode").attr("disabled","disabled");
+            time = 60;
+         });
+
+         function go() {
+
+        if (time>=0){
+            var btntext = time + "秒后可重发激活码";
+            $("#getcode").text(btntext);
+        }else {
+            clearInterval(mytime);
+            var btntext = "获取激活码";
+            $("#getcode").text(btntext);
+            $("#getcode").removeAttr("disabled");
+        }
+        time--;
+    }
+
     </script>
 {% endblock %}

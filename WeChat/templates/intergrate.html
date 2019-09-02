@@ -1,0 +1,147 @@
+{% extends 'userinfonew.html' %}
+{% load staticfiles %}
+{% block title %}积分兑换{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/userinfo.css' %}">
+
+    <style>
+         .class-button{
+        background-color:white;
+        outline: none;
+        color: black;
+        border-width: 1px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:0px;
+        font-size: 18px;
+    }
+
+         .class-button.active{
+        background-color:white;
+        outline: none;
+        color: darkred;
+       border-width: 0px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:0px;
+        font-size: 18px;
+        box-shadow: none;
+    }
+
+    .class-button:hover{
+        background-color:white;
+        outline: none;
+        color: darkred;
+       border-width: 0px;
+        border-color:whitesmoke;
+        border-Radius:0px;
+        font-size: 18px;
+    }
+
+    .class-button:focus{
+        background-color:white;
+        outline: none;
+        color: darkred;
+       border-width: 0px;
+        border-color:whitesmoke;
+        border-Radius:0px;
+        font-size: 18px;
+    }
+
+    .class-h4{
+        background-color:white;
+        outline: none;
+        color: black;
+        border-width: 1px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:0px;
+        font-size: 20px;
+        font-weight:bold;
+    }
+     ul li{list-style: none}
+
+    .article-a:link{color:black}
+     .article-a:visited{color:black}
+    .article-a:hover{color:darkred;
+        text-decoration: none;
+    }
+    </style>
+{% endblock %}
+
+{% block exchangecontent %}
+    <div class="row clearfix">
+           <div class="row clearfix">
+                <h2 class="text-center">积分兑换</h2>
+           </div>
+            <div class="row clearfix" style="text-align: center;">
+                <form class='form-login' enctype="multipart/form-data" action="/exchange/" method="post">
+                   <div class="row">
+                           {{ credit_form.exchangetype.label_tag}}
+                   </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="pull-right" style="margin-right: 15px">
+                            {{ credit_form.exchangetype.0}}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="pull-left">
+                            {{ credit_form.exchangetype.1}}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="pull-right" style="margin-right: 7px">
+                            {{ credit_form.exchangetype.2}}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="pull-left">
+                            {{ credit_form.exchangetype.3}}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="pull-right">
+                            {{ credit_form.exchangetype.4}}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="pull-left">
+                            {{ credit_form.exchangetype.5}}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="pull-right">
+                            {{ credit_form.exchangetype.6}}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="pull-left">
+                            {{ credit_form.exchangetype.7}}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <button type="submit" class="btn btn-primary">兑换</button>
+                    </div>
+                     <br/>
+                    <div class="row">
+                        <div class="row">
+                        <h4 class="pull-left">兑换说明：</h4>
+                        </div>
+                        <div class="row">
+                        <h5 class="pull-left">1、积分可通过<a href="/userinfo/">签到</a>及缝芽币兑换获得；</h5>
+                        <h5 class="pull-left">2、1缝芽币可兑换10积分；</h5>
+                        <h5 class="pull-left">3、不支持积分的反向兑换,即积分无法兑换缝芽币；</h5>
+                        <h5 class="pull-left">4、如订单出现问题，请到<a herf="#">兑换订单</a>中申诉；</h5>
+                        <h5 class="pull-left">5、您兑换后即表明您同意以上条款；</h5>
+                        <h5 class="pull-left">6、以上条款最终解释权归缝芽网所有.</h5>
+                        </div>
+                </form>
+            </div>
+    </div>
+{% endblock %}

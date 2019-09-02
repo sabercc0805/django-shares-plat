@@ -95,21 +95,24 @@ class Commonuser(models.Model):
     acountuser = models.CharField(db_column='AcountUser', max_length=128)  # Field name made lowercase.
     source = models.CharField(db_column='Source', max_length=128)  # Field name made lowercase.
     cardid = models.CharField(db_column='CardID', max_length=24, blank=True, null=True)  # Field name made lowercase.
-    identify = models.CharField(db_column='Identify', max_length=24, blank=True, null=True)  # Field name made lowercase.
+    identify = models.CharField(db_column='Identify', max_length=48, blank=True, null=True)  # Field name made lowercase.
     level = models.IntegerField(db_column='Level')  # Field name made lowercase.
     headpath = models.CharField(db_column='HeadPath', max_length=256, blank=True, null=True)  # Field name made lowercase.
     memberdate = models.DateTimeField(db_column='MemberDate', blank=True, null=True)  # Field name made lowercase.
     recharge = models.IntegerField(db_column='Recharge', blank=True, null=True)  # Field name made lowercase.
     currentrechargedate = models.DateTimeField(db_column='CurrentRechargeDate', blank=True, null=True)  # Field name made lowercase.
     currentrecharge = models.IntegerField(db_column='CurrentRecharge', blank=True, null=True)  # Field name made lowercase.
-    registerdate = models.DateTimeField(db_column='RegisterDate',auto_now = True)  # Field name made lowercase.
+    registerdate = models.DateTimeField(db_column='RegisterDate',auto_now_add = True)  # Field name made lowercase.
     firstlogindate = models.DateTimeField(db_column='FirstLoginDate', blank=True, null=True)  # Field name made lowercase.
-    currnetlogindate = models.DateTimeField(db_column='CurrnetLoginDate', blank=True, null=True)  # Field name made lowercase.
+    currnetlogindate = models.DateTimeField(db_column='CurrnetLoginDate', blank=True, null=True,auto_now=True)  # Field name made lowercase.
     isfree = models.IntegerField(db_column='IsFree', blank=True, null=True)  # Field name made lowercase.
     remark = models.CharField(db_column='Remark', max_length=32, blank=True, null=True)  # Field name made lowercase.
     phonenum = models.CharField(db_column='PhoneNum', max_length=16, blank=True, null=True)
     fengyacoin = models.IntegerField(db_column='FengYaCoin', blank=True,default=0)
     integrate = models.IntegerField(db_column='integrate', blank=True, default=0)
+    keeplogin = models.IntegerField(db_column='keeplogin', blank=True, default=0)
+    signdate = models.CharField(db_column='SignDate', blank=True, null=True,max_length=10)
+
     class Meta:
         managed = True
         db_table = 'commonuser'
@@ -118,6 +121,9 @@ class Fileright(models.Model):
     userid = models.CharField(db_column='UserID', max_length=128)
     title = models.CharField(db_column='title', max_length=100)
     buydate = models.DateTimeField(db_column='BuyDate',auto_now = True)  # Field name made lowercase.
+    costtype = models.IntegerField(db_column='costtype', default=0)
+    cost = models.IntegerField(db_column='cost', default=0)
+    tag = models.CharField(db_column='tag', max_length=20, default='其他')
 
     class Meta:
         managed = True
@@ -204,7 +210,77 @@ class ArticleContain(models.Model):
     collect = models.IntegerField(db_column='collect', default=0)#是否收藏
     finger = models.IntegerField(db_column='finger', default=0)  # 点赞
     commentflag = models.IntegerField(db_column='commentflag', default=0)  # 评论显示/是否评论/评论是否通过 0：未评论；1：已评论还未通过；2：评论且通过；3、不通过重新评论（显示一次后置0，并在消息中心中显示）
+    costtype = models.IntegerField(db_column='costtype', default=0)
+    cost = models.IntegerField(db_column='cost', default=0)
+    tag = models.CharField(db_column='tag', max_length=20, default='其他')
 
     class Meta:
         managed = True
         db_table = 'articlecontain'
+
+#总计池
+class CoinPool(models.Model):
+    primaryid = models.CharField(db_column='ID', max_length=16, primary_key=True,default='totalcoin')
+    totalcoin = models.BigIntegerField(db_column='TotalCoin', default=1000000000000)  # 初始缝芽币一百亿 分为单位
+
+    class Meta:
+        managed = True
+        db_table = 'coinpool'
+
+#积分兑换订单，内部兑换没有失败只有成功才会放入该表
+class CreditExchange(models.Model):
+    orderid = models.CharField(db_column='OrderID', max_length=32,primary_key=True)#32位订单号
+    coin = models.IntegerField(db_column='coin')  #兑换缝芽币数量 分为单位
+    integrate = models.IntegerField(db_column='integrate')  # 兑换缝芽积分数量
+    userid = models.CharField(db_column='UserID', max_length=128)
+    exchangedate = models.DateTimeField(db_column='exchangedate', blank=True, null=True,auto_now=True)  # 兑换时间
+    precent = models.IntegerField(db_column='precent',default=100)  # 折扣百分制
+    orderstate = models.IntegerField(db_column='orderstate', blank=False,default=0)  # 兑换状态0：未成功；1：兑换成功
+    appeal = models.IntegerField(db_column='appeal', blank=False, default=0)  # 订单申诉0：无问题可申诉；1：已申诉；2：已处理申诉结果查看注册邮箱
+    #wechatid = models.CharField(db_column='wechatid', max_length=32,default="")  # 32位订单号,微信订单号
+
+    class Meta:
+        managed = True
+        db_table = 'creditexchange'
+
+#充值订单已完成或失败的
+class OrderOver(models.Model):
+    orderid = models.CharField(db_column='OrderID', max_length=32,primary_key=True)#32位订单号
+    coin = models.IntegerField(db_column='coin')  #充值缝芽币数量 分为单位
+    money = models.IntegerField(db_column='money')  # 充值金额 分为单位
+    userid = models.CharField(db_column='UserID', max_length=128)
+    chargedate = models.DateTimeField(db_column='chargedate', blank=True, null=True,auto_now=True)  # 充值时间
+    precent = models.IntegerField(db_column='precent',default=100)  # 折扣百分制
+    orderstate = models.IntegerField(db_column='orderstate',blank=False)  # 充值状态0：充值失败；1：充值成功
+    wechatid = models.CharField(db_column='wechatid', max_length=32,default="")  # 32位订单号,微信订单号
+    appeal = models.IntegerField(db_column='appeal', blank=False,default=0)  # 订单申诉0：无问题可申诉；1：已申诉；2：已处理申诉结果查看注册邮箱
+
+    class Meta:
+        managed = True
+        db_table = 'orderover'
+
+#充值订单未支付或处于未知状态需要到微信端或其他端查询的，开始下单没有订单号，返回才有
+class OrderStart(models.Model):
+    orderid = models.CharField(db_column='OrderID', max_length=32, primary_key=True)  # 32位订单号
+    coin = models.IntegerField(db_column='coin')  # 充值缝芽币数量 分为单位
+    money = models.IntegerField(db_column='money')  # 充值金额 分为单位
+    userid = models.CharField(db_column='UserID', max_length=128)
+    chargedate = models.DateTimeField(db_column='chargedate', blank=True, null=True, auto_now=True)  # 充值时间
+    precent = models.IntegerField(db_column='precent', default=100)  # 折扣百分制
+    orderstate = models.IntegerField(db_column='orderstate', blank=False,default=-1)  # 充值状态，为了不与OrderStart重复修改默认为-1：订单未支付；-2：未知状态
+    wechatid = models.CharField(db_column='wechatid', max_length=32, default="")  # 32位订单号,微信订单号
+    appeal = models.IntegerField(db_column='appeal', blank=False, default=0)  # 订单申诉0：无问题可申诉；1：已申诉；2：已处理申诉结果查看注册邮箱
+
+
+    class Meta:
+        managed = True
+        db_table = 'orderstart'
+
+class Code(models.Model):#验证码
+    email = models.CharField(db_column='Email', primary_key=True,max_length=48)
+    codeid = models.CharField(db_column='CodeID', max_length=6)
+    gettime = models.DateTimeField(db_column='gettime', blank=True, null=True, auto_now=True)  # 充值时间
+
+    class Meta:
+        managed = True
+        db_table = 'code'
