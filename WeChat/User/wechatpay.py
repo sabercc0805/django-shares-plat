@@ -1,4 +1,4 @@
-import os
+﻿import os
 import qrcode
 from random import Random
 import time
@@ -29,7 +29,7 @@ _MCH_ID = "1543525851"
 _API_KEY = "zzhr1990hr0805zjw1991pmf04251111"
 
 _UFDODER_URL = "https://api.mch.weixin.qq.com/pay/unifiedorder" #url是微信下单api
-_NOTIFY_URL = "https//yuntaoz.cn/checkresult"
+_NOTIFY_URL = "https://www.yuntaoz.cn/checkresult/"
 myname = socket.getfqdn(socket.gethostname())
 _CREATE_IP = "47.93.201.81"  # 发起支付请求的ip
 
@@ -99,7 +99,7 @@ def wxpay(request):
         except:
             coin = 0
 
-        money = coin*precent/100
+        money = int(coin*precent/100)
         ordertype = ""
         if chargetype > 9:
             ordertype = "1" + str(chargetype)
@@ -149,7 +149,7 @@ def wxpay(request):
             img = qrcode.make(data_dict.get('code_url'))  # 创建支付二维码片
             img.save('static' + '/qrcode/' + qrcode_name)  #
             qrcodepath = '/qrcode/' + qrcode_name
-            return render(request, 'pay.html', {'qrcodepath': qrcodepath})  # 为支付页面模板传入二维码图像
+            return render(request, 'pay.html', {'qrcodepath': qrcodepath,'orderid':out_trade_no})  # 为支付页面模板传入二维码图像
 
         errortype = -3
         return render(request, 'chargetran.html', {"chargetype": errortype, "success": success})
@@ -176,7 +176,8 @@ def check_wxpay(request):
 
             xml = trans_dict_to_xml(params)  # 转换字典为XML
             orderstate = 0
-            if data_dict.get('return_code') == 'SUCCESS':
+            strresult = str(data_dict.pop('result_code'))
+            if strresult == "SUCCESS":              
                 orderstate = 1
 
             try:
@@ -184,7 +185,7 @@ def check_wxpay(request):
                 wechatid = data_dict.pop('transaction_id')
                 order_start = models.OrderStart.objects.get(orderid=out_trade_no)
                 meony = order_start.money
-                returnmeony = data_dict.pop('cash_fee')
+                returnmeony = int(data_dict.pop('cash_fee'))
                 if meony != returnmeony:
                     orderstate = 0
 

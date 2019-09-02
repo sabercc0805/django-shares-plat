@@ -1,4 +1,4 @@
-from random import Random  # 用于生成随机码
+﻿from random import Random  # 用于生成随机码
 from django.core.mail import send_mail  # 发送邮件模块
 from django.conf import settings    # setting.py添加的的配置信息
 from datetime import datetime
@@ -14,12 +14,6 @@ def random_str(randomlength=6):
     return str
 
 def send_code_email(email,strcode,send_type="register"):
-    """
-    发送电子邮件
-    :param email: 要发送的邮箱
-    :param send_type: 邮箱类型
-    :return: True/False
-    """
     # 初始化为空
     email_title = ""
     email_body = ""

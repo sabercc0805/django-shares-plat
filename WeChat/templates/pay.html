@@ -2,8 +2,7 @@
 
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
+     <meta charset="UTF-8">
         <title>微信扫码支付</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -23,24 +22,21 @@
         </div>
 <script>
     onload=function () {
-        setInterval(go,1000)
+        setInterval(function () {
+            $.get("/checkorder/?orderid={{ orderid }}",{}, function(ret){
+            if (ret == 1) {
+                    location.href = "/chargeresult/?result=1&orderid={{ orderid }}";
+                } else if (ret == 0) {
+                    location.href = "/chargeresult/?result=0&orderid={{ orderid }}";
+                }
+        })
+            },3000)
     };
 
-    function go() {
-
-            $.get("/checkorder/?orderid={{ orderid }}",{}, function(ret){
-            if(ret == 1)
-            {
-                var url = "/chargeresult/?result=1&orderid=" + {{ orderid }};
-                location.href=url;
-            }
-            else if(ret == 0)
-            {
-                var url = "/chargeresult/?result=0&orderid=" + {{ orderid }};
-               location.href=url;
-            }
-        })
-    }
 </script>
     </body>
 </html>
+
+
+
+
