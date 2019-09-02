@@ -64,10 +64,10 @@ class ChangePwdForm(forms.Form):
 
 class RegisterForm(forms.Form):
     username = forms.CharField(label="用户名", max_length=128,min_length=5, widget=forms.TextInput(attrs={'class': 'form-control','placeholder': "用户名长度大于5字符小于20字符",}))
-    password1 = forms.CharField(label="密码", max_length=48, widget=forms.PasswordInput(attrs={'class': 'form-control'}))
-    password2 = forms.CharField(label="确认密码", max_length=48,widget=forms.PasswordInput(attrs={'class': 'form-control'}))
-    phonenumber = forms.EmailField(label="Email", widget=forms.EmailInput(attrs={'class': 'form-control','placeholder': "目前唯一找回密码的验证方式，请认真填写！",}))
-
+    password1 = forms.CharField(label="密码", min_length=8,max_length=48, widget=forms.PasswordInput(attrs={'class': 'form-control','placeholder': "密码长度至少大于8位"}))
+    password2 = forms.CharField(label="确认密码", min_length=8,max_length=48,widget=forms.PasswordInput(attrs={'class': 'form-control','placeholder': "确认密码"}))
+    phonenumber = forms.EmailField(label="Email", min_length=5,max_length=48,widget=forms.EmailInput(attrs={'id':'email','class': 'form-control','placeholder': "目前唯一找回密码的验证方式，请认真填写！",}))
+    code = forms.CharField(label="激活码", max_length=6,widget=forms.TextInput(attrs={'id':'code','class': 'form-control', 'placeholder': "填入6位激活码", }))
     captcha = CaptchaField(label='验证码',error_messages={'invalid': "验证码错误"})
 
 class ArticleForm(forms.Form):
@@ -100,7 +100,7 @@ class ArticleForm(forms.Form):
                                      )
     #标签
     tag = forms.IntegerField(label="教程标签",widget=widgets.RadioSelect(),initial=0)
-    articletag = forms.CharField(label="标签", max_length=20,
+    articletag = forms.CharField(label="标签", max_length=20,required=False,
                                    widget=forms.TextInput(attrs={'class': 'form-control'}))
     # 保证每次访问重新获取最新数据
     def __init__(self, *args, **kwargs):
@@ -121,3 +121,21 @@ class ArticleForm(forms.Form):
 class Commitform(forms.Form):
     commitcontent = forms.CharField(label="评论内容", required=True, min_length=10,max_length=500,widget=forms.Textarea(attrs={
                               'id':"commitcontent",'style': 'height: 60px;width:100%;resize:none','placeholder': "评论请大于10字符小于500字符，并且请您的评论遵循国家相关法律法规！",}))
+
+class Creditform(forms.Form):
+    exchangetype = forms.ChoiceField(label="兑换选项",
+                                    choices=((0, '10积分'), (1, '50积分'), (2, '100积分'),(3, '500积分'),(4, '1000积分'),
+                                            (5, '2000积分'),(6, '3000积分'),(7, '5000积分'),),
+                                    initial=0,
+                                    widget=forms.RadioSelect  # 插件表现形式为单选按钮
+                                    )
+
+class Coinform(forms.Form):
+    chargetype = forms.ChoiceField(label="充值选项",
+                                    choices=((0, '10币'), (1, '30币'), (2, '50币'),(3, '100币'),(4, '200币'),
+                                            (5, '500币'),(6, '1000币'),(7, '2000币'),(8, '3000币'),(9, '其他金额'),),
+                                    initial=0,
+                                    widget=forms.RadioSelect  # 插件表现形式为单选按钮
+                                    )
+    charge = forms.IntegerField(label="充值金额",min_value=1,max_value=3000,required=False,
+                              widget=forms.NumberInput(attrs={'class': 'form-control', 'defalut': '1','placeholder': "请输入大于0，小于3000的整数"}))

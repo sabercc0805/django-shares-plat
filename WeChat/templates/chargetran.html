@@ -1,0 +1,54 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>支付结果</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+    </head>
+    <body>
+    {% if success == 1 %}
+        <div class="row text-center">
+            <h2 style="color: red">恭喜您，{{ content }}成功！</h2>
+        </div>
+        <div class="row text-center">
+            <p>您成功{{ content }}了{{ num }}{{ unit }}！还有<span id="sp">10</span>秒跳转到用户信息...</p>
+        </div>
+    {% else%}
+        <div class="row text-center">
+            <h2 style="color: limegreen">对不起，{{ content }}失败！</h2>
+        </div>
+        <div class="row text-center">
+            {% if chargetype == 1 %}
+                <p>充值失败，若您已扣费请到<a href="#">充值订单</a>中进行申诉，我们会尽快安排专人处理，给您带来的不便我们深感歉意！还有<span id="sp">10</span>秒跳转到用户信息...</p>
+            {% elif chargetype == 2 %}
+                <p>兑换失败，若您已扣除缝芽币请到<a href="#">兑换订单</a>中进行申诉，我们会尽快安排专人处理，给您带来的不便我们深感歉意！还有<span id="sp">10</span>秒跳转到用户信息...</p>
+            {% elif chargetype == -1 %}
+                <p>兑换失败，您的缝芽币不足请前往充值，谢谢！还有<span id="sp">10</span>秒跳转到用户信息...</p>
+            {% elif chargetype == -2 %}
+                <p>由于系统原因订单不能生成，请稍后重试，给您带来的不便我们深感歉意！还有<span id="sp">10</span>秒跳转到用户信息...</p>
+            {% elif chargetype == -3 %}
+                <p>微信支付系统生成订单失败，请稍后重试，给您带来的不便我们深感歉意！还有<span id="sp">10</span>秒跳转到用户信息...</p>
+            {% endif %}
+
+    {% endif %}</div>
+<script>
+    onload=function () {
+        setInterval(go,1000)
+    };
+    var x=9;
+    function go() {
+
+        if (x>=0){
+            document.getElementById("sp").innerText=x;
+        }else {
+                location.href="/userinfo/";
+        }
+        x--;
+    }
+</script>
+    </body>
+</html>

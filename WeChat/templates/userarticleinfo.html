@@ -1,0 +1,153 @@
+{% extends 'userinfonew.html' %}
+{% load staticfiles %}
+{% block title %}{{ contentname }}{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/userinfo.css' %}">
+
+    <style>
+         .class-button{
+        background-color:white;
+        outline: none;
+        color: black;
+        border-width: 1px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:0px;
+        font-size: 18px;
+    }
+
+         .class-button.active{
+        background-color:white;
+        outline: none;
+        color: darkred;
+       border-width: 0px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:0px;
+        font-size: 18px;
+        box-shadow: none;
+    }
+
+    .class-button:hover{
+        background-color:white;
+        outline: none;
+        color: darkred;
+       border-width: 0px;
+        border-color:whitesmoke;
+        border-Radius:0px;
+        font-size: 18px;
+    }
+
+    .class-button:focus{
+        background-color:white;
+        outline: none;
+        color: darkred;
+       border-width: 0px;
+        border-color:whitesmoke;
+        border-Radius:0px;
+        font-size: 18px;
+    }
+
+    .class-h4{
+        background-color:white;
+        outline: none;
+        color: black;
+        border-width: 1px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:0px;
+        font-size: 20px;
+        font-weight:bold;
+    }
+     ul li{list-style: none}
+
+    .article-a:link{color:black}
+     .article-a:visited{color:black}
+    .article-a:hover{color:darkred;
+        text-decoration: none;
+    }
+    </style>
+{% endblock %}
+
+{% block exchangecontent %}
+    <div class="row clearfix">
+           <div class="row clearfix">
+                <h2 class="text-center">{{ contentname }}</h2>
+           </div>
+            <div class="row clearfix" style="height:100%">
+                <ul class="list-group">
+                        {% for artcile in article_list %}
+                            <li class="list-group-item">
+                                <div>
+                                    <h2>
+                                        <a class="center-block text-left article-a" href="/articlecontent/?title={{ artcile.title }}&currentPage={{ currentPage }}">{{ artcile.title }}</a>
+                                    </h2>
+                                </div>
+                                <div class="row">
+                                    {% if artcile.costtype == 0 %}
+                                        <p class="pull-left">&nbsp;&nbsp;&nbsp;&nbsp;免费</p>
+                                    {% elif artcile.costtype == 1 %}
+                                        <p class="pull-left">&nbsp;&nbsp;&nbsp;&nbsp;积分:{{ artcile.cost }}</p>
+                                    {% elif artcile.costtype == 2 %}
+                                        <p class="pull-left">&nbsp;&nbsp;&nbsp;&nbsp;缝芽币:{{ artcile.cost }}</p>
+                                    {% endif %}
+                                <p class="pull-left" style="color: lightgray">&nbsp;|</p>
+                                    <p class="pull-left">&nbsp;{{ artcile.tag }}</p>
+                                <p class="pull-left" style="color: lightgray">&nbsp;|</p>
+                                {% if artcile.firstreaddate %}
+                                    <p class="pull-left">&nbsp;购买日期:{{ artcile.firstreaddate | date:'Y-m-d' }}</p>
+                                {% else %}
+                                    <p class="pull-left">&nbsp;购买日期:{{ artcile.buydate | date:'Y-m-d' }}</p>
+                                {% endif %}
+
+                                {% if type == 2 %}
+                                    {% if artcile.collect == 1 %}
+                                        <p class="pull-right">
+                                            <a class="center-block text-left article-a" href="/usercancel/?titlename={{ artcile.title }}&type=2&page={{ currentPage }}">&nbsp;取消收藏&nbsp;&nbsp;&nbsp;&nbsp;</a>
+                                        </p>
+                                    {% endif %}
+                                {% endif %}
+                                 {% if type == 3 %}
+                                    {% if artcile.finger == 1 %}
+                                        <p class="pull-right">
+                                            <a class="center-block text-left article-a" href="/usercancel/?titlename={{ artcile.title }}&type=3&page={{ currentPage }}">&nbsp;取消点赞&nbsp;&nbsp;&nbsp;&nbsp;</a>
+                                        </p>
+                                {% endif %}
+                                {% endif %}
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+            </div>
+            <div class="row clearfix">
+                 <nav style="text-align: center">
+                        <ul class="pagination pagination-center" id="pager">
+                                {#上一页按钮开始#}
+                                {# 如果当前页有上一页#}
+                            {% if article_list.has_previous %}
+                                {#  当前页的上一页按钮正常使用#}
+                                <li class="previous"><a href="/userarticleoperate/?type={{ type }}&page={{ article_list.previous_page_number }}">上一页</a></li>
+                            {% else %}
+                                {# 当前页的不存在上一页时,上一页的按钮不可用#}
+                                <li class="previous disabled"><a href="#">上一页</a></li>
+                            {% endif %}
+                                {#上一页按钮结束#}
+                                {# 页码开始#}
+                            {% for num in paginator.page_range %}
+                                {% if num == currentPage %}
+                                     <li class="item active"><a href="/userarticleoperate/?page={{ num }}&type={{ type }}">{{ num }}</a></li>
+                                {% else %}
+                                     <li class="item"><a href="/userarticleoperate/?page={{ num }}&type={{ type }}">{{ num }}</a></li>
+                                {% endif %}
+                             {% endfor %}
+                            {#页码结束#}
+                            {# 下一页按钮开始#}
+                            {% if article_list.has_next %}
+                                <li class="next"><a href="/userarticleoperate/?type={{ type }}&page={{ article_list.next_page_number }}">下一页</a></li>
+                            {% else %}
+                                <li class="next disabled"><a href="#">下一页</a></li>
+                            {% endif %}
+                            {# 下一页按钮结束#}
+                        </ul>
+                 </nav>
+            </div>
+    </div>
+{% endblock %}

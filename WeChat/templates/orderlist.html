@@ -1,0 +1,221 @@
+{% extends 'userinfonew.html' %}
+{% load staticfiles %}
+{% block title %}{{ contentname }}{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/userinfo.css' %}">
+
+    <style>
+         .class-button{
+        background-color:white;
+        outline: none;
+        color: black;
+        border-width: 1px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:0px;
+        font-size: 18px;
+    }
+
+         .class-button.active{
+        background-color:white;
+        outline: none;
+        color: darkred;
+       border-width: 0px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:0px;
+        font-size: 18px;
+        box-shadow: none;
+    }
+
+    .class-button:hover{
+        background-color:white;
+        outline: none;
+        color: darkred;
+       border-width: 0px;
+        border-color:whitesmoke;
+        border-Radius:0px;
+        font-size: 18px;
+    }
+
+    .class-button:focus{
+        background-color:white;
+        outline: none;
+        color: darkred;
+       border-width: 0px;
+        border-color:whitesmoke;
+        border-Radius:0px;
+        font-size: 18px;
+    }
+
+    .class-h4{
+        background-color:white;
+        outline: none;
+        color: black;
+        border-width: 1px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:0px;
+        font-size: 20px;
+        font-weight:bold;
+    }
+     ul li{list-style: none}
+
+    .article-a:link{color:black}
+     .article-a:visited{color:black}
+    .article-a:hover{color:darkred;
+        text-decoration: none;
+    }
+    </style>
+{% endblock %}
+
+{% block exchangecontent %}
+    <div class="row clearfix">
+           <div class="row clearfix">
+                <h2 class="text-center">{{ contentname }}</h2>
+           </div>
+            <div class="modal fade" id="errorinfomodel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	                        <div class="modal-dialog">
+		                        <div class="modal-content">
+			                        <div class="modal-header">
+				                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					                                                                &times;
+                                        </button>
+				                        <h4 class="modal-title" id="myModalLabel">
+					                               提示
+                                        </h4>
+			                        </div>
+			                        <div class="modal-body">
+                                        <h4 id="errorinfo" class="text-center"></h4>
+			                        </div>
+		                        </div><!-- /.modal-content -->
+	                        </div><!-- /.modal -->
+            </div>
+            <div class="row clearfix" style="text-align: center;">
+                <div class="row clearfix" style="text-align: center;">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th class="text-center">订单号</th>
+                                {% if ordertype == 1 %}
+                                    <th class="text-center">订单金额(RMB)</th>
+                                    <th class="text-center">缝芽币数量</th>
+                                {% elif ordertype == 2 %}
+                                    <th class="text-center">缝芽币消耗</th>
+                                    <th class="text-center">积分数量</th>
+                                {% endif %}
+                                <th class="text-center">订单状态</th>
+                                <th class="text-center">订单时间</th>
+                                <th class="text-center">订单申诉</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in order_list %}
+                            <tr>
+                                <td>{{ order.orderid }}</td>
+                                {% if ordertype == 1 %}
+                                    <td>{% widthratio order.money 100 1 %} </td>
+                                    <td>{% widthratio order.coin 100 1 %} </td>
+                                     {% if order.orderstate == 0 %}
+                                         <td>充值失败 </td>
+                                    {% elif order.orderstate == 1 %}
+                                         <td>充值成功 </td>
+                                    {% elif order.orderstate == -1 %}
+                                         <td>未支付(失效) </td>
+                                    {% elif order.orderstate == -2 %}
+                                         <td>状态不明</td>
+                                    {% endif %}
+                                    <td>{{ order.chargedate | date:'Y-m-d' }} </td>
+
+                                {% elif ordertype == 2 %}
+                                    <td>{% widthratio order.coin 100 1 %} </td>
+                                    <td>{{ order.integrate }} </td>
+                                     {% if order.orderstate == 0 %}
+                                         <td>兑换失败 </td>
+                                    {% elif order.orderstate == 1 %}
+                                         <td>兑换成功 </td>
+                                    {% endif %}
+                                    <td>{{ order.exchangedate | date:'Y-m-d' }} </td>
+                                {% endif %}
+                                {% if order.appeal == 0 %}
+                                    <!--样式测试时添加-->
+                                    <td><a id={{ order.orderid }} onclick="apeal(this.id,{{ ordertype }},{{ order.orderstate }})" type="button">申诉</a></td>
+                                {% elif order.appeal == 1 %}
+                                    <td>已申诉</td>
+                                {% elif order.appeal == 2 %}
+                                    <td>已处理请查看邮箱</td>
+                                {% endif %}
+
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row clearfix">
+                 <nav style="text-align: center">
+                        <ul class="pagination pagination-center" id="pager">
+                                {#上一页按钮开始#}
+                                {# 如果当前页有上一页#}
+                            {% if article_list.has_previous %}
+                                {#  当前页的上一页按钮正常使用#}
+                                <li class="previous"><a href="/orderlist/?page={{ order_list.previous_page_number }}&ordertype={{ ordertype }}&type={{ type }}">上一页</a></li>
+                            {% else %}
+                                {# 当前页的不存在上一页时,上一页的按钮不可用#}
+                                <li class="previous disabled"><a href="#">上一页</a></li>
+                            {% endif %}
+                                {#上一页按钮结束#}
+                                {# 页码开始#}
+                            {% for num in paginator.page_range %}
+                                {% if num == currentPage %}
+                                     <li class="item active"><a href="/orderlist/?page={{ num }}&ordertype={{ ordertype }}&type={{ type }}">{{ num }}</a></li>
+                                {% else %}
+                                     <li class="item"><a href="/orderlist/?page={{ num }}&ordertype={{ ordertype }}&type={{ type }}">{{ num }}</a></li>
+                                {% endif %}
+                             {% endfor %}
+                            {#页码结束#}
+                            {# 下一页按钮开始#}
+                            {% if article_list.has_next %}
+                                <li class="next"><a href="/orderlist/?page={{ order_list.next_page_number }}&ordertype={{ ordertype }}&type={{ type }}">下一页</a></li>
+                            {% else %}
+                                <li class="next disabled"><a href="#">下一页</a></li>
+                            {% endif %}
+                            {# 下一页按钮结束#}
+                        </ul>
+                 </nav>
+            </div>
+            </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+        function apeal(id,type,state)
+            {
+                var orderid = id;
+                var ordertype = type;
+                var orderstate = state;
+                $.ajax({
+            url: '/apeal/',
+            type: 'POST',
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                orderid: orderid,
+                ordertype:ordertype,
+                orderstate:orderstate
+            },
+            success: function (ret) {
+               if(ret == 1)
+            {
+               $("#" + orderid).text("已申诉");
+               $("#" + orderid).attr("disabled","disabled");
+               $("#errorinfo").text("已收到您的申诉，对给您带来的困扰我们十分抱歉，我们会尽快处理，处理结果将发送到您的注册邮箱，祝您生活愉快！");
+                $('#errorinfomodel').modal('show');
+            }
+            else if(ret == -1)
+            {
+                $("#errorinfo").text("申诉失败，请重新登录后在进行操作！");
+                $('#errorinfomodel').modal('show');
+            }
+            }
+        })
+            }
+    </script>
+{% endblock %}

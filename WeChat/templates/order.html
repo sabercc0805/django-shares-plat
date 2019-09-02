@@ -1,0 +1,84 @@
+{% extends 'userinfonew.html' %}
+{% load staticfiles %}
+{% block title %}我的订单{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/userinfo.css' %}">
+
+    <style>
+         .class-button{
+        background-color:white;
+        outline: none;
+        color: black;
+        border-width: 1px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:0px;
+        font-size: 18px;
+    }
+
+         .class-button.active{
+        background-color:white;
+        outline: none;
+        color: darkred;
+       border-width: 0px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:0px;
+        font-size: 18px;
+        box-shadow: none;
+    }
+
+    .class-button:hover{
+        background-color:white;
+        outline: none;
+        color: darkred;
+       border-width: 0px;
+        border-color:whitesmoke;
+        border-Radius:0px;
+        font-size: 18px;
+    }
+
+    .class-button:focus{
+        background-color:white;
+        outline: none;
+        color: darkred;
+       border-width: 0px;
+        border-color:whitesmoke;
+        border-Radius:0px;
+        font-size: 18px;
+    }
+
+    .class-h4{
+        background-color:white;
+        outline: none;
+        color: black;
+        border-width: 1px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:0px;
+        font-size: 20px;
+        font-weight:bold;
+    }
+     ul li{list-style: none}
+
+    .article-a:link{color:black}
+     .article-a:visited{color:black}
+    .article-a:hover{color:darkred;
+        text-decoration: none;
+    }
+    </style>
+{% endblock %}
+
+{% block exchangecontent %}
+    <div class="row clearfix">
+           <div class="row clearfix">
+                <h2 class="text-center">{{ contentname }}</h2>
+           </div>
+            <div class="row clearfix" style="text-align: center;">
+                <div class="row clearfix" style="text-align: center;">
+                    <h1>您还没有{{ oprateinfo }}！可以前往我们的教程逛逛<span class="glyphicon glyphicon-hand-down"></span></h1>
+                </div>
+                <div class="row clearfix" style="text-align: center;">
+                    <a class="center-block" href="/article/"><h2>前往教程</h2></a>
+                </div>
+            </div>
+    </div>
+{% endblock %}

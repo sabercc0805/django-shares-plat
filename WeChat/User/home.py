@@ -1,4 +1,5 @@
 import os
+from django.utils import timezone
 from django.http import FileResponse
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
@@ -13,12 +14,20 @@ from .forms import UserInfoForm
 from .forms import ChangePwdForm
 from .forms import RegisterForm
 from .forms import Commitform
+from .forms import Creditform
+from .forms import Coinform
 from django.forms.models import model_to_dict
 from django.http import Http404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils.http import urlquote
 from django.http import JsonResponse
 from django.db.models import Q
+
+from User.email import random_str  # 用于生成随机码
+from User.email import send_code_email  # 用于生成随机码
+
+from User.wechatpay import order_num
+from User.wechatpay import opratecoinpool
 
 @csrf_exempt
 @csrf_protect
@@ -234,6 +243,9 @@ def login(request):
             try:
                 user = models.Commonuser.objects.get(userid=username)
                 if user.password == password:
+                    #nowTime = datetime.datetime.now().strftime('YYYY-MM-DD HH:MM:SS')
+                    #user.currnetlogindate = datetime.datetime.now()
+                    user.save()
                     request.session['is_login'] = True
                     request.session['user_id'] = user.userid
                     request.session['user_name'] = user.userid
@@ -275,6 +287,7 @@ def register(request):
             password1 = register_form.cleaned_data['password1']
             password2 = register_form.cleaned_data['password2']
             phonenumber = register_form.cleaned_data['phonenumber']
+            codeinput = register_form.cleaned_data['code']
             #if len(phonenumber) != 11:
             #message = "手机号码为11位！"
             #return render(request, 'register.html', locals())
@@ -305,6 +318,33 @@ def register(request):
                 except:
                     state = 1
 
+                try:
+                    codeobj = models.Code.objects.get(email=phonenumber)
+
+                    if codeobj.codeid != codeinput:
+                        message = '激活码错误，请重新获取激活码！'
+                        register_form = RegisterForm(locals())
+                        return render(request, 'register.html', locals())
+
+                    getdate = codeobj.gettime
+                    strdate = getdate.strftime("%Y-%m-%d %H:%M:%S")
+                    beforedate = datetime.strptime(strdate, '%Y-%m-%d %H:%M:%S')
+                    nowdate = timezone.now().strftime("%Y-%m-%d %H:%M:%S")
+                    trandate = datetime.strptime(nowdate, '%Y-%m-%d %H:%M:%S')
+
+                    delta = trandate - beforedate
+                    interval = delta.seconds
+                    if interval/60 > 5:
+                        message = '激活码超时，请重新获取激活码！'
+                        register_form = RegisterForm(locals())
+                        return render(request, 'register.html', locals())
+
+                    codeobj.delete()
+                except:
+                    message = '激活失败，请重新获取激活码！'
+                    register_form = RegisterForm(locals())
+                    return render(request, 'register.html', locals())
+
                 # 当一切都OK的情况下，创建新用户
     #可能是django  bug  int类型字段直接等于会报错，必须在创建时赋值
                 new_user = models.Commonuser.objects.create(userid = username,level=1)
@@ -314,7 +354,7 @@ def register(request):
                 new_user.acountuser = 'webregister'
                 new_user.source =  'webregister'
                 new_user.save()
-                return redirect('/login/')  # 自动跳转到登录页面
+                return render(request, 'registertran.html') # 自动跳转到登录页面
     register_form = RegisterForm()
     return render(request, 'register.html', locals())
 
@@ -330,6 +370,33 @@ def userinfo(request):
         return redirect("/logout/")
 
     username = request.session['user_id']
+
+    try:
+        User = models.Commonuser.objects.get(userid=username)
+        ChangePwd_form = ChangePwdForm()
+        type = 0
+        signed = 0
+        fengyacoin = int(User.fengyacoin/100)
+        try:
+            signdate = User.signdate
+            beforedate = datetime.strptime(signdate, '%Y-%m-%d')
+            nowdate =timezone.now().strftime("%Y-%m-%d")
+            trandate = datetime.strptime(nowdate, '%Y-%m-%d')
+
+            delta = trandate - beforedate
+            interval = delta.days
+            if interval == 0:
+                signed = 1
+        except:
+            signed = 0
+
+        return render(request, 'userinfoshow.html', locals())
+    except:
+        render(request, 'commontran.html')
+
+
+'''
+    username = request.session['user_id']
     nlevel = request.session['level']
     registertime = request.session['registerdate']
     level = ""
@@ -342,25 +409,7 @@ def userinfo(request):
         level = "白金会员"
     elif nlevel == 4:
         level = "钻石会员"
-
-
-    if request.method == "POST":
-        UserInfo_form = UserInfoForm(request.POST)
-        if UserInfo_form.is_valid():
-            User = models.Commonuser.objects.get(userid=username)
-            phonenum = User.phonenum
-            email = User.identify
-            coin = User.fengyacoin
-            ChangePwd_form = ChangePwdForm()
-            return render(request, 'userinfo.html', locals())
-
-    User = models.Commonuser.objects.get(userid=username)
-    phonenum = User.phonenum
-    email = User.identify
-    coin = User.fengyacoin
-    UserInfo_form = UserInfoForm(locals())
-    ChangePwd_form = ChangePwdForm()
-    return render(request, 'userinfo.html',locals())
+'''
 
 def article(request):
     kind = 0
@@ -382,24 +431,24 @@ def article(request):
 
     if len(search) == 0:
         if not tag:
-            article_list = models.BlogArticle.objects.filter(delete_flag=0)
+            article_list = models.BlogArticle.objects.filter(delete_flag=0).order_by('-create_time')
             tag = '全部'
         else:
             if tag == '全部':
-                article_list = models.BlogArticle.objects.filter(delete_flag=0)
+                article_list = models.BlogArticle.objects.filter(delete_flag=0).order_by('-create_time')
             else:
                 tag = request.GET.get('tag')
-                article_list = models.BlogArticle.objects.filter(delete_flag=0, tag=tag)
+                article_list = models.BlogArticle.objects.filter(delete_flag=0, tag=tag).order_by('-create_time')
     else:
         if not tag:
-            article_list = models.BlogArticle.objects.filter(delete_flag=0, title__icontains=search)
+            article_list = models.BlogArticle.objects.filter(delete_flag=0, title__icontains=search).order_by('-create_time')
             tag = '全部'
         else:
             if tag == '全部':
-                article_list = models.BlogArticle.objects.filter(delete_flag=0, title__icontains=search)
+                article_list = models.BlogArticle.objects.filter(delete_flag=0, title__icontains=search).order_by('-create_time')
             else:
                 tag = request.GET.get('tag')
-                article_list = models.BlogArticle.objects.filter(delete_flag=0, tag=tag, title__icontains=search)
+                article_list = models.BlogArticle.objects.filter(delete_flag=0, tag=tag, title__icontains=search).order_by('-create_time')
 
     currentPage = request.GET.get('currentPage')
     tag_list = models.BlogTag.objects.filter()
@@ -461,7 +510,7 @@ def articlecontent(request):
             try:
                 acticlejudge = models.BlogArticle.objects.get(title=titlename)
                 userinfo = models.Commonuser.objects.get(userid=username)
-                coin = userinfo.fengyacoin
+                coin = int(userinfo.fengyacoin/100)
                 integral = userinfo.integrate
                 filecosttype = acticlejudge.filecosttype
                 #查找一下在已有列表中是否存在如果存在不再重复扣费
@@ -483,16 +532,17 @@ def articlecontent(request):
                             integral = integrate
 
                     elif acticlejudge.articlecosttype == 2:
-                        fengyacoin = acticlejudge.articlecost
+                        fengyacoin = acticlejudge.articlecost*100
                         if userinfo.fengyacoin < fengyacoin:
                             situation = 3
                             return render(request, 'articletran.html',
                                           {"currentPage": currentPage, 'situation': situation})
                         else:
+                            opratecoinpool(fengyacoin)
                             fengyacoin = userinfo.fengyacoin - fengyacoin
                             models.Commonuser.objects.filter(userid=username).update(fengyacoin=fengyacoin)
-                            coin = fengyacoin
-                    new_data = models.ArticleContain.objects.create(title=titlename,userid=username)
+                            coin = fengyacoin/100
+                    new_data = models.ArticleContain.objects.create(title=titlename,userid=username,costtype=acticlejudge.articlecosttype,cost=acticlejudge.articlecost,tag=acticlejudge.tag)
                     new_data.save()
             except:
                 situation = 1
@@ -602,7 +652,7 @@ def download(request):
             if filecosttype == 1:
                 userbalance = intergrate - int(cost)
             elif filecosttype == 2:
-                userbalance = fengyacoin - int(cost)
+                userbalance = fengyacoin - int(cost)*100
 
             if userbalance >= 0:
                 try:
@@ -610,10 +660,11 @@ def download(request):
                         userinfo.integrate = userbalance
                         userinfo.save()
                     elif filecosttype == 2:
+                        opratecoinpool(int(cost)*100)
                         userinfo.fengyacoin = userbalance
                         userinfo.save()
 
-                    models.Fileright.objects.create(userid=userid, title=titlename)
+                    models.Fileright.objects.create(userid=userid, title=titlename,costtype=filecosttype,cost=articleblog.cost,tag=articleblog.tag)
                     savepath = "C:\\articlefile\\" + titlename
                     file = open(os.path.join(savepath, filename), 'rb')
                     response = FileResponse(file)
@@ -631,7 +682,7 @@ def download(request):
                     last = userinfo.integrate
                 elif filecosttype == 2:
                     errortype = 3
-                    last = userinfo.fengyacoin
+                    last = userinfo.fengyacoin/100
 
                 return render(request, 'downtran.html',
                               {"errortype": errortype, "titlename": titlename, "currentPage": currentPage, "last": last})
@@ -658,18 +709,6 @@ def changepassword(request):
         return redirect("/logout/")
 
     username = request.session['user_id']
-    nlevel = request.session['level']
-    registertime = request.session['registerdate']
-    level = ""
-
-    if nlevel == 1:
-        level = "普通会员"
-    elif nlevel == 2:
-        level = "超级会员"
-    elif nlevel == 3:
-        level = "白金会员"
-    elif nlevel == 4:
-        level = "钻石会员"
 
     errortype = -1
     if request.method == "POST":
@@ -689,10 +728,13 @@ def changepassword(request):
                     errortype = 2
             else:
                 errortype = 1
-
-    UserInfo_form = UserInfoForm(locals())
-    ChangePwd_form = ChangePwdForm()
-    return render(request, 'userinfo.html', locals())
+    try:
+        User = models.Commonuser.objects.get(userid=username)
+        ChangePwd_form = ChangePwdForm()
+        type = 0
+        return render(request, 'userinfoshow.html', locals())
+    except:
+        return render(request,"commontran.html")
 
 ################ajax返回#############################
 #####用户点赞#########
@@ -780,4 +822,488 @@ def ajax_commit(request):
             return JsonResponse(bcommit, safe=False)
     else:
         return redirect("/logout/")
+
+def userarticleoperate(request):
+    kind = 0
+
+    if not request.session.get('is_login', None):
+        return redirect('/index/')
+
+    model = request.session['model']
+    if model != 1000:
+        return redirect("/logout/")
+
+    type = request.GET.get('type',0) #1：教程历史；2、收藏；3、点赞；4、下载
+    type = int(type)
+    username = request.session['user_id']
+    article_list = []
+    oprateinfo = ""
+    try:
+        if type == 1:
+            contentname = "历史教程"
+            oprateinfo = "历史教程"
+            article_list = models.ArticleContain.objects.filter(userid=username).order_by('-firstreaddate')
+        elif type == 2:
+            contentname = "我的收藏"
+            oprateinfo = "收藏"
+            article_list = models.ArticleContain.objects.filter(userid=username, collect=1).order_by('-firstreaddate')
+        elif type == 3:
+            contentname = "我的点赞"
+            oprateinfo = "点赞"
+            article_list = models.ArticleContain.objects.filter(userid=username, finger=1).order_by('-firstreaddate')
+        elif type == 4:
+            contentname = "我的下载"
+            oprateinfo = "下载"
+            article_list = models.Fileright.objects.filter(userid=username).order_by('-buydate')
+        else:
+            return render(request, 'commontran.html')
+    except:
+        return render(request, 'commontran.html')
+
+    if article_list.count() == 0:
+        return render(request, 'userarticlenone.html',locals())
+
+    paginator = Paginator(article_list, 10)
+    # 从前端获取当前的页码数,默认为1
+    page = request.GET.get('page', 1)
+
+    # if int(page) > article_list.count()/10:
+    # raise Http404("Page does not exist")
+    # 把当前的页码数转换成整数类型
+    currentPage = 1
+    try:
+        currentPage = int(page)
+    except:
+        currentPage = 1
+
+    try:
+        article_list = paginator.page(page)  # 获取当前页码的记录
+    except PageNotAnInteger:
+        article_list = paginator.page(1)  # 如果用户输入的页码不是整数时,显示第1页的内容
+    except EmptyPage:
+        article_list = paginator.page(paginator.num_pages)  # 如果用户输入的页数不在系统的页码列表中时,显示最后一页的内容
+
+    return render(request, 'userarticleinfo.html', locals())
+
+def usercancel(request):
+    kind = 0
+
+    if not request.session.get('is_login', None):
+        return redirect('/index/')
+
+    model = request.session['model']
+    if model != 1000:
+        return redirect("/logout/")
+
+    type = request.GET.get('type',0)  # 1：教程历史；2、收藏；3、点赞；4、下载
+    type = int(type)
+    titlename = request.GET.get('titlename')
+    username = request.session['user_id']
+    article_list = []
+    oprateinfo = ""
+
+    try:
+        userarticle = models.ArticleContain.objects.get(userid=username,title=titlename)
+        if type == 2:
+            userarticle.collect = 0
+            userarticle.save()
+            contentname = "我的收藏"
+            oprateinfo = "收藏"
+            article_list = models.ArticleContain.objects.filter(userid=username, collect=1).order_by('-firstreaddate')
+        elif type == 3:
+            userarticle.finger = 0
+            userarticle.save()
+            contentname = "我的点赞"
+            oprateinfo = "点赞"
+            article_list = models.ArticleContain.objects.filter(userid=username, finger=1).order_by('-firstreaddate')
+    except:
+        return render(request, 'commontran.html')
+
+    if article_list.count() == 0:
+        return render(request, 'userarticlenone.html',locals())
+
+    paginator = Paginator(article_list, 10)
+    # 从前端获取当前的页码数,默认为1
+    page = request.GET.get('page', 1)
+
+    # if int(page) > article_list.count()/10:
+    # raise Http404("Page does not exist")
+    # 把当前的页码数转换成整数类型
+    currentPage = int(page)
+
+    try:
+        article_list = paginator.page(page)  # 获取当前页码的记录
+    except PageNotAnInteger:
+        article_list = paginator.page(1)  # 如果用户输入的页码不是整数时,显示第1页的内容
+    except EmptyPage:
+        article_list = paginator.page(paginator.num_pages)  # 如果用户输入的页数不在系统的页码列表中时,显示最后一页的内容
+    return render(request, 'userarticleinfo.html', locals())
+
+def ajax_sign(request):
+    bcommit = 0
+    if not request.session.get('is_login', None):
+        return redirect('/index/')
+
+    model = request.session['model']
+    if model != 1000:
+        return redirect("/logout/")
+
+
+    username = request.session['user_id']
+
+#签到获取积分在充值处一起做
+    bsign = 1
+
+    try:
+        keeplogin = 0
+        user = models.Commonuser.objects.get(userid=username)
+        credit = user.integrate
+
+        switch = {
+            1: 10,
+            2: 15,
+            3: 20,
+            4: 25,
+            5: 30,
+            6: 35,
+            7: 40,
+        }
+        try:
+            signdate = user.signdate
+            beforedate = datetime.strptime(signdate, '%Y-%m-%d')
+            nowdate = timezone.now().strftime("%Y-%m-%d")
+            trandate = datetime.strptime(nowdate, '%Y-%m-%d')
+
+            delta = trandate - beforedate
+            interval = delta.days
+            keeplogin = user.keeplogin
+
+            if interval == 0:
+                return JsonResponse(0, safe=False)
+            elif interval != 1:
+                keeplogin = 1
+            else:
+                keeplogin += 1
+
+            if keeplogin < 7:
+                credit += switch[keeplogin]
+            else:
+                credit += switch[7]
+
+            nowTime = timezone.now().strftime('%Y-%m-%d')
+            models.Commonuser.objects.filter(userid=username).update(signdate=nowTime, keeplogin=keeplogin,integrate=credit)
+        except:
+            keeplogin = 1
+            credit += switch[keeplogin]
+            nowTime = timezone.now().strftime("%Y-%m-%d")
+            models.Commonuser.objects.filter(userid=username).update(signdate=nowTime,keeplogin=1,integrate=credit)
+
+        return JsonResponse(keeplogin, safe=False)
+    except:
+        bsign = -1
+        return JsonResponse(bsign, safe=False)
+
+def credits(request):
+    kind = 0
+
+    if not request.session.get('is_login', None):
+        return redirect('/index/')
+
+    model = request.session['model']
+    if model != 1000:
+        return redirect("/logout/")
+
+    type = request.GET.get('type', 0)
+    type = int(type)
+    credit_form = Creditform()
+    return render(request, 'intergrate.html', locals())
+
+def coin(request):
+    kind = 0
+
+    if not request.session.get('is_login', None):
+        return redirect('/index/')
+
+    model = request.session['model']
+    if model != 1000:
+        return redirect("/logout/")
+
+    type = request.GET.get('type', 0)  # 1：教程历史；2、收藏；3、点赞；4、下载
+    type = int(type)
+    coin_form = Coinform()
+
+    return render(request, 'coin.html', locals())
+
+def exchange(request):
+    kind = 0
+
+    if not request.session.get('is_login', None):
+        return redirect('/index/')
+
+    model = request.session['model']
+    if model != 1000:
+        return redirect("/logout/")
+
+    if request.method == "POST":
+        credit_form = Creditform(request.POST)
+        exchangetype = 0
+        success = 0
+        if credit_form.is_valid():
+            exchangetype = int(credit_form.cleaned_data['exchangetype'])
+        else:
+            chargetype = -2
+            return render(request, 'chargetran.html', {"chargetype": chargetype, "success": success})
+
+        username = request.session['user_id']
+        precent = 100
+        credit = 0
+
+        switch = {
+            0: 10,
+            1: 50,
+            2: 100,
+            3: 500,
+            4: 1000,
+            5: 2000,
+            6: 3000,
+            7: 5000,
+        }
+
+        try:
+            credit = switch[exchangetype]
+        except:
+            credit = 0
+
+        ordertype = ""
+        if exchangetype > 9:
+            ordertype = "2" + str(exchangetype)
+        else:
+            ordertype = "20" + str(exchangetype)
+
+        if credit <= 0 | len(ordertype) == 0:
+            chargetype = -2
+            return render(request, 'chargetran.html', {"chargetype":chargetype,"success":success})
+
+        coin = credit/10*100
+        coin = coin*precent/100
+        try:
+            User = models.Commonuser.objects.get(userid=username)
+            usercoin = User.fengyacoin
+            usergrate = User.integrate
+            if usercoin > coin:
+                #获取订单号
+                orderid = order_num(ordertype,username)
+                #创建订单
+                new_credit = models.CreditExchange.objects.create(orderid=orderid,coin=coin,integrate=credit,userid=username,precent=precent)
+                new_credit.save();
+                try:
+                    usercoin -= coin
+                    usergrate += credit
+                    models.Commonuser.objects.filter(userid=username).update(fengyacoin=usercoin,integrate=usergrate)
+                    #F函数更新coinpool 并发小心
+                    try:
+                        opratecoinpool(coin)
+                        new_credit.orderstate = 1
+                        new_credit.save()
+                    except:
+                        new_credit.orderstate = -1
+                        new_credit.save()
+
+                    content = "兑换"
+                    num = credit
+                    unit= "积分"
+                    success = 1
+                    return render(request, 'chargetran.html',locals())
+                except:
+                    chargetype = -2
+                    return render(request, 'chargetran.html', {"chargetype": chargetype, "success": success})
+            else:
+                chargetype = -1
+                return render(request, 'chargetran.html', {"chargetype": chargetype, "success": success})
+        except:
+            chargetype = -2
+            return render(request, 'chargetran.html', {"chargetype": chargetype,"success":success})
+
+        return redirect('/userinfo/')
+    else:
+        return redirect('/index/')
+
+def checkorder(request):
+    kind = 0
+
+    if not request.session.get('is_login', None):
+        return redirect('/index/')
+
+    model = request.session['model']
+    if model != 1000:
+        return redirect("/logout/")
+
+    username = request.session['user_id']
+    orderid = request.GET.get('orderid',"")
+
+    result = -1
+    try:
+        orderover = models.OrderOver.objects.get(userid=username,orderid=orderid)
+        if orderover.orderstate == 1:
+            result = 1
+        elif orderover.orderstate == 0:
+            result = 0
+    except:
+        result = -1
+
+    return JsonResponse(result, safe=False)
+
+def chargeresult(request):
+    kind = 0
+
+    if not request.session.get('is_login', None):
+        return redirect('/index/')
+
+    model = request.session['model']
+    if model != 1000:
+        return redirect("/logout/")
+
+    username = request.session['user_id']
+    success = request.GET.get('result', 0)
+    orderid = request.GET.get('orderid', "")
+    num = 0
+    if success == 1:
+        orderover = models.OrderOver.objects.get(userid=username, orderid=orderid)
+        num = orderover.coin
+
+    content = "充值"
+    unit = "缝芽币"
+    chargetype = 1
+    return render(request, 'chargetran.html', locals())
+
+def ceshi(request):
+    return render(request, 'pay.html')
+
+def orderlist(request):
+    kind = 0
+
+    if not request.session.get('is_login', None):
+        return redirect('/index/')
+
+    model = request.session['model']
+    if model != 1000:
+        return redirect("/logout/")
+
+    order_list = []
+    over_list = []
+    start_list = []
+    username = request.session['user_id']
+    ordertype = int(request.GET.get('ordertype', 1))
+    type = int(request.GET.get('type',0))
+    try:
+        if ordertype == 1:
+            over_list = models.OrderOver.objects.filter(userid=username).order_by('-chargedate')
+            start_list = models.OrderStart.objects.filter(userid=username).order_by('-chargedate')
+            if over_list.count() > 0 & start_list.count() > 0:
+                over_list.extend(start_list)
+                order_list = over_list
+            elif over_list.count() > 0:
+                order_list = over_list
+            elif start_list.count() > 0:
+                order_list = start_list
+        elif ordertype == 2:
+            order_list = models.CreditExchange.objects.filter(userid=username).order_by('-exchangedate')
+    except:
+        render(request, 'commontran.html')
+
+    if len(order_list) == 0:
+        oprateinfo = ''
+        if ordertype == 1:
+            oprateinfo = '缝芽币充值'
+        elif ordertype == 2:
+            oprateinfo = '积分兑换'
+        return render(request, 'orderone.html', locals())
+
+    paginator = Paginator(order_list, 15)
+    # 从前端获取当前的页码数,默认为1
+    page = request.GET.get('page', 1)
+
+    #if int(page) > article_list.count()/10:
+       # raise Http404("Page does not exist")
+    # 把当前的页码数转换成整数类型
+    currentPage = int(page)
+
+    try:
+        order_list = paginator.page(page)  # 获取当前页码的记录
+    except PageNotAnInteger:
+        order_list = paginator.page(1)  # 如果用户输入的页码不是整数时,显示第1页的内容
+    except EmptyPage:
+        order_list = paginator.page(paginator.num_pages)  # 如果用户输入的页数不在系统的页码列表中时,显示最后一页的内容
+
+    return render(request, 'orderlist.html',locals())
+
+def ajax_apeal(request):#申诉用post
+    kind = 0
+
+    if not request.session.get('is_login', None):
+        return redirect('/index/')
+
+    model = request.session['model']
+    if model != 1000:
+        return redirect("/logout/")
+
+    username = request.session['user_id']
+
+    if request.method == "POST":
+        ordertype = request.POST["ordertype"]
+        orderstate = request.POST["orderstate"]
+        orderid = request.POST["orderid"]
+        if int(ordertype) == 1:
+            try:
+                if int(orderstate) < 0:
+                    models.OrderStart.objects.filter(userid=username, orderid=orderid).update(appeal=1)
+                else:
+                    models.OrderOver.objects.filter(userid=username,orderid=orderid).update(appeal=1)
+
+                return JsonResponse(1, safe=False)
+            except:
+                return JsonResponse(-1, safe=False)
+        elif int(ordertype) == 2:
+            try:
+                models.CreditExchange.objects.filter(userid=username,orderid=orderid).update(appeal=1)
+                return JsonResponse(1, safe=False)
+            except:
+                return JsonResponse(-1, safe=False)
+
+    else:
+        return JsonResponse(-1, safe=False)
+
+def ajax_getcode(request):#获取激活码
+
+    if request.method == "POST":
+        email = request.POST["email"]
+        if len(email) == 0:
+            return JsonResponse(0, safe=False)
+
+        str = ""
+        try:
+            User = models.Commonuser.objects.get(identify=email)
+            username = User.userid
+            return JsonResponse(-1, safe=False)
+        except:
+            str = random_str()
+
+        try:
+            code = models.Code.objects.get(email=email)
+            code.codeid = str
+            code.save()
+        except:
+            try:
+                code = models.Code.objects.create(email=email, codeid=str)
+                code.save()
+            except:
+                return JsonResponse(0, safe=False)
+
+        if send_code_email(email, str):
+            return JsonResponse(1, safe=False)
+        else:
+            return JsonResponse(0, safe=False)
+    else:
+        return JsonResponse(0, safe=False)
+
 

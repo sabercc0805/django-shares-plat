@@ -119,13 +119,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # session 设置
@@ -148,6 +148,7 @@ STATICFILES_DIRS = (
     ('images', os.path.join(STATIC_ROOT, 'images').replace('\\', '/')),
     ('bootstrap', os.path.join(STATIC_ROOT, 'bootstrap').replace('\\', '/')),
     ('uepload', os.path.join(MEDIA_ROOT).replace('\\', '/')),
+    ('qrcode', os.path.join(STATIC_ROOT, 'qrcode').replace('\\', '/')),
 )
 #HERE = os.path.dirname(os.path.abspath(__file__))
 #HERE = os.path.join(HERE, '../')
@@ -157,3 +158,11 @@ STATICFILES_DIRS = (
     # Don‘t forget to use absolute paths, not relative paths.
     #os.path.join(HERE, 'static/').replace('\\', '/'),
 #)
+
+# 发送邮箱验证码
+EMAIL_HOST = "smtp.163.com"     # 服务器
+EMAIL_PORT = 25                 # 一般情况下都为25
+EMAIL_HOST_USER = "fengyadata@163.com"     # 账号
+EMAIL_HOST_PASSWORD = "fengyadata2019"          # 密码 (注意：这里的密码指的是授权码)
+EMAIL_USE_TLS = False       # 一般都为False
+EMAIL_FROM = "fengyadata@163.com"      # 邮箱来自
