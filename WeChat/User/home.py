@@ -1,5 +1,9 @@
+<<<<<<< HEAD
+﻿import os
+=======
 import os
 from django.utils import timezone
+>>>>>>> 3f72703a59df8e218d1001931a9f3097d2e05b78
 from django.http import FileResponse
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
