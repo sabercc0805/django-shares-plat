@@ -83,5 +83,6 @@ urlpatterns = [
     url(r'^apeal/', home.ajax_apeal),
     url(r'^getcode/', home.ajax_getcode),
     url(r'^checkresult/', wechatpay.check_wxpay),
+    url(r'^ceshi/', home.ceshi),
 ]
 

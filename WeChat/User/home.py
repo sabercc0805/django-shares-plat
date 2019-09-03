@@ -1,9 +1,5 @@
-<<<<<<< HEAD
-﻿import os
-=======
 import os
 from django.utils import timezone
->>>>>>> 3f72703a59df8e218d1001931a9f3097d2e05b78
 from django.http import FileResponse
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
@@ -1168,7 +1164,7 @@ def chargeresult(request):
         return redirect("/logout/")
 
     username = request.session['user_id']
-    success = request.GET.get('result', 0)
+    success = int(request.GET.get('result', 0))
     orderid = request.GET.get('orderid', "")
     num = 0
     if success == 1:
@@ -1309,5 +1305,8 @@ def ajax_getcode(request):#获取激活码
             return JsonResponse(0, safe=False)
     else:
         return JsonResponse(0, safe=False)
+
+def ceshi(request):
+    return render(request, 'pay.html')
 
 

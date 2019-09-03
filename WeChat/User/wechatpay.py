@@ -31,7 +31,7 @@ _API_KEY = "zzhr1990hr0805zjw1991pmf04251111"
 _UFDODER_URL = "https://api.mch.weixin.qq.com/pay/unifiedorder" #url是微信下单api
 _NOTIFY_URL = "https//yuntaoz.cn/checkresult"
 myname = socket.getfqdn(socket.gethostname())
-_CREATE_IP = "47.93.201.81"  # 发起支付请求的ip
+_CREATE_IP = socket.gethostbyname(myname)  # 发起支付请求的ip
 
 # 定义字典转XML的函数
 def trans_dict_to_xml(data_dict):
@@ -99,7 +99,7 @@ def wxpay(request):
         except:
             coin = 0
 
-        money = coin*precent/100
+        money = int(coin*precent/100)
         ordertype = ""
         if chargetype > 9:
             ordertype = "1" + str(chargetype)
@@ -149,7 +149,7 @@ def wxpay(request):
             img = qrcode.make(data_dict.get('code_url'))  # 创建支付二维码片
             img.save('static' + '/qrcode/' + qrcode_name)  #
             qrcodepath = '/qrcode/' + qrcode_name
-            return render(request, 'pay.html', {'qrcodepath': qrcodepath})  # 为支付页面模板传入二维码图像
+            return render(request, 'pay.html', {'qrcodepath': qrcodepath,'orderid':out_trade_no})  # 为支付页面模板传入二维码图像
 
         errortype = -3
         return render(request, 'chargetran.html', {"chargetype": errortype, "success": success})
