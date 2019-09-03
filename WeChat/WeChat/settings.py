@@ -161,8 +161,8 @@ STATICFILES_DIRS = (
 
 # 发送邮箱验证码
 EMAIL_HOST = "smtp.163.com"     # 服务器
-EMAIL_PORT = 465                 # 一般情况下都为25
+EMAIL_PORT = 465                # 一般情况下都为25
 EMAIL_HOST_USER = "fengyadata@163.com"     # 账号
 EMAIL_HOST_PASSWORD = "fengyadata2019"          # 密码 (注意：这里的密码指的是授权码)
-EMAIL_USE_SSL = True      # 一般都为False
+EMAIL_USE_SSL = True    
 EMAIL_FROM = "fengyadata@163.com"      # 邮箱来自

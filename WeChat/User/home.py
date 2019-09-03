@@ -1,4 +1,4 @@
-import os
+﻿import os
 from django.utils import timezone
 from django.http import FileResponse
 from django.http import HttpResponse
@@ -1305,8 +1305,5 @@ def ajax_getcode(request):#获取激活码
             return JsonResponse(0, safe=False)
     else:
         return JsonResponse(0, safe=False)
-
-def ceshi(request):
-    return render(request, 'pay.html')
 
 
