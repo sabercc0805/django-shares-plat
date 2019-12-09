@@ -420,6 +420,8 @@ def article(request):
         #model = request.session['model']
         #if model != 1000:
             #return redirect("/logout/")
+    top_list = []
+    common_list = []
     article_list = []
     search = ''
     if request.method == "POST":
@@ -431,24 +433,36 @@ def article(request):
 
     if len(search) == 0:
         if not tag:
-            article_list = models.BlogArticle.objects.filter(delete_flag=0).order_by('-create_time')
+            top_list = models.BlogArticle.objects.filter(delete_flag=0, top=1).order_by('-create_time')
+            common_list = models.BlogArticle.objects.filter(delete_flag=0, top=0).order_by('-create_time')
             tag = '全部'
         else:
             if tag == '全部':
-                article_list = models.BlogArticle.objects.filter(delete_flag=0).order_by('-create_time')
+                top_list = models.BlogArticle.objects.filter(delete_flag=0, top=1).order_by('-create_time')
+                common_list = models.BlogArticle.objects.filter(delete_flag=0, top=0).order_by('-create_time')
             else:
                 tag = request.GET.get('tag')
-                article_list = models.BlogArticle.objects.filter(delete_flag=0, tag=tag).order_by('-create_time')
+                top_list = models.BlogArticle.objects.filter(delete_flag=0, top=1, tag=tag ).order_by('-create_time')
+                common_list = models.BlogArticle.objects.filter(delete_flag=0, top=0, tag=tag).order_by('-create_time')
     else:
         if not tag:
-            article_list = models.BlogArticle.objects.filter(delete_flag=0, title__icontains=search).order_by('-create_time')
+            top_list = models.BlogArticle.objects.filter(delete_flag=0, title__icontains=search, top=1).order_by('-create_time')
+            common_list = models.BlogArticle.objects.filter(delete_flag=0, title__icontains=search, top=0).order_by('-create_time')
             tag = '全部'
         else:
             if tag == '全部':
-                article_list = models.BlogArticle.objects.filter(delete_flag=0, title__icontains=search).order_by('-create_time')
+                top_list = models.BlogArticle.objects.filter(delete_flag=0, title__icontains=search, top=1).order_by('-create_time')
+                common_list = models.BlogArticle.objects.filter(delete_flag=0, title__icontains=search, top=0).order_by('-create_time')
             else:
                 tag = request.GET.get('tag')
-                article_list = models.BlogArticle.objects.filter(delete_flag=0, tag=tag, title__icontains=search).order_by('-create_time')
+                top_list = models.BlogArticle.objects.filter(delete_flag=0, tag=tag, title__icontains=search, top=1).order_by( '-create_time')
+                common_list = models.BlogArticle.objects.filter(delete_flag=0, tag=tag, title__icontains=search, top=0).order_by('-create_time')
+
+    for object in top_list:
+        article_list.append(object)
+
+    for object in common_list:
+        article_list.append(object)
 
     currentPage = request.GET.get('currentPage')
     tag_list = models.BlogTag.objects.filter()
@@ -483,6 +497,7 @@ def articlecontent(request):
     finger = 0
     bcollect = 0
     filecosttype = 0
+    username = ""
     titlename = request.GET.get('title')
     currentPage = request.GET.get('currentPage')
 
@@ -561,9 +576,6 @@ def articlecontent(request):
         if commitUserList:
             commitnum = commitUserList.count()
 
-    #获取该文章评论列表
-    commitlist = models.ArticleContain.objects.filter(title=titlename,commentflag=2).order_by('firstreaddate')
-
 
     if titlename:
         acticle = models.BlogArticle.objects.get(title=titlename)
@@ -582,6 +594,12 @@ def articlecontent(request):
             nLevel = request.session['level']
             if nLevel < right:
                 return render(request, 'articletran.html', {"currentPage": currentPage})
+
+            # 获取该文章评论列表
+        if cancommit == 2:
+            commitlist = models.SpecialCommit.objects.filter(title=titlename, commentflag=2).order_by('-firstreaddate')#y用户自己评论，最新的在上面
+        else:
+            commitlist = models.ArticleContain.objects.filter(title=titlename, commentflag=2).order_by('firstreaddate')
 
         recommendlist = models.BlogArticle.objects.filter(tag=tag,delete_flag=0).order_by('-create_time')[:10]
 
@@ -807,15 +825,24 @@ def ajax_commit(request):
 
     if request.method == "POST":
         title = request.POST.get('title')
+        commentflag = int(request.POST.get('commentflag'))
         username = request.session['user_id']
         commitcontent = request.POST.get("commitcontent")
 
         try:
             bcommit = 1
-            article = models.ArticleContain.objects.get(userid=username, title=title)
-            article.comment = commitcontent
-            article.commentflag = 1
-            article.save()
+            if commentflag == 2:
+                bcommit = 2
+                commit = models.SpecialCommit.objects.create(userid=username, title=title, comment=commitcontent)
+                commit.save()
+            else:
+                bcommit = 1
+                article = models.ArticleContain.objects.get(userid=username, title=title)
+                article.comment = commitcontent
+                article.commentflag = 1
+                article.save()
+
+
             return JsonResponse(bcommit, safe=False)
         except:
             bcommit = -1

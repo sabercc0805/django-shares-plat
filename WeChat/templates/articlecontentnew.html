@@ -140,23 +140,25 @@
             <div style="margin-top: 3px">
              <ul class="list-group" style="border-left: 0;border-right: 0;">
                 {% for commitlast in  commitlist%}
-                    <li class="list-group-item" style="border-left: 0;border-right: 0;border-radius: 0%;border-color: red">
+                    <li class="list-group-item" style="border-left: 0;border-right: 0;border-top:0;border-radius: 0%;border-color: red">
                         <div>
                             <h5 style="margin-top: -3px;margin-bottom: -3px">
-                                {{ commitlast.userid }}:{{ commitlast.comment }}
+                                {{ commitlast.userid }}:{{ commitlast.firstreaddate | date:'Y-m-d H:i:s' }}
                             </h5>
+                            <br/>
+                            <input id='commenttemp{{ commitlast.id }}' type='hidden'  value='{{ commitlast.comment }}' />
+                            <p id="Ueditcomment{{ commitlast.id }}"></p>
                         </div>
                     </li>
                 {% endfor %}
              </ul>
-            <!-- 可以设置无法评论-->
+            <!-- 可以设置无法评论或仅作者可评论-->
                 {% if cancommit == 1 %}
                     {% if request.session.is_login %}
                         {% if commitflag == 0 %}
                              <div id="nocommit" class="row clearfix">
                             <form class='form-login'  action="#">
-                                <p class="form-group">
-                                    {{ commit_form.commitcontent}}
+                                <p class="form-group" id="commitform" style="height: 250px;width: 100%">
                                 </p>
                                 <button  class="btn btn-primary pull-right" type="button" id="ajaxcommit">提交评论</button>
                             </form>
@@ -177,12 +179,11 @@
                                 <h5 class="text-center">很抱歉！您的评论未通过审核，可以重新评论！</h5>
                              </div>
                             <div id="nocommit" class="row clearfix">
-                            <form class='form-login'  action="#">
-                                <p class="form-group">
-                                    {{ commit_form.commitcontent}}
-                                </p>
-                                <button  class="btn btn-primary pull-right" type="button" id="ajaxcommit">提交评论</button>
-                            </form>
+                                <form class='form-login'  action="#">
+                                    <p class="form-group" id="commitform" style="height: 250px;width: 100%">
+                                    </p>
+                                    <button  class="btn btn-primary pull-right" type="button" id="ajaxcommit">提交评论</button>
+                                </form>
                             </div>
                             <div id="alreadycommit" class="row clearfix hidden" style="background-color:lightslategray">
                                 <h5 class="text-center">您已评论正在审核中...</h5>
@@ -195,10 +196,36 @@
                         <a class="article-a text-center" href="/login/"><h5>请登录后进行评论！</h5></a>
                      </div>
                     {% endif %}
-                {% else %}
-                    <div class="row clearfix" style="background-color:lightslategray">
-                        <h5 class="text-center">该文章不能评论！</h5>
-                     </div>
+                {% elif cancommit == 0 %}
+                    {% if request.session.is_login %}
+                        <div class="row clearfix" style="background-color:lightslategray">
+                            <h5 class="text-center">该文章不能评论！</h5>
+                        </div>
+                    {% else %}
+                        <div class="row clearfix" style="background-color:lightslategray">
+                            <a class="article-a text-center" href="/login/"><h5>请登录后进行评论！</h5></a>
+                        </div>
+                    {% endif %}
+                {% elif cancommit == 2 %}
+                     {% if request.session.is_login %}
+                     {% if request.session.user_id == userid %}
+                            <div id="nocommit" class="row clearfix">
+                                <form class='form-login'  action="#">
+                                    <p class="form-group" id="commitform" style="height: 250px;width: 100%">
+                                    </p>
+                                    <button  class="btn btn-primary pull-right" type="button" id="ajaxcommit">提交评论</button>
+                                </form>
+                            </div>
+                     {% else %}
+                          <div class="row clearfix" style="background-color:lightslategray">
+                            <h5 class="text-center">该文章仅作者可评论！</h5>
+                          </div>
+                     {% endif %}
+                    {% else %}
+                         <div class="row clearfix" style="background-color:lightslategray">
+                            <a class="article-a text-center" href="/login/"><h5>请登录后进行评论！</h5></a>
+                        </div>
+                     {% endif %}
                 {% endif %}
             </div>
             <!--推荐-->
@@ -276,7 +303,7 @@
             <div class="row" style="margin-top: -10px">
                 {% if request.session.is_login  %}
                     <div class="col-md-6">
-                    <h5 class="pull-left" style="margin-left: 10px">缝芽币：{{ coin }}</h5>
+                    <h5 class="pull-left" style="margin-left: 10px">缝芽币：{{ coin }} + {{ showgiftcoin }}(赠送)</h5>
                 </div>
                 <div class="col-md-6">
                     <h5 class="pull-left" >评论数：{{ commitnum }}</h5>
@@ -387,6 +414,63 @@
     <script type="text/javascript">
     $(document).ready(function() {
         $("#Uedit").append($("#temp").val());
+         $("#Ueditcomment").append($("#commenttemp").val());
+        {% for commitlast in  commitlist%}
+            $("#Ueditcomment{{ commitlast.id }}").append($("#commenttemp{{ commitlast.id }}").val());
+        {% endfor %}
+
+    {% if cancommit == 2 %}
+        var ue = UE.getEditor('commitform', {
+	toolbars: [
+			[
+	        		'undo', //撤销
+	        		'redo', //重做
+	        		'bold', //加粗
+	        		'indent', //首行缩进
+                    'justifyleft', //居左对齐
+                    'justifyright', //居右对齐
+                    'justifycenter', //居中对齐
+                    'justifyjustify', //两端对齐
+	        		'italic', //斜体
+                    'superscript', //上标
+                    'formatmatch', //格式刷
+                    'insertimage', //多图上传
+                    'emotion', //表情
+                    'spechars', //特殊字符
+	        		'fullscreen', //全屏
+	    		]
+		],
+            maximumWords:1000,
+           serverUrl: '/ueditor/controller/?imagePathFormat=&filePathFormat='
+	})
+        {% elif cancommit == 1 %}
+
+        {% if commitflag != 1 and commitflag != 2 %}
+            var ue = UE.getEditor('commitform', {
+	toolbars: [
+			[
+	        		'undo', //撤销
+	        		'redo', //重做
+	        		'bold', //加粗
+	        		'indent', //首行缩进
+                    'justifyleft', //居左对齐
+                    'justifyright', //居右对齐
+                    'justifycenter', //居中对齐
+                    'justifyjustify', //两端对齐
+	        		'italic', //斜体
+                    'superscript', //上标
+                    'formatmatch', //格式刷
+                    'emotion', //表情
+                    'spechars', //特殊字符
+	        		'fullscreen', //全屏
+	    		]
+		],
+            maximumWords:1000,
+            serverUrl: '/ueditor/controller/?imagePathFormat=&filePathFormat='
+	})
+            {% endif %}
+        {% endif %}
+
 
         $("#totop").click(function (){
                 $('html, body').animate({
@@ -452,15 +536,15 @@
 
         $('#ajaxcommit').click(function () {
 
-             var commitcontent = $("#commitcontent").val();
-
+             var commitcontent = ue.getContent();
         $.ajax({
             url: '/commit/',
             type: 'POST',
             data: {
                 csrfmiddlewaretoken: '{{ csrf_token }}',
                 commitcontent: commitcontent,
-                title:'{{ titlename }}'
+                title:'{{ titlename }}',
+                commentflag:'{{ cancommit }}'
             },
             success: function (ret) {
                if(ret == -1)
@@ -476,6 +560,10 @@
                 $("#alreadycommit").removeClass("hidden");
                 $("#nocommit").addClass("hidden");
                  $("#refusecommit").addClass("hidden");
+            }
+             else if(ret == 2)
+            {
+               window.location.reload();
             }
             }
         })

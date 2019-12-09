@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'superuser',
     'account',
     "DjangoUeditor",
+    'User.templatetags.templatefilter',
     #'werkzeug_debugger_runserver',证书到时候直接域名使用
    # 'django_extensions',
 ]

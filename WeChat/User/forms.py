@@ -1,4 +1,4 @@
-from django import forms
+﻿from django import forms
 from captcha.fields import CaptchaField
 from DjangoUeditor.forms import UEditorField
 from django.forms import widgets
@@ -93,12 +93,18 @@ class ArticleForm(forms.Form):
                                     )
     cost = forms.IntegerField(label="下载附件消耗缝芽币", widget=forms.NumberInput(attrs={'class': 'form-control', 'defalut': '0'}))
     cancommit = forms.ChoiceField(label="是否可以评论",
-                                     choices=((0, '否'), (1, '是'),),
+                                     initial=0,
+                                     choices=((0, '否'), (1, '是'), (2,'仅作者可回复'),),
                                      # (2, '超级会员'),(3, '白金会员'),(4, '钻石会员'),),  # 定义下拉框的选项，元祖第一个值为option的value值，后面为html里面的值
-                                     initial=1,  # 默认选中第二个option
                                      widget=forms.RadioSelect  # 插件表现形式为单选按钮
                                      )
     #标签
+    top = forms.ChoiceField(label="是否置顶",
+                                  choices=((0, '否'), (1, '是'),),
+                                  # (2, '超级会员'),(3, '白金会员'),(4, '钻石会员'),),  # 定义下拉框的选项，元祖第一个值为option的value值，后面为html里面的值
+                                  widget=forms.RadioSelect , # 插件表现形式为单选按钮
+                                  initial=0
+                                  )
     tag = forms.IntegerField(label="教程标签",widget=widgets.RadioSelect(),initial=0)
     articletag = forms.CharField(label="标签", max_length=20,required=False,
                                    widget=forms.TextInput(attrs={'class': 'form-control'}))

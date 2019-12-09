@@ -47,6 +47,7 @@ class BlogArticle(models.Model):
     score = models.IntegerField(db_column='score', default=50)#为方便且节省资源，防止出错，所有涉及到小数的全部以整数代替，/10.0为真实的数值
     scorernumber = models.IntegerField(db_column='scorernumber', default=0)#评分人数（目前无评分为点赞人数）
     cancommit = models.IntegerField(db_column='cancommit', default=0)#是否可以评论0：不可以；1、可以
+    top =  models.IntegerField(db_column='top', default=0)#是否置顶0：是；1、否
     class Meta:
         managed = True
         db_table = 'blogarticle'
@@ -202,11 +203,12 @@ class Usercharge(models.Model):
 
 #教程用户评论及收藏评分等
 class ArticleContain(models.Model):
+    id = models.AutoField(db_column='ID', primary_key=True)
     userid = models.CharField(db_column='UserID', max_length=128)
     title = models.CharField(db_column='title', max_length=100)
     firstreaddate = models.DateTimeField(db_column='ReadDate',auto_now = True)  # Field name made lowercase.
     score = models.IntegerField(db_column='score', default=0)#评分，0默认为未评分
-    comment = models.CharField(db_column='comment', max_length=500,default='')  # Field name made lowercase.
+    comment = UEditorField(db_column='comment', default='')
     collect = models.IntegerField(db_column='collect', default=0)#是否收藏
     finger = models.IntegerField(db_column='finger', default=0)  # 点赞
     commentflag = models.IntegerField(db_column='commentflag', default=0)  # 评论显示/是否评论/评论是否通过 0：未评论；1：已评论还未通过；2：评论且通过；3、不通过重新评论（显示一次后置0，并在消息中心中显示）
@@ -233,7 +235,7 @@ class CreditExchange(models.Model):
     coin = models.IntegerField(db_column='coin')  #兑换缝芽币数量 分为单位
     integrate = models.IntegerField(db_column='integrate')  # 兑换缝芽积分数量
     userid = models.CharField(db_column='UserID', max_length=128)
-    exchangedate = models.DateTimeField(db_column='exchangedate', blank=True, null=True,auto_now=True)  # 兑换时间
+    exchangedate = models.DateTimeField(db_column='exchangedate', blank=True, null=True,auto_now_add=True)  # 兑换时间
     precent = models.IntegerField(db_column='precent',default=100)  # 折扣百分制
     orderstate = models.IntegerField(db_column='orderstate', blank=False,default=0)  # 兑换状态0：未成功；1：兑换成功
     appeal = models.IntegerField(db_column='appeal', blank=False, default=0)  # 订单申诉0：无问题可申诉；1：已申诉；2：已处理申诉结果查看注册邮箱
@@ -284,3 +286,15 @@ class Code(models.Model):#验证码
     class Meta:
         managed = True
         db_table = 'code'
+		
+class SpecialCommit(models.Model):#作者评论
+    id = models.AutoField(db_column='ID', primary_key=True)
+    userid = models.CharField(db_column='UserID', max_length=128)
+    title = models.CharField(db_column='title', max_length=100)
+    firstreaddate = models.DateTimeField(db_column='ReadDate',auto_now = True)  # Field name made lowercase.
+    comment = UEditorField(db_column='comment', default='')
+    commentflag = models.IntegerField(db_column='commentflag', default=2)  # 评论显示/是否评论/评论是否通过 0：未评论；1：已评论还未通过；2：评论且通过；3、不通过重新评论（显示一次后置0，并在消息中心中显示）
+
+    class Meta:
+        managed = True
+        db_table = 'specialcommit'

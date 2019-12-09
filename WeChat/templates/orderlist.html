@@ -1,5 +1,6 @@
 {% extends 'userinfonew.html' %}
 {% load staticfiles %}
+{% load templatefilter %}
 {% block title %}{{ contentname }}{% endblock %}
 
 {% block css %}
@@ -112,7 +113,7 @@
                             <tr>
                                 <td>{{ order.orderid }}</td>
                                 {% if ordertype == 1 %}
-                                    <td>{% widthratio order.money 100 1 %} </td>
+                                    <td>{{ order.money |div:100 }}</td>
                                     <td>{% widthratio order.coin 100 1 %} </td>
                                      {% if order.orderstate == 0 %}
                                          <td>充值失败 </td>

@@ -417,6 +417,8 @@ def articleadd(request):
            cancommit = article_form.cleaned_data['cancommit']
            tag = article_form.cleaned_data['tag']
            articletag = article_form.cleaned_data['articletag']
+           top= 0
+           top = article_form.cleaned_data['top']
 
            if tag == 0:
                if len(articletag) != 0:
@@ -475,7 +477,7 @@ def articleadd(request):
                new_article = models.BlogArticle.objects.create(title=articletitle, content=articlecontent,userid=userid,
                                                                filepath=filepath,cost=cost,user_right=right,rightname=rightname,
                                                                articlecosttype=articlecosttype,articlecost=articlecost,
-                                                               filecosttype=downloadcosttype,cancommit=cancommit,tag=articletag)
+                                                               filecosttype=downloadcosttype,cancommit=cancommit,tag=articletag,top=top)
                new_article.save()
                article_form = ArticleForm({"cost":0,"right":1,"articlecosttype":2,"articlecost":0,"downloadcosttype":2,"cancommit":1,"tag":1})
                return render(request, 'articleadd.html', locals())
@@ -508,7 +510,8 @@ def articlemodify(request):
            cancommit = article_form.cleaned_data['cancommit']
            tag = article_form.cleaned_data['tag']
            articletag = article_form.cleaned_data['articletag']
-
+           top = 0
+           top = article_form.cleaned_data['top']
            if tag == 0:
                if len(articletag) != 0:
                    try:
@@ -558,6 +561,7 @@ def articlemodify(request):
                article.filecosttype = downloadcosttype
                article.cancommit = cancommit
                article.tag = articletag
+               article.top = top
                if len(filepath) > 0:
                    savepath = "C:\\articlefile\\" + articletitle
                    article.filepath = filepath
@@ -612,6 +616,7 @@ def articlemodify(request):
    downloadcosttype = article.filecosttype
    cancommit = article.cancommit
    articletag = article.tag
+   top = article.top
    tag = 1
    try:
        tagget = models.BlogTag.objects.get(name=articletag)

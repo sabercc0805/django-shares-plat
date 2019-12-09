@@ -285,3 +285,9 @@ def check_test(request):
            return HttpResponse('测试成功')
        except:
             return HttpResponse('测试失败')
+
+def wechatauthorizefile(request):
+    return render(request,"MP_verify_7AKOcVh5wQ73jMyU.txt")
+
+def wxopenauthorizefile(request):
+    return render(request,"5688529521.txt")

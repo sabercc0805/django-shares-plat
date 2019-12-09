@@ -28,9 +28,14 @@ from User import home
 from User import wechatpay
 from superuser import super
 from account import account
+from django.views import static
+from django.conf import settings 
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^static/(?P<path>.*)$', static.serve,
+      {'document_root': settings.STATIC_ROOT}),
+    url(r'^ueditor/',include('DjangoUeditor.urls' )),
     url(r'^$',home.index),
     url(r'^index/', home.index),
     url(r'^login/', home.login),
@@ -82,6 +87,8 @@ urlpatterns = [
     url(r'^orderlist/', home.orderlist),
     url(r'^apeal/', home.ajax_apeal),
     url(r'^getcode/', home.ajax_getcode),
-    url(r'^checkresult/', wechatpay.check_wxpay),
+    url(r'^checkresult/', wechatpay.check_wxpay), 
+    url(r'^MP_verify_7AKOcVh5wQ73jMyU.txt', wechatpay.wechatauthorizefile),
+    url(r'^5688529521.txt', wechatpay.wxopenauthorizefile),
 ]
 
