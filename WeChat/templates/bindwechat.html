@@ -1,0 +1,70 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>提现微信绑定</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+        <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+         <style>
+             .sign-button{
+        background-color:greenyellow;
+        outline: none;
+        color: white;
+        border-width: 0px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:3px;
+        font-size: 18px;
+    }
+    .sign-button:hover{
+        background-color:greenyellow;
+        outline: none;
+        color: white;
+       border-width: 1px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:3px;
+        font-size: 18px;
+    }
+
+    .sign-button:focus{
+        background-color:greenyellow;
+        outline: none;
+        color: white;
+       border-width: 1px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:3px;
+        font-size: 18px;
+    }
+         </style>
+    </head>
+    <body>
+       <div class="row center-block"style="text-align: center;">
+           <img src="{% static 'images/ico.png' %}" style="height:140px;width:140px;">
+       </div>
+        <br>
+        <form class='form-login' action="/wechatverify/" method="post">
+            {%csrf_token%}
+            <p>
+            <input name="code" type="text" value="{{ code }}" style="display:none">
+            </p>
+            <p>
+            <input name="state" type="text" value="{{ state }}" style="display:none">
+            </p>
+            <p class="form-group">
+                {{ wechatbind_form.wechatid.label_tag}}
+                {{ wechatbind_form.wechatid}}
+            </p>
+            <div class="row">
+                <h5 class="text-center">非必填项，微信号只作为提醒标志，不影响提现，
+                    为保护您的隐私，您可以不填该选项，但是后续如果您忘记了提现微信，本网站无法找回只能更改提现微信，请注意！</h5>
+            </div>
+            <div class="row">
+                <button type="submit" class="btn btn-primary sign-button center-block">绑定提现微信</button>
+            </div>
+        </form>
+    </body>
+</html>

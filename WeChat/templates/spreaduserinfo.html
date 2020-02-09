@@ -1,0 +1,345 @@
+{% extends 'spreadinfo.html' %}
+{% load templatefilter %}
+{% load staticfiles %}
+{% block title %}{{ contentname }}{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/userinfo.css' %}">
+
+    <style>
+         .class-button{
+        background-color:white;
+        outline: none;
+        color: black;
+        border-width: 1px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:0px;
+        font-size: 18px;
+    }
+
+         .class-button.active{
+        background-color:white;
+        outline: none;
+        color: darkred;
+       border-width: 0px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:0px;
+        font-size: 18px;
+        box-shadow: none;
+    }
+
+    .class-button:hover{
+        background-color:white;
+        outline: none;
+        color: darkred;
+       border-width: 0px;
+        border-color:whitesmoke;
+        border-Radius:0px;
+        font-size: 18px;
+    }
+
+    .class-button:focus{
+        background-color:white;
+        outline: none;
+        color: darkred;
+       border-width: 0px;
+        border-color:whitesmoke;
+        border-Radius:0px;
+        font-size: 18px;
+    }
+
+     .sign-button{
+        background-color:white;
+        outline: none;
+        color: darkred;
+        border-width: 1px;
+        border-color:darkred;
+        border-Radius:3px;
+        font-size: 18px;
+    }
+    .sign-button:hover{
+        background-color:darkred;
+        outline: none;
+        color: white;
+       border-width: 1px;
+        border-color:darkred;
+        border-Radius:3px;
+        font-size: 18px;
+    }
+
+    .sign-button:focus{
+        background-color:darkred;
+        outline: none;
+        color: white;
+       border-width: 1px;
+        border-color:darkred;
+        border-Radius:3px;
+        font-size: 18px;
+    }
+
+     .jiaocheng-button{
+        background-color:rgba(0,0,0,0);
+        outline: none;
+        color: white;
+        border-width: 0px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:0px;
+        font-size: 18px;
+    }
+    .jiaocheng-button:hover{
+        background-color:rgba(0,0,0,0);
+        outline: none;
+        color: darkred;
+       border-width: 0px;
+        border-color:whitesmoke;
+        border-Radius:0px;
+        font-size: 18px;
+    }
+
+    .jiaocheng-button:focus{
+        background-color:rgba(0,0,0,0);
+        outline: none;
+        color: darkred;
+       border-width: 0px;
+        border-color:whitesmoke;
+        border-Radius:0px;
+        font-size: 18px;
+    }
+
+    .class-h4{
+        background-color:white;
+        outline: none;
+        color: black;
+        border-width: 1px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:0px;
+        font-size: 20px;
+        font-weight:bold;
+    }
+     ul li{list-style: none}
+    </style>
+{% endblock %}
+
+{% block exchangecontent %}
+    <div class="row clearfix">
+        <div class="row clearfix" style="height:300px;background-color: #FFFFFF;">
+            <div class="col-md-3" style="height:320px;background-color: gold;margin-top:-10px;margin-bottom:-30px;box-shadow:3px 3px 8px gray;">
+                <br>
+                <br>
+                <a style="border-color: rgba(0,0,0,0)" href="#" data-toggle="modal" data-target="#picmodel"> <img src="{% static 'images/login.jpg' %}" class="img-circle center-block" alt="140x140" width="140px" height="140px" style="box-shadow:-2px 0px 8px #f00,0px -2px 8px #000,0px 2px 8px #9e038a,2px 0px 8px #0f0;"/></a>
+                <h2 class="text-center" style="font-weight: bolder">{{ User.userid }}</h2>
+                <div class="row clearfix" style="background-color: black;position: absolute;bottom: 0px;height: 70px;width: 100%;">
+                    <div class="row">
+                        <h5 class="text-center" style="color: #FFFFFF">石缝芽数据欢迎您！</h5>
+                    </div>
+                    <a class="btn jiaocheng-button center-block" href="/wechatcash/">前往提现<span class="glyphicon glyphicon-hand-right"></span></a>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <h3>我的分销</h3>
+                <HR>
+                <div class="col-md-4">
+                    {% if User.isaccount == 1 %}
+                        <div class="row">
+                        <h3 class="pull-left" style="font-weight: bolder">等级:无限</h3>
+                    </div>
+                    <div class="row">
+                         <h5 class="pull-left">认证推广人，等级无限</h5>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <a href="/spreadlist/?type=3"><h5 class="pull-left">分销数据</h5></a>
+                    </div>
+                    {% else %}
+                        <div class="row">
+                        <h3 class="pull-left" style="font-weight: bolder">等级:Lv{{ level }}</h3>
+                    </div>
+                    <div class="row">
+                         <h5 class="pull-left">{{ User.totalmeony |div:100 }}/{{ nextlevel }}</h5>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <a href="/coin/?type=5"><h5 class="pull-left">分销数据</h5></a>
+                    </div>
+                    {% endif %}
+
+                </div>
+                 <div class="col-md-4">
+                     <div class="row">
+                     <h3 id="showgrate" class="pull-left" style="font-weight: bolder">{{ User.spreadmeony |div:100 }}</h3>
+                     </div>
+                     <div class="row">
+                         <h5 class="pull-left">元</h5>
+                     </div>
+                     <br>
+                     <div class="row">
+                        <a href="/wechatcash/"><h5 class="pull-left">可提现</h5></a>
+                    </div>
+                </div>
+            <div class="col-md-4">
+                     <div class="row">
+                     <h3 id="showgrate" class="pull-left" style="font-weight: bolder">{{ User.spreadprecent }}%</h3>
+                     </div>
+                     <div class="row">
+                         <h5 class="pull-left">分成比例</h5>
+                     </div>
+                     <br>
+                     <div class="row">
+                        <a id="upprecent"><h5 class="pull-left">提升分成</h5></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row clearfix" style="height:100%;background-color: #FFFFFF;">
+            <div class="col-md-12">
+                <h3>我的推广信息</h3>
+                <HR>
+            </div>
+            <div class="col-md-12">
+                <h4 class="text-center"><strong>推广链接:</strong></h4>
+            </div>
+            <div class="col-md-12">
+                <h5 class="text-center">https://www.yuntaoz.cn/?md5={{ User.md5 }}</h5>
+            </div>
+            <div class="col-md-12">
+                <h4 class="text-center"><strong>推广码:</strong></h4>
+            </div>
+            <div class="col-md-12">
+                <h4 class="text-center">{{ User.spreadcode }}</h4>
+            </div>
+            <div class="col-md-12">
+                <h4 class="text-center"><strong>推广二维码:</strong></h4>
+            </div>
+            <div class="col-md-12 center-block">
+                <img class="center-block" src="{% static qrcodepath %}" style="height:200px;width:200px;">
+            </div>
+
+            <div class="col-md-12" id="authorizespread">
+                <h3>认证推广人</h3>
+                <HR>
+            </div>
+
+            {% if User.isaccount == 1 %}
+                <div class="col-md-12">
+                    <h4 class="text-center">恭喜您！您已是认证推广人！</h4>
+                </div>
+            {% else %}
+                <div class="col-md-12">
+                        <form class='form-login' action="/activeaccount/" method="post">
+                            {% csrf_token %}
+                            <p class="form-group">
+                                <span>{{ active_form.code.label_tag }}</span>
+                                {{ active_form.code }}
+                            </p>
+                            <button type="submit" class="btn btn-primary center-block">绑定</button>
+                        </form>
+                    </div>
+                    <div class="row">
+                        <h5 class="text-center">欢迎您绑定推广人，绑定后将获得300积分！</h5>
+                    </div>
+            {% endif %}
+
+            <div class="col-md-12" style="height: 150px;margin-top: 30px;">
+                <h2 class="text-center">敬请期待</h2>
+            </div>
+<!-- 模态框（Modal） -->
+            <div class="modal fade" id="picmodel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	                        <div class="modal-dialog">
+		                        <div class="modal-content">
+			                        <div class="modal-header">
+				                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					                                                                &times;
+                                        </button>
+				                        <h4 class="modal-title" id="myModalLabel">
+					                               上传头像
+                                        </h4>
+			                        </div>
+			                        <div class="modal-body">
+				                       该功能尚未实装，将在下一版本添加，谢谢您的支持！
+			                        </div>
+			                        <div class="modal-footer">
+				                        <input id="input-1a" type="file" class="file" data-show-preview="false">
+			                        </div>
+		                        </div><!-- /.modal-content -->
+	                        </div><!-- /.modal -->
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+    $("#ajaxsign").click(function(){
+        $.get("/sign/",{}, function(ret){
+            if(ret == -1)
+            {
+               $("#errorinfo").text("您提交的信息不对，请重新登录后重试！");
+               $('#errorinfomodel').modal('show');
+            }
+            else if(ret == -2)
+            {
+                $("#errorinfo").text("您尚未登录无法使用签到功能，请登录后重试");
+                $('#errorinfomodel').modal('show');
+            }
+            else if(ret == 0)
+            {
+                $("#errorinfo").text("您今日已签到！");
+                $('#errorinfomodel').modal('show');
+            }
+            else if(ret > 0)
+            {
+                $("#ajaxsign").addClass("active");
+                $("#ajaxsign").text("已签到");
+
+                var textsign = "连续签到"+ ret.toString() + "天";
+                $("#signshow").text(textsign);
+
+                var intergrate = 0;
+
+                if(ret == 1)
+                {
+                    intergrate = 10;
+                }
+                else if(ret == 2)
+                {
+                    intergrate = 15;
+                }
+                else if(ret == 3)
+                {
+                    intergrate = 20;
+                }
+                else if(ret == 4)
+                {
+                    intergrate = 25;
+                }
+                else if(ret == 5)
+                {
+                    intergrate = 30;
+                }
+                else if(ret == 6)
+                {
+                    intergrate = 35;
+                }
+                else
+                {
+                    intergrate = 40;
+                }
+
+                var realgrate = {{ User.integrate }};
+                realgrate += intergrate;
+                $("#showgrate").text(realgrate.toString());
+
+                var text = "连续签到"+ ret.toString() + "天,获得" + intergrate.toString()+ "积分。";
+                $("#keepday").text(text);
+                $('#signmodel').modal('show');
+            }
+        })
+      });
+
+    $("#upprecent").click(function (){
+                $('html, body').animate({
+                    scrollTop: $("#authorizespread").offset().top
+                }, 500);
+            });
+    </script>
+{% endblock %}

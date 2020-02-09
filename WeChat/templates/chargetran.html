@@ -23,9 +23,9 @@
         </div>
         <div class="row text-center">
             {% if chargetype == 1 %}
-                <p>充值失败，若您已扣费请到<a href="#">充值订单</a>中进行申诉，我们会尽快安排专人处理，给您带来的不便我们深感歉意！还有<span id="sp">10</span>秒跳转到用户信息...</p>
+                <p>充值失败，若您已扣费请到<a href="/orderlist/?ordertype=1">充值订单</a>中进行申诉，我们会尽快安排专人处理，给您带来的不便我们深感歉意！还有<span id="sp">10</span>秒跳转到用户信息...</p>
             {% elif chargetype == 2 %}
-                <p>兑换失败，若您已扣除缝芽币请到<a href="#">兑换订单</a>中进行申诉，我们会尽快安排专人处理，给您带来的不便我们深感歉意！还有<span id="sp">10</span>秒跳转到用户信息...</p>
+                <p>兑换失败，若您已扣除缝芽币请到<a href="/orderlist/?ordertype=2">兑换订单</a>中进行申诉，我们会尽快安排专人处理，给您带来的不便我们深感歉意！还有<span id="sp">10</span>秒跳转到用户信息...</p>
             {% elif chargetype == -1 %}
                 <p>兑换失败，您的缝芽币不足请前往充值，谢谢！还有<span id="sp">10</span>秒跳转到用户信息...</p>
             {% elif chargetype == -2 %}

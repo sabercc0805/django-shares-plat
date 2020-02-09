@@ -1,0 +1,32 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>关注微信公众号领取缝芽币</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+        <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    </head>
+    <body>
+    {% if success == 1 %}
+        <div class="row center-block">
+        <p style="height: 150px"></p>
+        <div class="row" style="position: relative">
+            <img class="center-block" src="/static/images/logo.png" style="height: 58px;width: 169px;vertical-align: middle">
+        </div>
+            <br/>
+            <br/>
+        <div class="row">
+            <button class="center-block btn btn-success"  href="authorizeuserresult/userid={{ userid }}&code={{ code }}&appid={{ appid }}">请您点击领取缝芽币！</button>
+        </div>
+        </div>
+    {% else%}
+        <div class="row text-center">
+            <h4 class="text-center" style="color: limegreen">对不起，您的授权失败，请重新扫码或刷新后重新扫码领取！</h4>
+        </div>
+    {% endif %}
+    </body>
+</html>

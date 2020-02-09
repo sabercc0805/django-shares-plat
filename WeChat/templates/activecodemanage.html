@@ -1,0 +1,101 @@
+{% extends 'superindex.html' %}
+{% load staticfiles %}
+{% block title %}激活码管理{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/article.css' %}">
+    <link rel="stylesheet" href="{% static 'css/superindex.css' %}">
+    <style xmlns="http://www.w3.org/1999/html">
+    .article-a:link{color:black}
+     .article-a:visited{color:black}
+    .article-a:hover{color:darkred;
+        text-decoration: none;
+    }
+   </style>
+{% endblock %}
+
+{% block maincontent %}
+    <div class="container">
+        <div class="col-md-10 col-md-offset-1">
+            <form class='form-login'  action="/activecode/" method="post">
+                <p class="form-group">
+                    {{ code_form.precent.label_tag }}
+                    {{ code_form.precent}}
+                </p>
+                <button  class="btn btn-primary" type="submit">生成激活码</button>
+            </form>
+
+            <div class="row clearfix">
+                <h2 class="text-center">激活码列表</h2>
+           </div>
+            <div class="row clearfix" style="text-align: center;">
+                <div class="row clearfix" style="text-align: center;">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th class="text-center">推广激活码</th>
+                                <th class="text-center">生成时间</th>
+                                <th class="text-center">操作管理员</th>
+                                <th class="text-center">分成百分比(%)</th>
+                                <th class="text-center">是否激活</th>
+                                <th class="text-center">激活用户</th>
+                                <th class="text-center">激活日期</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for code in code_list %}
+                            <tr>
+                                <td>{{ code.codeid }}</td>
+                                <td>{{ code.gettime | date:'Y-m-d H:i:s' }}</td>
+                                <td>{{ code.getuser}}</td>
+                                <td>{{ code.spreadprecent}}</td>
+
+                                {% if code.isused == 1 %}
+                                    <td>已激活</td>
+                                    <td>{{ code.userid}}</td>
+                                    <td>{{ code.usetime | date:'Y-m-d'}}</td>
+                                {% else %}
+                                    <td>未激活</td>
+                                    <td>无</td>
+                                    <td>无</td>
+                                {% endif %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row clearfix">
+                 <nav style="text-align: center">
+                        <ul class="pagination pagination-center" id="pager">
+                                {#上一页按钮开始#}
+                                {# 如果当前页有上一页#}
+                            {% if code_list.has_previous %}
+                                {#  当前页的上一页按钮正常使用#}
+                                <li class="previous"><a href="/activecode/?page={{ code_list.previous_page_number }}">上一页</a></li>
+                            {% else %}
+                                {# 当前页的不存在上一页时,上一页的按钮不可用#}
+                                <li class="previous disabled"><a href="#">上一页</a></li>
+                            {% endif %}
+                                {#上一页按钮结束#}
+                                {# 页码开始#}
+                            {% for num in paginator.page_range %}
+                                {% if num == currentPage %}
+                                     <li class="item active"><a href="/activecode/?page={{ num }}">{{ num }}</a></li>
+                                {% else %}
+                                     <li class="item"><a href="/activecode/?page={{ num }}">{{ num }}</a></li>
+                                {% endif %}
+                             {% endfor %}
+                            {#页码结束#}
+                            {# 下一页按钮开始#}
+                            {% if code_list.has_next %}
+                                <li class="next"><a href="/activecode/?page={{ code_list.next_page_number }}">下一页</a></li>
+                            {% else %}
+                                <li class="next disabled"><a href="#">下一页</a></li>
+                            {% endif %}
+                            {# 下一页按钮结束#}
+                        </ul>
+                 </nav>
+            </div>
+        </div>
+        </div>
+    </div>
+{% endblock %}

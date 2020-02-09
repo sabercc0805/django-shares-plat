@@ -165,6 +165,12 @@
                                     <p class="pull-left">&nbsp;{{ artcile.tag }}</p>
                                     <p class="pull-left" style="color: lightgray">&nbsp;|</p>
                                     <p class="pull-left">&nbsp;{{ artcile.create_time | date:'Y-m-d' }}</p>
+                                    {% if artcile.authorize == 1 %}
+                                        {% if artcile.articlecosttype != 0 %}
+                                            <p class="pull-left" style="color: lightgray">&nbsp;|</p>
+                                            <a class="pull-left" href="/plat/articlenocase/?title={{ artcile.title }}&currentPage={{ currentPage }}">&nbsp;免费看</a>
+                                        {% endif %}
+                                    {% endif %}
 
                                 <p class="pull-right">&nbsp;点击率:{{ artcile.click_nums }}&nbsp;&nbsp;&nbsp;&nbsp;</p>
                                 <p class="pull-right" style="color: lightgray">&nbsp;|</p>

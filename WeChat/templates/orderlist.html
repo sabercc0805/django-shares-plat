@@ -123,6 +123,8 @@
                                          <td>未支付(失效) </td>
                                     {% elif order.orderstate == -2 %}
                                          <td>状态不明</td>
+                                     {% elif order.orderstate == 2 %}
+                                         <td>关注公众号赠送</td>
                                     {% endif %}
                                     <td>{{ order.chargedate | date:'Y-m-d' }} </td>
 
@@ -133,6 +135,8 @@
                                          <td>兑换失败 </td>
                                     {% elif order.orderstate == 1 %}
                                          <td>兑换成功 </td>
+                                     {% elif order.orderstate == 2 %}
+                                         <td>签到赠送 </td>
                                     {% endif %}
                                     <td>{{ order.exchangedate | date:'Y-m-d' }} </td>
                                 {% endif %}
@@ -143,8 +147,9 @@
                                     <td>已申诉</td>
                                 {% elif order.appeal == 2 %}
                                     <td>已处理请查看邮箱</td>
+                                {% elif order.appeal == -1 %}
+                                    <td>不可申诉</td>
                                 {% endif %}
-
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -155,7 +160,7 @@
                         <ul class="pagination pagination-center" id="pager">
                                 {#上一页按钮开始#}
                                 {# 如果当前页有上一页#}
-                            {% if article_list.has_previous %}
+                            {% if order_list.has_previous %}
                                 {#  当前页的上一页按钮正常使用#}
                                 <li class="previous"><a href="/orderlist/?page={{ order_list.previous_page_number }}&ordertype={{ ordertype }}&type={{ type }}">上一页</a></li>
                             {% else %}
@@ -173,7 +178,7 @@
                              {% endfor %}
                             {#页码结束#}
                             {# 下一页按钮开始#}
-                            {% if article_list.has_next %}
+                            {% if order_list.has_next %}
                                 <li class="next"><a href="/orderlist/?page={{ order_list.next_page_number }}&ordertype={{ ordertype }}&type={{ type }}">下一页</a></li>
                             {% else %}
                                 <li class="next disabled"><a href="#">下一页</a></li>

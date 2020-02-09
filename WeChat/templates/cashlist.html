@@ -1,0 +1,105 @@
+{% extends 'superindex.html' %}
+{% load staticfiles %}
+{% block title %}订单列表{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/article.css' %}">
+    <link rel="stylesheet" href="{% static 'css/superindex.css' %}">
+    <style xmlns="http://www.w3.org/1999/html">
+    .article-a:link{color:black}
+     .article-a:visited{color:black}
+    .article-a:hover{color:darkred;
+        text-decoration: none;
+    }
+   </style>
+{% endblock %}
+
+{% block maincontent %}
+    <div class="container">
+        <div class="col-md-10 col-md-offset-1">
+            <div class="row clearfix">
+                <h2 class="text-center">订单列表</h2>
+           </div>
+            <div class="row clearfix" style="text-align: center;">
+                <div class="row clearfix" style="text-align: center;">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th class="text-center">订单号</th>
+                                <th class="text-center">用户名</th>
+                                <th class="text-center">提现金额</th>
+                                <th class="text-center">申请时间</th>
+                                <th class="text-center">提现类型</th>
+                                <th class="text-center">微信号</th>
+                                <th class="text-center">银行卡号</th>
+                                <th class="text-center">开户行</th>
+                                <th class="text-center">真实姓名</th>
+                                <th class="text-center">订单状态</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for code in code_list %}
+                            <tr>
+                                <td>{{ order.orderid }}</td>
+                                <td>{{ order.userid }}</td>
+                                <td>{{ order.meony }}</td>
+                                <td>{{ order.time | date:'Y-m-d H:i:s' }}</td>
+                                {% if order.iswechat == 1 %}
+                                    <td>微信提现</td>
+                                {% else %}
+                                    <td>银行卡提现</td>
+                                {% endif %}
+                                <td>{{ order.bankid }}</td>
+                                <td>{{ order.bankname }}</td>
+                                <td>{{ order.realname }}</td>
+                                {% if order.orderstate == 0 %}
+                                    <td>提现失败</td>
+                                {% elif order.orderstate == 1 %}
+                                    <td>提现成功</td>
+                                {% elif order.orderstate == 2 %}
+                                    <td>等待审核</td>
+                                {% elif order.orderstate == 3 %}
+                                    <td>打款中...</td>
+                                {% elif order.orderstate == -1 %}
+                                    <td>审核不通过</td>
+                                {% endif %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row clearfix">
+                 <nav style="text-align: center">
+                        <ul class="pagination pagination-center" id="pager">
+                                {#上一页按钮开始#}
+                                {# 如果当前页有上一页#}
+                            {% if code_list.has_previous %}
+                                {#  当前页的上一页按钮正常使用#}
+                                <li class="previous"><a href="/activecode/?page={{ code_list.previous_page_number }}">上一页</a></li>
+                            {% else %}
+                                {# 当前页的不存在上一页时,上一页的按钮不可用#}
+                                <li class="previous disabled"><a href="#">上一页</a></li>
+                            {% endif %}
+                                {#上一页按钮结束#}
+                                {# 页码开始#}
+                            {% for num in paginator.page_range %}
+                                {% if num == currentPage %}
+                                     <li class="item active"><a href="/activecode/?page={{ num }}">{{ num }}</a></li>
+                                {% else %}
+                                     <li class="item"><a href="/activecode/?page={{ num }}">{{ num }}</a></li>
+                                {% endif %}
+                             {% endfor %}
+                            {#页码结束#}
+                            {# 下一页按钮开始#}
+                            {% if code_list.has_next %}
+                                <li class="next"><a href="/activecode/?page={{ code_list.next_page_number }}">下一页</a></li>
+                            {% else %}
+                                <li class="next disabled"><a href="#">下一页</a></li>
+                            {% endif %}
+                            {# 下一页按钮结束#}
+                        </ul>
+                 </nav>
+            </div>
+        </div>
+        </div>
+    </div>
+{% endblock %}

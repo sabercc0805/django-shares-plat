@@ -28,15 +28,24 @@ from User import home
 from User import wechatpay
 from superuser import super
 from account import account
-from django.views import static
-from django.conf import settings 
+from User import views
+
+plat_patterns = [
+    url(r'^authorizeinfo/', home.authorizeinfo),
+    url(r'^articlenocase/', home.authorizenocase),
+    url(r'^articlenocasetran/', home.ajax_checkarticle),
+    url(r'^allconcernarticle/', home.allconcernarticle),
+    url(r'^allconcerncoin/', home.allconcerncoin),
+    url(r'^authorizecallback/(?P<userid>\w+)/$', wechatpay.call_back_authorize),
+    url(r'^componentauthorize/(?P<userid>\w+)/$', wechatpay.authorize_user_code),
+    url(r'^componentauthorizearticle/(?P<userid>\w+)/(?P<title>\S\s+)/$', wechatpay.authorize_article),
+]
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^static/(?P<path>.*)$', static.serve,
-      {'document_root': settings.STATIC_ROOT}),
+    url(r'^$',home.tranupdate),
+    url(r'^uindex/', home.tranupdate),
     url(r'^ueditor/',include('DjangoUeditor.urls' )),
-    url(r'^$',home.index),
     url(r'^index/', home.index),
     url(r'^login/', home.login),
     url(r'^register/', home.register),
@@ -64,6 +73,7 @@ urlpatterns = [
     url(r'^datamodify/', super.centerdatamodify),
     url(r'^showdata/', super.showdata),
     url(r'^iframe/', super.iframe),
+    url(r'^activecode/', super.activecode),
     url(r'^showcommondata/', home.showdata),
     url(r'^iframecommon/', home.iframe),
     url(r'^about/', home.about),
@@ -87,8 +97,36 @@ urlpatterns = [
     url(r'^orderlist/', home.orderlist),
     url(r'^apeal/', home.ajax_apeal),
     url(r'^getcode/', home.ajax_getcode),
-    url(r'^checkresult/', wechatpay.check_wxpay), 
+    url(r'^checkresult/', wechatpay.check_wxpay),
     url(r'^MP_verify_7AKOcVh5wQ73jMyU.txt', wechatpay.wechatauthorizefile),
-    url(r'^5688529521.txt', wechatpay.wxopenauthorizefile),
+    url(r'^spreadbind/', home.spreadbindlist),
+    url(r'^spreadlist/', home.spreaduorderlist),
+    url(r'^activatespread/', home.ActivateSpread),
+    url(r'^spreadinfo/', home.ShowSpreadInfo),
+    url(r'^bind/', home.bind),
+    url(r'^real/', home.real),
+    url(r'^getcashcode/', home.ajax_getcashcode),
+    url(r'^bindbank/', home.bindbank),
+    url(r'^bankcash/', home.bankcash),
+    url(r'^bankcashlist/', home.bankcashlist),
+    url(r'^wechatcash/', home.wechatcash),
+    url(r'^wechatcashlist/', home.wechatcashlist),
+    url(r'^spreadapeal/', home.ajax_spreadapeal),
+    url(r'^cashmanage/', super.cashmanage),
+    url(r'^cashapprove/', super.cashapprove),
+    url(r'^cashbank/', super.cashbank),
+    url(r'^cashsucess/', super.cashsucess),
+    url(r'^managecashlist/', super.cashlist),
+    url(r'^cashappeallist/', super.cashappealmanage),
+    url(r'^cashappeal/', super.cashappeal),
+    url(r'^wechatbind/', home.wechatbind),
+    url(r'^wechatverify/', home.wechatverify),
+#三方平台相关url
+    url(r'^openweiixn/', wechatpay.openweixin),
+    url(r'^plat/', include(plat_patterns)),
+    #url(r'^componentauthorizeresult/', wechatpay.authorize_user_result),
+#ceshi
+    url(r'^ce/(?P<id>\w+)/$', home.ce),
+
 ]
 

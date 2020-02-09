@@ -157,14 +157,15 @@
                 <HR>
                 <div class="col-md-6">
                     <div class="row">
-                        <h3 class="pull-left" style="font-weight: bolder">{{ fengyacoin }}</h3>
+                        <h3 class="pull-left" style="font-weight: bolder">{{ fengyacoin }}+{{ giftcoin }}</h3>
                     </div>
                     <div class="row">
-                         <h5 class="pull-left">缝芽币</h5>
+                         <h5 class="pull-left">缝芽币+赠送</h5>
                     </div>
                     <br>
                     <div class="row">
-                        <a href="/coin/?type=5"><h5 class="pull-left">充值</h5></a>
+                        <span> <a href="/coin/?type=5"><h5 class="pull-left">充值</h5></a>
+                            <a id="concern" href="#" data-toggle="modal" data-target="#concernmodel"><h5 class="pull-left">(免费领取缝芽币)</h5></a></span>
                     </div>
                 </div>
                  <div class="col-md-6">
@@ -248,6 +249,30 @@
 
             <div class="col-md-12" style="margin-top: 20px;">
                 <a class="btn sign-button center-block" style="width:178px" href="#" data-toggle="modal" data-target="#passwordmodel">修改密码</a>
+            </div>
+
+            <div class="col-md-12">
+                <h3>绑定推广人</h3>
+                <HR>
+            </div>
+            <div class="col-md-12">
+                {% if isbind == 1 %}
+                    <h4 class="text-center">恭喜您！已绑定推广人</h4>
+                {% else %}
+                    <div class="row">
+                        <form class='form-login' action="/bind/" method="post">
+                            {% csrf_token %}
+                            <p class="form-group">
+                                <span>{{ active_form.code.label_tag }}</span>
+                                {{ active_form.code }}
+                            </p>
+                            <button type="submit" class="btn btn-primary center-block">绑定</button>
+                        </form>
+                    </div>
+                    <div class="row">
+                        <h5 class="text-center">欢迎您绑定推广人，绑定后将获得300积分！</h5>
+                    </div>
+                {% endif %}
             </div>
 
             <div class="col-md-12" style="height: 150px;margin-top: 30px;">
@@ -335,6 +360,77 @@
                                         <h5 class="pull-left" style="margin-left: 10px">2、连续签到7天以上，每天固定获得40积分；</h5>
                                         <h5 class="pull-left" style="margin-left: 10px">3、若中间断签则连续签到归零，从第一天开始累积。</h5>
                                         <h5 class="pull-left" style="margin-left: 10px">4、签到规则及积分获取的最终解释权归属于石缝芽数据</h5>
+                                        </div>
+			                        </div>
+		                        </div><!-- /.modal-content -->
+	                        </div><!-- /.modal -->
+                        </div>
+
+                        <div class="modal fade" id="concernmodel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	                        <div class="modal-dialog">
+		                        <div class="modal-content">
+			                        <div class="modal-header">
+				                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					                                                                &times;
+                                        </button>
+				                        <h4 class="modal-title" id="myModalLabel">
+					                               关注微信号赠送缝芽币
+                                        </h4>
+			                        </div>
+			                        <div class="modal-body">
+                                        {% if isalready == 1 %}
+                                            <div class="row clearfix">
+                                                <h4 class="text-center">您今日已经领取过缝芽币，请明日再来领取！</h4>
+                                            </div>
+                                        {% elif isalready == 0 %}
+				                       <div class="row clearfix">
+                                           <h4 class="text-center">每日领取缝芽币步骤如下</h4>
+                                       </div>
+                                         <div class="row clearfix">
+                                           <div class="col-md-6">
+                                               <div class="row">
+                                                    <h4 class="text-center"><strong>第一步：</strong>微信扫码关注公众号</h4>
+                                                    <h5 class="text-center">(已关注可以省略该步)</h5>
+                                                    <br/>
+                                               </div>
+                                                <div class="row center-block"style="text-align: center;">
+                                                    <img src="{{ qrcodeurl }}" style="height:200px;width:200px;">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="row">
+                                                    <h4 class="text-center"><strong>第二步：</strong>微信扫码授权领取缝芽币</h4>
+                                                    <br/>
+                                                    <br/>
+                                                </div>
+                                                <div class="row center-block"style="text-align: center;">
+                                                    <img src="{% static qrcodepath %}" style="height:200px;width:200px;">
+                                                </div>
+                                            </div>
+                                            {% elif isalready == 2 %}
+                                            <div class="row clearfix">
+                                                <h4 class="text-center">恭喜您，您已经关注了目前全部公众号，今日可以直接点击下方按钮免费领取缝芽币！</h4>
+                                            </div>
+                                            <div class="row clearfix center-block">
+                                                <button class="center-block btn btn-primary class-button" href="/palt/allconcerncoin/">免费领取缝芽币</button>
+                                            </div>
+                                             {% else %}
+                                                <div class="row clearfix">
+                                                    <h4 class="text-center">对不起，未获取到相关信息，请您稍后重试或刷新页面！</h4>
+                                                </div>
+                                             {% endif %}
+                                         </div>
+			                        <div class="modal-footer">
+                                        <div class="row">
+                                        <h4 class="pull-left" style="margin-left: 10px">领取规则</h4>
+                                        </div>
+                                        <div class="row">
+                                        <h5 class="pull-left" style="margin-left: 10px">1、每日扫码关注推荐公众号，可以领取5缝芽币；</h5>
+                                        <h5 class="pull-left" style="margin-left: 10px">2、若您已关注该公众号，还未领取缝芽币，可以直接扫码领取；</h5>
+                                        <h5 class="pull-left" style="margin-left: 10px">3、领取时需要关注微信授权验证，请您同意授权，否则无法领取；</h5>
+                                        <h5 class="pull-left" style="margin-left: 10px">4、每日只能领取一次，系统自动限制，每日上午9点进行更新；</h5>
+                                        <h5 class="pull-left" style="margin-left: 10px">5、赠送缝芽币仅可以购买文章及附件权限，不可兑换积分或交易；</h5>
+                                        <h5 class="pull-left" style="margin-left: 10px">6、领取缝芽币的最终解释权归属于石缝芽数据。</h5>
                                         </div>
 			                        </div>
 		                        </div><!-- /.modal-content -->

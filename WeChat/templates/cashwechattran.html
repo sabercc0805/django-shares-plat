@@ -1,0 +1,93 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+     <meta charset="UTF-8">
+        <title>微信提现</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="{% static 'css/TimeCircles.css' %}">
+        <script src="{% static 'js/jquery-3.3.1.min.js' %}">
+        </script>
+        <script src="{% static 'js/TimeCircles.js' %}"></script>
+
+    </head>
+    <body>
+        <div class="row">
+            <div class="someTimer" data-timer="21" style="width: 200px; margin: 0 auto;"></div>
+        </div>
+        <div class="row">
+            <h4>正在提现中，倒计时结束或页面跳转前请不要关闭页面！</h4>
+        </div>
+<script>
+
+    onload=function () {
+        setInterval(go,1000)
+        setInterval(check,2000)
+
+        $('.someTimer').TimeCircles({
+		time : {
+			Days: {
+				show: false,
+				text: "天",
+				color: "#FC6"
+			},
+			Hours: {
+				show: false,
+				text: "时",
+				color: "#9CF"
+			},
+			Minutes: {
+				show: false,
+				text: "分",
+				color: "#BFB"
+			},
+			Seconds: {
+				show: true,
+				text: "秒",
+				color: "#BFB"
+			}
+		}
+		,
+		refresh_interval: 0.1,
+		count_past_zero: false,
+		circle_bg_color: "#eee",
+		fg_width: 0.05,
+		bg_width: 1
+	});
+
+    };
+
+    var x=10;
+    function go() {
+        if (x>=0){
+            document.getElementById("sp").innerText=x;
+        }else {
+            location.href="/cashresult/?result=3&orderid={{ orderid }}";
+        }
+        x--;
+    };
+
+    function check() {
+       if (x > 0)
+            {
+                $.get("/checkcash/?orderid={{ orderid }}",{}, function(ret){
+            if (ret == 1) {
+                    location.href = "/cashresult/?result=1&orderid={{ orderid }}";
+                } else if (ret == 0) {
+                    location.href = "/cashresult/?result=0&orderid={{ orderid }}";
+                }
+                else if (ret == 3) {
+                    location.href = "/cashresult/?result=3&orderid={{ orderid }}";
+                }
+        })
+            }
+    };
+
+</script>
+    </body>
+</html>
+
+
+
+

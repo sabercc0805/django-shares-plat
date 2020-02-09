@@ -1,0 +1,29 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Trans</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+    </head>
+    <body>
+        <p>恭喜您！已成功绑定推广人，300积分已入账！还有<span id="sp">5</span>秒跳转到用户信息页面...</p>
+<script>
+    onload=function () {
+        setInterval(go,1000)
+    };
+    var x=4;
+    function go() {
+        if (x>=0){
+            document.getElementById("sp").innerText=x;
+        }else {
+            location.href="/userinfo/";
+        }
+        x--;
+    }
+</script>
+    </body>
+</html>
