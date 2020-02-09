@@ -1,0 +1,3 @@
+Migrations for 'User':
+  User\migrations\0002_orderover_wechatid.py
+    - Add field wechatid to orderover

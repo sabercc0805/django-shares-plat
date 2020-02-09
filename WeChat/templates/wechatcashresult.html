@@ -1,0 +1,50 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>支付结果</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+    </head>
+    <body>
+    {% if result == 1 %}
+        <div class="row text-center">
+            <h2 style="color: red">恭喜您，提现成功！</h2>
+        </div>
+        <div class="row text-center">
+            <p>请注意关注微信零钱到账提醒！还有<span id="sp">10</span>秒跳转到微信提现页面...</p>
+        </div>
+    {% else%}
+        <div class="row text-center">
+            <h2 style="color: limegreen">对不起，{{ content }}</h2>
+        </div>
+        <div class="row text-center">
+            {% if result == 0 %}
+                <p>钱款已原路退回余额，失败原因：{{ failreason }}，若您有疑问请到<a href="/wechatcashlist/">微信提现订单</a>中进行申诉，我们会尽快安排专人处理，给您带来的不便我们深感歉意！还有<span id="sp">10</span>秒跳转到微信提现页面...</p>
+            {% elif result == -1 %}
+                <p>提现订单状态不明，请您立即到<a href="/wechatcashlist/">微信提现订单</a>进行申诉，我们会尽快安排专人处理，给您带来的不便我们深感歉意！还有<span id="sp">10</span>秒跳转到微信提现页面...</p>
+            {% elif result == 3 %}
+                <p>微信尚未返回提现结果，提现订处理中，请您稍后到<a href="/wechatcashlist/">微信提现订单</a>查询结果，如出现状态不明订单请您立刻申诉！还有<span id="sp">10</span>秒跳转到微信提现页面...</p>
+            {% endif %}
+
+    {% endif %}</div>
+<script>
+    onload=function () {
+        setInterval(go,1000)
+    };
+    var x=9;
+    function go() {
+
+        if (x>=0){
+            document.getElementById("sp").innerText=x;
+        }else {
+                location.href="/userinfo/";
+        }
+        x--;
+    }
+</script>
+    </body>
+</html>

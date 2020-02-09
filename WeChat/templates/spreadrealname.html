@@ -1,0 +1,126 @@
+{% extends 'spreadinfo.html' %}
+{% load staticfiles %}
+{% load templatefilter %}
+{% block title %}{{ contentname }}{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/userinfo.css' %}">
+
+    <style>
+         .class-button{
+        background-color:white;
+        outline: none;
+        color: black;
+        border-width: 1px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:0px;
+        font-size: 18px;
+    }
+
+         .class-button.active{
+        background-color:white;
+        outline: none;
+        color: darkred;
+       border-width: 0px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:0px;
+        font-size: 18px;
+        box-shadow: none;
+    }
+
+    .class-button:hover{
+        background-color:white;
+        outline: none;
+        color: darkred;
+       border-width: 0px;
+        border-color:whitesmoke;
+        border-Radius:0px;
+        font-size: 18px;
+    }
+
+    .class-button:focus{
+        background-color:white;
+        outline: none;
+        color: darkred;
+       border-width: 0px;
+        border-color:whitesmoke;
+        border-Radius:0px;
+        font-size: 18px;
+    }
+
+    .sign-button{
+        background-color:white;
+        outline: none;
+        color: darkred;
+        border-width: 1px;
+        border-color:darkred;
+        border-Radius:3px;
+        font-size: 18px;
+    }
+    .sign-button:hover{
+        background-color:darkred;
+        outline: none;
+        color: white;
+       border-width: 1px;
+        border-color:darkred;
+        border-Radius:3px;
+        font-size: 18px;
+    }
+
+    .sign-button:focus{
+        background-color:darkred;
+        outline: none;
+        color: white;
+       border-width: 1px;
+        border-color:darkred;
+        border-Radius:3px;
+        font-size: 18px;
+    }
+    .class-h4{
+        background-color:white;
+        outline: none;
+        color: black;
+        border-width: 1px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:0px;
+        font-size: 20px;
+        font-weight:bold;
+    }
+     ul li{list-style: none}
+    </style>
+{% endblock %}
+
+{% block exchangecontent %}
+    <div class="row clearfix">
+           <div class="row clearfix">
+                <h2 class="text-center">{{ contentname }}</h2>
+           </div>
+            <div class="row clearfix" style="text-align: center;">
+                <div class="row clearfix" style="text-align: center;">
+                    {% if isreal %}
+                        <h4 class="text-center">您已实名认证，可以进行提现操作！</h4>
+                        <h5 class="text-center">{{ realname }}</h5>
+                        <h5 class="text-center">{{ cardid }}</h5>
+                    {% else %}
+                        <form class='form-login' action="/real/" method="post">
+                         {% csrf_token %}
+                        <p class="form-group">
+                            {{ realname_form.realname.label_tag}}
+                            {{ realname_form.realname}}
+                        </p>
+                        <p class="form-group">
+                            {{ realname_form.cardid.label_tag}}
+                            {{ realname_form.cardid}}
+                        </p>
+                        <button type="submit" class="btn btn-primary center-block">认证</button>
+                        </form>
+                    {% endif %}
+                </div>
+                <HR/>
+                <BR/>
+                <div class="row clearfix">
+                    <h5 class="text-center" >请认真准确填写实名认证,一旦填写不可修改，实名认证关系到您的提现，如有问题只能联系本网站进行更换。</h5>
+                </div>
+            </div>
+    </div>
+{% endblock %}

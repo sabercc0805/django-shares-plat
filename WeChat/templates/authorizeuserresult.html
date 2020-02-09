@@ -1,0 +1,36 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>领取缝芽币结果</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+        <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    </head>
+    <body>
+    {% if sign == 1 %}
+        <div class="row text-center">
+            <h4 class="text-center" style="color: red">恭喜您！获得5缝芽币，你可以到我的信息中查看！</h4>
+        </div>
+    {% elif sign == 0 %}
+        <div class="row text-center">
+            <h4 class="text-center" style="color: limegreen">对不起，您的授权失败，请重新扫码领取缝芽币！</h4>
+        </div>
+    {% elif sign == -1 %}
+        <div class="row text-center">
+            <h4 class="text-center" style="color: limegreen">对不起，您的尚未关注公众号，请关注后重新扫码领取缝芽币！</h4>
+        </div>
+    {% elif sign == -2 %}
+        <div class="row text-center">
+            <h4 class="text-center" style="color: limegreen">对不起，今日已领取过缝芽币，请明日关注公众号后再次领取！</h4>
+        </div>
+    {% elif sign == -3 %}
+        <div class="row text-center">
+            <h4 class="text-center" style="color: limegreen">十分抱歉，网站数据出错，请稍后重新扫码领取缝芽币！</h4>
+        </div>
+    {% endif %}
+    </body>
+</html>

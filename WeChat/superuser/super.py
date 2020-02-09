@@ -11,9 +11,24 @@ from User import models
 from User.forms import UserForm
 from User.forms import ArticleForm
 from User.forms import CenterForm
+from User.forms import ActiveCodeform
+
 from django.http import Http404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from User.emailsend import get_active_code
+from django.db.models import F
 
+def loginverify(func):#登陆验证装饰器
+    def inner(request):
+        if not request.session.get('is_login', None):
+            return redirect('/superindex/')
+
+        model = request.session['model']
+        if model != 1001:
+            return redirect("/superlogout/")
+        return func(request)
+
+    return inner
 
 def iframe(request):
     if not request.session.get('is_login', None):
@@ -417,6 +432,10 @@ def articleadd(request):
            cancommit = article_form.cleaned_data['cancommit']
            tag = article_form.cleaned_data['tag']
            articletag = article_form.cleaned_data['articletag']
+           top= 0
+           top = article_form.cleaned_data['top']
+           authorize = 0
+           authorize = article_form.cleaned_data['authorize']
 
            if tag == 0:
                if len(articletag) != 0:
@@ -475,12 +494,13 @@ def articleadd(request):
                new_article = models.BlogArticle.objects.create(title=articletitle, content=articlecontent,userid=userid,
                                                                filepath=filepath,cost=cost,user_right=right,rightname=rightname,
                                                                articlecosttype=articlecosttype,articlecost=articlecost,
-                                                               filecosttype=downloadcosttype,cancommit=cancommit,tag=articletag)
+                                                               filecosttype=downloadcosttype,cancommit=cancommit,tag=articletag,top=top
+                                                               ,authorize=authorize)
                new_article.save()
-               article_form = ArticleForm({"cost":0,"right":1,"articlecosttype":2,"articlecost":0,"downloadcosttype":2,"cancommit":1,"tag":1})
+               article_form = ArticleForm({"cost":0,"right":1,"articlecosttype":2,"articlecost":0,"downloadcosttype":2,"cancommit":0,"tag":1,"top":0,"authorize":0})
                return render(request, 'articleadd.html', locals())
 
-   article_form = ArticleForm({"cost":0,"right":1,"articlecosttype":2,"articlecost":0,"downloadcosttype":2,"cancommit":1,"tag":1})
+   article_form = ArticleForm({"cost":0,"right":1,"articlecosttype":2,"articlecost":0,"downloadcosttype":2,"cancommit":0,"tag":1,"top":0,"authorize":0})
    return render(request, 'articleadd.html',locals())
 
 def articlemodify(request):
@@ -508,7 +528,10 @@ def articlemodify(request):
            cancommit = article_form.cleaned_data['cancommit']
            tag = article_form.cleaned_data['tag']
            articletag = article_form.cleaned_data['articletag']
-
+           top = 0
+           top = article_form.cleaned_data['top']
+           authorize = 0
+           authorize = article_form.cleaned_data['authorize']
            if tag == 0:
                if len(articletag) != 0:
                    try:
@@ -558,6 +581,8 @@ def articlemodify(request):
                article.filecosttype = downloadcosttype
                article.cancommit = cancommit
                article.tag = articletag
+               article.top = top
+               article.authorize = authorize
                if len(filepath) > 0:
                    savepath = "C:\\articlefile\\" + articletitle
                    article.filepath = filepath
@@ -612,6 +637,8 @@ def articlemodify(request):
    downloadcosttype = article.filecosttype
    cancommit = article.cancommit
    articletag = article.tag
+   top = article.top
+   authorize = article.authorize
    tag = 1
    try:
        tagget = models.BlogTag.objects.get(name=articletag)
@@ -864,4 +891,245 @@ def commitmanage(request):
         return redirect("/superindex/")
 
 
+def activecode(request):
+    if not request.session.get('is_login', None):
+        # 如果本来就未登录，也就没有登出一说
+        return redirect("/superindex/")
 
+    model = request.session['model']
+    if model != 1001:
+        return redirect("/superlogout/")
+
+    userid = request.session["user_id"]
+    if request.method == "POST":
+        info = "生成激活码失败，请重试！"
+        try:
+            precent = request.POST["precent"]
+            code = get_active_code()
+            if len(code) == 0:
+                return render(request, 'commoninfotran.html', {"info": info})
+
+            newcode = models.SpreadCode.objects.create(codeid=code, getuser=userid, spreadprecent=precent)
+            newcode.save()
+            return redirect("/activecode/")
+        except:
+            return render(request, 'commoninfotran.html', {"info": info})
+
+
+    kind = 1
+    code_list = []
+    code_form = ActiveCodeform()
+
+    try:
+        code_list = models.SpreadCode.objects.all().order_by('-gettime')
+    except:
+        code_list = []
+
+    paginator = Paginator(code_list, 15)
+    # 从前端获取当前的页码数,默认为1
+    page = request.GET.get('page', 1)
+
+    # if int(page) > article_list.count()/10:
+    # raise Http404("Page does not exist")
+    # 把当前的页码数转换成整数类型
+    currentPage = int(page)
+
+    try:
+        code_list = paginator.page(page)  # 获取当前页码的记录
+    except PageNotAnInteger:
+        code_list = paginator.page(1)  # 如果用户输入的页码不是整数时,显示第1页的内容
+    except EmptyPage:
+        code_list = paginator.page(paginator.num_pages)  # 如果用户输入的页数不在系统的页码列表中时,显示最后一页的内容
+
+    return render(request, 'activecodemanage.html',locals())
+
+@loginverify
+def cashmanage(request):
+    kind = 1
+    contentname = "提现审核"
+    order_list = []
+
+    try:
+        order_list = models.CashOrder.objects.filter(iswechat=0,orderstate=2).order_by('time')
+    except:
+        info="系统读取数据不成功，请检查数据库连接，或稍后再试！"
+        return render(request, 'commoninfotran.html')
+
+    paginator = Paginator(order_list, 15)
+    # 从前端获取当前的页码数,默认为1
+    page = request.GET.get('page', 1)
+
+    currentPage = int(page)
+
+    try:
+        order_list = paginator.page(page)  # 获取当前页码的记录
+    except PageNotAnInteger:
+        order_list = paginator.page(1)  # 如果用户输入的页码不是整数时,显示第1页的内容
+    except EmptyPage:
+        order_list = paginator.page(paginator.num_pages)  # 如果用户输入的页数不在系统的页码列表中时,显示最后一页的内容
+
+    return render(request, 'cashmanage.html',locals())
+
+@loginverify
+def cashapprove(request):
+    orderid = request.GET.get('id')
+    identify = int(request.GET.get('identify'))
+    page = request.GET.get('page', 1)
+
+    try:
+        if identify == 1:
+            order = models.CashOrder.objects.get(orderid=orderid)
+            order.orderstate = 3
+            order.save()
+        else:
+            order = models.CashOrder.objects.get(orderid=orderid)
+            userid = order.userid
+            meony = order.meony
+            order.orderstate = -1
+            order.appeal = 0
+            order.save()
+            # 失败返回钱数
+            User = models.Commonuser.objects.get(userid=userid)
+            User.spreadmeony = F('spreadmeony') + meony
+            User.save()
+            # 恢复次数
+            BindUser = models.CashBind.objects.get(userid=userid)
+            BindUser.banktimes = BindUser.banktimes + 1
+            BindUser.save()
+    except:
+        info = "系统写入参数不成功，请检查数据库连接，或稍后再试！"
+        return render(request, 'commoninfotran.html')
+
+    url = "/cashmanage/?page=" + str(page)
+    return redirect(url)
+
+@loginverify
+def cashbank(request):
+    kind = 1
+    contentname = "提现打款"
+    order_list = []
+
+    try:
+        order_list = models.CashOrder.objects.filter(iswechat=0,orderstate=3).order_by('time')
+    except:
+        info="系统读取数据不成功，请检查数据库连接，或稍后再试！"
+        return render(request, 'commoninfotran.html')
+
+    paginator = Paginator(order_list, 15)
+    # 从前端获取当前的页码数,默认为1
+    page = request.GET.get('page', 1)
+
+    currentPage = int(page)
+
+    try:
+        order_list = paginator.page(page)  # 获取当前页码的记录
+    except PageNotAnInteger:
+        order_list = paginator.page(1)  # 如果用户输入的页码不是整数时,显示第1页的内容
+    except EmptyPage:
+        order_list = paginator.page(paginator.num_pages)  # 如果用户输入的页数不在系统的页码列表中时,显示最后一页的内容
+
+    return render(request, 'cashtobank.html',locals())
+
+@loginverify
+def cashsucess(request):
+    orderid = request.GET.get('id')
+    identify = int(request.GET.get('identify'))
+    page = request.GET.get('page', 1)
+
+    try:
+        if identify == 1:
+            order = models.CashOrder.objects.get(orderid=orderid)
+            order.orderstate = 1
+            order.appeal = 0
+            order.save()
+        else:
+            order = models.CashOrder.objects.get(orderid=orderid)
+            userid = order.userid
+            meony = order.meony
+            order.orderstate = 0
+            order.appeal = 0
+            order.save()
+            #失败返回钱数
+            User = models.Commonuser.objects.get(userid=userid)
+            User.spreadmeony = F('spreadmeony') + meony
+            User.save()
+            #恢复次数
+            BindUser =  models.CashBind.objects.get(userid=userid)
+            BindUser.banktimes = BindUser.banktimes + 1
+            BindUser.save()
+    except:
+        info = "系统写入参数不成功，请检查数据库连接，或稍后再试！"
+        return render(request, 'commoninfotran.html')
+
+    url = "/cashbank/?page=" + str(page)
+    return redirect(url)
+
+@loginverify
+def cashlist(request):
+    kind = 1
+    contentname = "所有提现订单"
+    order_list = []
+
+    try:
+        order_list = models.CashOrder.objects.all().order_by('-time')
+    except:
+        info="系统读取数据不成功，请检查数据库连接，或稍后再试！"
+        return render(request, 'commoninfotran.html')
+
+    paginator = Paginator(order_list, 15)
+    # 从前端获取当前的页码数,默认为1
+    page = request.GET.get('page', 1)
+
+    currentPage = int(page)
+
+    try:
+        order_list = paginator.page(page)  # 获取当前页码的记录
+    except PageNotAnInteger:
+        order_list = paginator.page(1)  # 如果用户输入的页码不是整数时,显示第1页的内容
+    except EmptyPage:
+        order_list = paginator.page(paginator.num_pages)  # 如果用户输入的页数不在系统的页码列表中时,显示最后一页的内容
+
+    return render(request, 'cashorderlist.html',locals())
+
+@loginverify
+def cashappealmanage(request):
+    kind = 1
+    order_list = []
+
+    try:
+        order_list = models.CashOrder.objects.filter(appeal=1).order_by('time')
+    except:
+        info="系统读取数据不成功，请检查数据库连接，或稍后再试！"
+        return render(request, 'commoninfotran.html')
+
+    paginator = Paginator(order_list, 15)
+    # 从前端获取当前的页码数,默认为1
+    page = request.GET.get('page', 1)
+
+    currentPage = int(page)
+
+    try:
+        order_list = paginator.page(page)  # 获取当前页码的记录
+    except PageNotAnInteger:
+        order_list = paginator.page(1)  # 如果用户输入的页码不是整数时,显示第1页的内容
+    except EmptyPage:
+        order_list = paginator.page(paginator.num_pages)  # 如果用户输入的页数不在系统的页码列表中时,显示最后一页的内容
+
+    return render(request, 'cashappeallist.html',locals())
+
+@loginverify
+def cashappeal(request):
+    orderid = request.GET.get('id')
+    page = request.GET.get('page', 1)
+
+    try:
+        order = models.CashOrder.objects.get(orderid=orderid)
+        order.appeal = 2
+        order.save()
+
+    except:
+        info = "系统写入参数不成功，请检查数据库连接，或稍后再试！"
+        return render(request, 'commoninfotran.html')
+
+    url = "/managecashlist/?page=" + str(page)
+    return redirect(url)

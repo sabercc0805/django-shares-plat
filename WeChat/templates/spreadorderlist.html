@@ -1,0 +1,142 @@
+{% extends 'spreadinfo.html' %}
+{% load staticfiles %}
+{% load templatefilter %}
+{% block title %}{{ contentname }}{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/userinfo.css' %}">
+
+    <style>
+         .class-button{
+        background-color:white;
+        outline: none;
+        color: black;
+        border-width: 1px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:0px;
+        font-size: 18px;
+    }
+
+         .class-button.active{
+        background-color:white;
+        outline: none;
+        color: darkred;
+       border-width: 0px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:0px;
+        font-size: 18px;
+        box-shadow: none;
+    }
+
+    .class-button:hover{
+        background-color:white;
+        outline: none;
+        color: darkred;
+       border-width: 0px;
+        border-color:whitesmoke;
+        border-Radius:0px;
+        font-size: 18px;
+    }
+
+    .class-button:focus{
+        background-color:white;
+        outline: none;
+        color: darkred;
+       border-width: 0px;
+        border-color:whitesmoke;
+        border-Radius:0px;
+        font-size: 18px;
+    }
+
+    .class-h4{
+        background-color:white;
+        outline: none;
+        color: black;
+        border-width: 1px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:0px;
+        font-size: 20px;
+        font-weight:bold;
+    }
+     ul li{list-style: none}
+
+    .article-a:link{color:black}
+     .article-a:visited{color:black}
+    .article-a:hover{color:darkred;
+        text-decoration: none;
+    }
+    </style>
+{% endblock %}
+
+{% block exchangecontent %}
+    <div class="row clearfix">
+           <div class="row clearfix">
+                <h2 class="text-center">{{ contentname }}</h2>
+           </div>
+            <div class="row clearfix" style="text-align: center;">
+                <div class="row clearfix" style="text-align: center;">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th class="text-center">绑定用户</th>
+                                <th class="text-center">订单金额(RMB)</th>
+                                <th class="text-center">分成比例</th>
+                                <th class="text-center">分成金额</th>
+                                <th class="text-center">订单时间</th>
+                                <th class="text-center">是否入账</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in order_list %}
+                            <tr>
+                                <td>{{ order.userid }}</td>
+                                <td>{{ order.orginmenoy |div:100 }}</td>
+                                <td>{{ order.spreadprecent}}% </td>
+                                <td>{{ order.dividemoney}}% </td>
+                                <td>{{ order.chargedate | date:'Y-m-d' }} </td>
+
+                                {% if order.spreadentry == 1 %}
+                                    <td>已入账</td>
+                                {% else %}
+                                    <td>未入账</td>
+                                {% endif %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row clearfix">
+                 <nav style="text-align: center">
+                        <ul class="pagination pagination-center" id="pager">
+                                {#上一页按钮开始#}
+                                {# 如果当前页有上一页#}
+                            {% if order_list.has_previous %}
+                                {#  当前页的上一页按钮正常使用#}
+                                <li class="previous"><a href="/spreadlist/?page={{ order_list.previous_page_number }}&type={{ type }}">上一页</a></li>
+                            {% else %}
+                                {# 当前页的不存在上一页时,上一页的按钮不可用#}
+                                <li class="previous disabled"><a href="#">上一页</a></li>
+                            {% endif %}
+                                {#上一页按钮结束#}
+                                {# 页码开始#}
+                            {% for num in paginator.page_range %}
+                                {% if num == currentPage %}
+                                     <li class="item active"><a href="/spreadlist/?page={{ num }}&type={{ type }}">{{ num }}</a></li>
+                                {% else %}
+                                     <li class="item"><a href="/spreadlist/?page={{ num }}&type={{ type }}">{{ num }}</a></li>
+                                {% endif %}
+                             {% endfor %}
+                            {#页码结束#}
+                            {# 下一页按钮开始#}
+                            {% if order_list.has_next %}
+                                <li class="next"><a href="/spreadlist/?page={{ order_list.next_page_number }}&type={{ type }}">下一页</a></li>
+                            {% else %}
+                                <li class="next disabled"><a href="#">下一页</a></li>
+                            {% endif %}
+                            {# 下一页按钮结束#}
+                        </ul>
+                 </nav>
+            </div>
+            </div>
+    </div>
+{% endblock %}

@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'superuser',
     'account',
     "DjangoUeditor",
+    'django_celery_beat', #添加app
     #'werkzeug_debugger_runserver',证书到时候直接域名使用
    # 'django_extensions',
 ]
@@ -129,7 +130,7 @@ USE_TZ = False
 
 
 # session 设置
-SESSION_COOKIE_AGE = 60 * 30 # 设置过期时间10分钟，默认为两周
+SESSION_COOKIE_AGE = 60 * 30 # 设置过期时间30分钟，默认为两周
 SESSION_SAVE_EVERY_REQUEST = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # 设置关闭浏览器时失效
 # Static files (CSS, JavaScript, Images)
@@ -142,6 +143,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_URL = '/static/uepload/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static/uepload')
+
+
 STATICFILES_DIRS = (
     ('css', os.path.join(STATIC_ROOT, 'css').replace('\\', '/')),
     ('js', os.path.join(STATIC_ROOT, 'js').replace('\\', '/')),
@@ -149,7 +152,11 @@ STATICFILES_DIRS = (
     ('bootstrap', os.path.join(STATIC_ROOT, 'bootstrap').replace('\\', '/')),
     ('uepload', os.path.join(MEDIA_ROOT).replace('\\', '/')),
     ('qrcode', os.path.join(STATIC_ROOT, 'qrcode').replace('\\', '/')),
+    ('spreadqrcode', os.path.join(STATIC_ROOT, 'spreadqrcode').replace('\\', '/')),
+    ('authorizeqrcode', os.path.join(STATIC_ROOT, 'authorizeqrcode').replace('\\', '/')),
+    ('componentqrcode', os.path.join(STATIC_ROOT, 'componentqrcode').replace('\\', '/')),
 )
+
 #HERE = os.path.dirname(os.path.abspath(__file__))
 #HERE = os.path.join(HERE, '../')
 #STATICFILES_DIRS = (
@@ -166,3 +173,83 @@ EMAIL_HOST_USER = "fengyadata@163.com"     # 账号
 EMAIL_HOST_PASSWORD = "fengyadata2019"          # 密码 (注意：这里的密码指的是授权码)
 EMAIL_USE_SSL = True    
 EMAIL_FROM = "fengyadata@163.com"      # 邮箱来自
+
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Asia/Shanghai'
+
+
+LOGGING_DIR = os.path.join(BASE_DIR, 'log')
+
+LOGGING = {
+    'version': 1,
+     'disable_existing_loggers': True,
+     'formatters': {
+         'simple': {
+             'format': '[%(asctime)s] %(levelname)s : %(message)s'
+         },
+         'verbose': {
+             'format': '[%(asctime)s] %(levelname)s %(module)s %(process)d %(thread)d : %(message)s'
+         },
+         'standard':{
+             'format': '%(asctime)s [%(threadName)s:%(thread)d] [%(name)s:%(lineno)d] [%(levelname)s]- %(message)s'
+         },
+     },
+ # handlers：用来定义具体处理日志的方式，可以定义多种，"default"就是默认方式，"console"就是打印到控制台方式。file是写入到文件的方式，注意使用的class不同
+     'handlers': {
+         'mail_admins':{
+             'level': 'ERROR',
+             'class': 'django.utils.log.AdminEmailHandler',
+             'include_html': True,
+         },
+         'default': {
+            'level':'DEBUG',
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(LOGGING_DIR,'WeChat_admin.log'),
+            'maxBytes': 1024*1024*5,
+            'backupCount': 5,
+            'formatter':'simple',
+         },
+         'request_handler': {
+             'level':'DEBUG',
+             'class':'logging.handlers.RotatingFileHandler',
+             'filename': os.path.join(LOGGING_DIR,'debug_request.log'),
+             'maxBytes': 1024*1024*5,
+             'backupCount': 5,
+             'formatter':'standard',
+         },
+         # 'scprits_handler': {
+         #    'level':'DEBUG',
+         #    'class':'logging.handlers.RotatingFileHandler',
+         #    'filename': os.path.join(LOGGING_DIR,'debug_scprits.log'),
+         #    'maxBytes': 1024*1024*5,
+         #    'backupCount': 5,
+         #    'formatter':'standard',
+         # },
+
+         'console': {
+             'level': 'INFO',
+             'class': 'logging.StreamHandler', # 用这'logging.StreamHandler' 日志信息才会输出到console
+             # 'filename':os.path.join(LOGGING_DIR,'info_console.log'),
+             'formatter': 'standard',
+         },
+         # 'file': {
+         #     'level': 'INFO',
+         #     'class':'logging.handlers.RotatingFileHandler',
+         #     'formatter': 'simple',
+         #     'filename':os.path.join(LOGGING_DIR,'info_file.log'),
+         #     'maxBytes': 1024*1024*5, # 5 MB
+         #     'backupCount': 5,
+         #     'mode': 'a',
+         # },
+     },
+     'loggers': { # log记录器，配置之后就会对应的输出日志
+         'django': {
+             'handlers': ['console','request_handler','default'],
+             'level':'INFO',
+             'propagate': True,
+         },
+     },
+}

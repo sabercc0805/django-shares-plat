@@ -30,7 +30,7 @@
                 </button-->
                 {% if kind == 0 %}
                     <a class="navbar-brand" href="/index/">缝芽网</a>
-                    <a class="navbar-brand" href="/showcommondata/">数据中心</a>
+                    <!--a class="navbar-brand" href="/showcommondata/">数据中心</a-->
                     <a class="navbar-brand" href="/article/">技术中心</a>
                     <a class="navbar-brand" href="/about/">关于我们</a>
                 {% elif kind == 1 %}
@@ -40,6 +40,11 @@
                 {% if request.session.is_login %}
                     {% if kind == 0 %}
                         <a class="navbar-brand" href="/userinfo/">我的天地</a>
+                        {% if request.session.isspread == 1 %}
+                            <a class="navbar-brand" href="/spreadinfo/">推广信息</a>
+                        {% else %}
+                            <a class="navbar-brand" data-toggle="modal" data-target="#activemodel">成为推广人</a>
+                        {% endif %}
                     {% endif %}
               {% endif %}
              </div>
@@ -49,7 +54,7 @@
                 {% if request.session.is_login %}
                     <li><a href="#">当前在线：{{ request.session.user_name }}</a></li>
                     {% if kind == 0 %}
-                      <li><a href="/logout/">登出</a></li>
+                        <li><a href="/logout/">登出</a></li>
                     {% endif %}
                     {% if kind == 1%}
                         <li><a href="/superlogout/">登出</a></li>
@@ -70,6 +75,38 @@
                      {% endif %}
               {% endif %}
             </ul>
+
+            <div class="modal fade" id="activemodel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                    &times;
+                                </button>
+                                <h4 class="modal-title" id="myModalLabel">
+                                    激活推广人
+                                </h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <form class='form-login' action="/activatespread/" method="post">
+                                        {% csrf_token %}
+                                        <p class="form-group">
+                                            <h5 class="text-center">推广人邀请码</h5>
+                                                <input class="center-block" type="text" name="activatecode" />
+                                        </p>
+                                        <button type="submit" class="btn btn-primary center-block">激活</button>
+                                    </form>
+                                </div>
+                                <div class="row">
+                                    <h5 class="text-center">欢迎您激活成为推广人，目前处于试用阶段，只有邀请推广人可激活，如您希望成为邀请推广人请联系我们！</h5>
+                                    <h4 class="text-center"><a herf="mailto:fengyadata@163.com">联系邮箱：fengyadata@163.com</a></h4>
+                                </div>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal -->
+            </div>
+
       </div>
     </div>
   <!--/div-->

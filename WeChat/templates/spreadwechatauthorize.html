@@ -1,0 +1,235 @@
+{% extends 'spreadinfo.html' %}
+{% load staticfiles %}
+{% load templatefilter %}
+{% block title %}{{ contentname }}{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/userinfo.css' %}">
+
+    <style>
+         .class-button{
+        background-color:white;
+        outline: none;
+        color: black;
+        border-width: 1px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:0px;
+        font-size: 18px;
+    }
+
+         .class-button.active{
+        background-color:white;
+        outline: none;
+        color: darkred;
+       border-width: 0px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:0px;
+        font-size: 18px;
+        box-shadow: none;
+    }
+
+    .class-button:hover{
+        background-color:white;
+        outline: none;
+        color: darkred;
+       border-width: 0px;
+        border-color:whitesmoke;
+        border-Radius:0px;
+        font-size: 18px;
+    }
+
+    .class-button:focus{
+        background-color:white;
+        outline: none;
+        color: darkred;
+       border-width: 0px;
+        border-color:whitesmoke;
+        border-Radius:0px;
+        font-size: 18px;
+    }
+
+    .sign-button{
+        background-color:white;
+        outline: none;
+        color: darkred;
+        border-width: 1px;
+        border-color:darkred;
+        border-Radius:3px;
+        font-size: 18px;
+    }
+    .sign-button:hover{
+        background-color:darkred;
+        outline: none;
+        color: white;
+       border-width: 1px;
+        border-color:darkred;
+        border-Radius:3px;
+        font-size: 18px;
+    }
+
+    .sign-button:focus{
+        background-color:darkred;
+        outline: none;
+        color: white;
+       border-width: 1px;
+        border-color:darkred;
+        border-Radius:3px;
+        font-size: 18px;
+    }
+
+    .class-h4{
+        background-color:white;
+        outline: none;
+        color: black;
+        border-width: 1px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:0px;
+        font-size: 20px;
+        font-weight:bold;
+    }
+     ul li{list-style: none}
+    </style>
+{% endblock %}
+
+{% block exchangecontent %}
+    <div class="row clearfix">
+           <div class="row clearfix">
+                <h2 class="text-center">{{ contentname }}</h2>
+           </div>
+            <div class="row clearfix" style="text-align: center;">
+                <div class="row clearfix" style="text-align: center;">
+                        <div class="col-md-12">
+                            <h3>绑定提现微信</h3>
+                            <HR>
+                        </div>
+                        {% if isbind %}
+                         <div class="row">
+                         <div class="col-md-4 col-md-offset-4">
+                            <h4 class="text-center">您已授权公众号相应权限</h4>
+                             <span><h5 class="pull-left">公众号appId:{{ appid }}</h5><a herf="#" data-toggle="modal" data-target="#weichatmodel">更改授权公众号</a></span>
+                         </div>
+                         <div class="col-md-6 col-md-offset-4">
+                             <h5 class="pull-left">公众号介绍:</h5>
+                             <h5 class="pull-left">&nbsp;&nbsp;{{appinfo}}</h5>
+                         </div>
+                        </div>
+                        <!--div class="row">
+                            <h5 class="text-center">微信提现为即时到账，提现微信号实名认证请与缝芽网实名认证相同，否则提现不成功！</h5>
+                        </div-->
+                    {% else %}
+                            <div class="row">
+                                    <div class="row">
+                                        <h4 class="text-center">公众号授权石缝芽数据第三方平台</h4>
+                                        <br/>
+                                        <h4 class="text-center"><strong>第一步：</strong>请填写并提交您的公众号信息</h4>
+                                        <br/>
+                                    </div>
+                                    <div class="row center-block"style="text-align: center;">
+                                        <img src="{% static 'images/qrcode_for_fengyadata.jpg' %}" style="height:200px;width:200px;">
+                                    </div>
+
+                                    <div class="row">
+                                        <h4 class="text-center"><strong>第二步：</strong>公众号管理员扫码授权</h4>
+                                        <br/>
+                                        <br/>
+                                    </div>
+                                    <div class="row center-block"style="text-align: center;">
+                                        <img src="{% static qrcodepath %}" style="height:200px;width:200px;">
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <h5 class="text-center">绑定提现微信请实名认证，并且实名认证与网站实名认证相同，否则无法提现！</h5>
+                                    <h5 class="text-center">由于微信官方要求，提现微信必须关注微信公众号，因此未关注石缝芽官方公众号的微信无法绑定！</h5>
+                                </div>
+                            </div>
+                    {% endif %}
+                </div>
+
+                <div class="modal fade" id="errorinfomodel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	                        <div class="modal-dialog">
+		                        <div class="modal-content">
+			                        <div class="modal-header">
+				                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					                                                                &times;
+                                        </button>
+				                        <h4 class="modal-title" id="myModalLabel">
+					                               提示
+                                        </h4>
+			                        </div>
+			                        <div class="modal-body">
+                                        <h4 id="errorinfo" class="text-center"></h4>
+			                        </div>
+		                        </div><!-- /.modal-content -->
+	                        </div><!-- /.modal -->
+                 </div>
+
+                <div class="modal fade" id="wechatmodel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                    &times;
+                                </button>
+                                <h4 class="modal-title" id="myModalLabel">
+                                    更改授权公众号
+                                </h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+
+                                </div>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal -->
+                </div>
+            </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+    var time = 60;
+    var mytime;
+     $('#getcode').click(function(){
+
+            $.ajax({
+            url: '/getcashcode/',
+            type: 'POST',
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                type:1,
+            },
+            success: function (ret) {
+                if(ret == 1)
+            {
+                $("#errorinfo").text("发送成功，请登录邮箱获取，5分钟内有效！");
+                $('#errorinfomodel').modal('show');
+            }
+            else if(ret == 0)
+            {
+                 $("#errorinfo").text("发送失败，请稍后再试，如多次失败请发送邮件到客服邮箱fengyadata@163.com！");
+                $('#errorinfomodel').modal('show');
+            }
+            }
+        })
+
+            mytime = setInterval(go,1000);
+            $("#getcode").attr("disabled","disabled");
+            time = 60;
+         });
+
+         function go() {
+
+        if (time>=0){
+            var btntext = time + "秒后可重发激活码";
+            $("#getcode").text(btntext);
+        }else {
+            clearInterval(mytime);
+            var btntext = "获取激活码";
+            $("#getcode").text(btntext);
+            $("#getcode").removeAttr("disabled");
+        }
+        time--;
+    }
+    </script>
+{% endblock %}

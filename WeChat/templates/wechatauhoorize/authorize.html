@@ -1,0 +1,247 @@
+{% extends 'spreadinfo.html' %}
+{% load staticfiles %}
+{% block title %}微信公众号授权{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/userinfo.css' %}">
+
+    <style>
+         .class-button{
+        background-color:white;
+        outline: none;
+        color: black;
+        border-width: 1px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:0px;
+        font-size: 18px;
+    }
+
+         .class-button.active{
+        background-color:white;
+        outline: none;
+        color: darkred;
+       border-width: 0px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:0px;
+        font-size: 18px;
+        box-shadow: none;
+    }
+
+    .class-button:hover{
+        background-color:white;
+        outline: none;
+        color: darkred;
+       border-width: 0px;
+        border-color:whitesmoke;
+        border-Radius:0px;
+        font-size: 18px;
+    }
+
+    .class-button:focus{
+        background-color:white;
+        outline: none;
+        color: darkred;
+       border-width: 0px;
+        border-color:whitesmoke;
+        border-Radius:0px;
+        font-size: 18px;
+    }
+
+    .sign-button{
+        background-color:white;
+        outline: none;
+        color: darkred;
+        border-width: 1px;
+        border-color:darkred;
+        border-Radius:3px;
+        font-size: 18px;
+    }
+    .sign-button:hover{
+        background-color:darkred;
+        outline: none;
+        color: white;
+       border-width: 1px;
+        border-color:darkred;
+        border-Radius:3px;
+        font-size: 18px;
+    }
+
+    .sign-button:focus{
+        background-color:darkred;
+        outline: none;
+        color: white;
+       border-width: 1px;
+        border-color:darkred;
+        border-Radius:3px;
+        font-size: 18px;
+    }
+
+    .class-h4{
+        background-color:white;
+        outline: none;
+        color: black;
+        border-width: 1px;
+        border-color:rgba(0,0,0,0);
+        border-Radius:0px;
+        font-size: 20px;
+        font-weight:bold;
+    }
+     ul li{list-style: none}
+    </style>
+{% endblock %}
+
+{% block exchangecontent %}
+    <div class="row clearfix">
+           <div class="row clearfix">
+                <h2 class="text-center">微信公众号授权</h2>
+           </div>
+            <div class="row clearfix" style="text-align: center;">
+                <div class="row clearfix" style="text-align: center;">
+                        {% if isauthorize %}
+                            <div class="col-md-12">
+                            <h3>授权信息</h3>
+                            <HR>
+                        </div>
+                            <div class="row">
+                         <div class="col-md-4 col-md-offset-4">
+                            <h4 class="text-center">您已授权公众号</h4>
+                             <span><h5 class="pull-left">公众号昵称:{{ nickname }}</h5><a herf="#" data-toggle="modal" data-target="#aumodel">更改授权公众号</a></span>
+                         </div>
+                        </div>
+                        <div class="row">
+                             <div class="row">
+                                 <div class="col-md-4">
+                                    <h4 class="text-center">公众号类型:{{ servicetype }}</h4>
+                                 </div>
+                                 <div class="col-md-4">
+                                    <h4 class="text-center">公众号主体:{{ principal }}</h4>
+                                 </div>
+                                 <div class="col-md-4">
+                                    <h4 class="text-center">公众号头像</h4>
+                                 </div>
+                                 <div class="col-md-4">
+                                     <img src={{ headurl }} style="height:200px;width:200px;">
+                                 </div>
+                                  <div class="col-md-4">
+                                    <h4 class="text-center">公众号二维码</h4>
+                                 </div>
+                                 <div class="col-md-4">
+                                     <img src={{ qrcodeurl }} style="height:200px;width:200px;">
+                                 </div>
+                                 <div class="col-md-4">
+                                    <h4 class="text-center">公众号介绍</h4>
+                                 </div>
+                                 <div class="col-md-4">
+                                     {{ describe }}
+                                 </div>
+                                 <!--div class="col-md-4 center-block" >
+                                     <button href="#">更新公众号信息</button>
+                                 </div-->
+                             </div>
+                         </div>
+                        </div>
+                    {% else %}
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h3>扫码授权</h3>
+                                    <HR>
+                                </div>
+                                {% if success == 1 %}
+                                    <div class="row center-block"style="text-align: center;">
+                                        <img src="{% static qrcodepath %}" style="height:200px;width:200px;">
+                                    </div>
+                                {% else %}
+                                    <div class="row center-block"style="text-align: center;">
+                                      <h4 class="text-center">十分抱歉，网站参数出错请您稍后刷新页面重试！</h4>
+                                    </div>
+                                {% endif %}
+                                <div class="col-md-8 col-md-offset-2">
+                                    <h5 class="text-left">1、请使用需要授权的公众号管理员微信扫描二维码进行授权；</h5>
+                                    <h5 class="text-left">2、二维码有效时间十分钟，超时请刷新页面；</h5>
+                                    <h5 class="text-left">3、提示授权成功后请刷新该页面查看授权信息；</h5>
+                                    <h5 class="text-left">4、授权中请使用默认权限不要点选取消，否则将导致增粉功能不可用；</h5>
+                                    <h5 class="text-left">5、目前仅支持一个用户授权一个公众号，多个授权公众号会以最后一次授权为准；</h5>
+                                    <h5 class="text-left">6、后续会根据推广用户等级提供多公众号授权，敬请期待！</h5>
+                                </div>
+                            </div>
+                    {% endif %}
+                </div>
+
+
+                <div class="modal fade" id="autmodel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                    &times;
+                                </button>
+                                <h4 class="modal-title" id="myModalLabel">
+                                    更改授权公众号
+                                </h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row center-block"style="text-align: center;">
+                                    <img src="{% static qrcodepath %}" style="height:200px;width:200px;">
+                                </div>
+                                <div class="col-md-8 col-md-offset-2">
+                                    <h5 class="text-left">1、请使用需要授权的公众号管理员微信扫描二维码进行授权；</h5>
+                                    <h5 class="text-left">2、提示授权成功后请刷新该页面查看授权信息；</h5>
+                                    <h5 class="text-left">3、授权中请使用默认权限不要点选取消，否则将导致增粉功能不可用；</h5>
+                                    <h5 class="text-left">4、目前仅支持一个用户授权一个公众号，多个授权公众号会以最后一次授权为准；</h5>
+                                    <h5 class="text-left">5、后续会根据推广用户等级提供多公众号授权，敬请期待！</h5>
+                                </div>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal -->
+                </div>
+            </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+    var time = 60;
+    var mytime;
+     $('#getcode').click(function(){
+
+            $.ajax({
+            url: '/getcashcode/',
+            type: 'POST',
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                type:1,
+            },
+            success: function (ret) {
+                if(ret == 1)
+            {
+                $("#errorinfo").text("发送成功，请登录邮箱获取，5分钟内有效！");
+                $('#errorinfomodel').modal('show');
+            }
+            else if(ret == 0)
+            {
+                 $("#errorinfo").text("发送失败，请稍后再试，如多次失败请发送邮件到客服邮箱fengyadata@163.com！");
+                $('#errorinfomodel').modal('show');
+            }
+            }
+        })
+
+            mytime = setInterval(go,1000);
+            $("#getcode").attr("disabled","disabled");
+            time = 60;
+         });
+
+         function go() {
+
+        if (time>=0){
+            var btntext = time + "秒后可重发激活码";
+            $("#getcode").text(btntext);
+        }else {
+            clearInterval(mytime);
+            var btntext = "获取激活码";
+            $("#getcode").text(btntext);
+            $("#getcode").removeAttr("disabled");
+        }
+        time--;
+    }
+    </script>
+{% endblock %}
