@@ -122,7 +122,7 @@ urlpatterns = [
     url(r'^wechatbind/', home.wechatbind),
     url(r'^wechatverify/', home.wechatverify),
 #三方平台相关url
-    url(r'^openweiixn/', wechatpay.openweixin),
+    url(r'^openweixin/', wechatpay.openweixin),
     url(r'^plat/', include(plat_patterns)),
     #url(r'^componentauthorizeresult/', wechatpay.authorize_user_result),
 #ceshi
