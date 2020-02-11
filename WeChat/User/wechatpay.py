@@ -628,11 +628,13 @@ def openweixin(request):
         nonce = request.POST.get("nonce","")
         timestamp = request.POST.get("timestamp", "")
         msg_sign = request.POST.get("msg_signature", "")
+        print(nonce)
+        print(msg_sign)
         #postdata
         encrypt_xml = str(request.body)
         decrypt_test = WXBizMsgCrypt(component_tocken, encodingAESKey, component_appid)
         ret, decryp_xml = decrypt_test.DecryptMsg(encrypt_xml, msg_sign, timestamp, nonce)
-
+        print(decryp_xml)
         if ret > 0:#解密报错，打印log
             return HttpResponse("success")
         else:#解密成功写入数据库
