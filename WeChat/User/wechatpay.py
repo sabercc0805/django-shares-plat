@@ -625,6 +625,7 @@ def openweixin(request):
     #获取加密数据解密，然后将时间戳与ticket存入数据库
     #若失败不更新，ticket有效时间较长
     if request.method == "POST":
+        return HttpResponse("success")
         nonce = request.POST.get("nonce","")
         timestamp = request.POST.get("timestamp", "")
         msg_sign = request.POST.get("msg_signature", "")
