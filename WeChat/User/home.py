@@ -20,6 +20,7 @@ from .forms import Activeform
 from .forms import RealNameform
 from .forms import BankBindform
 from .forms import BankCashform
+from .forms import WechatBindform
 from django.forms.models import model_to_dict
 from django.http import Http404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -54,6 +55,7 @@ from User.wechatpay import isequaldate
 from User.wechatpay import get_authorize_url_qrcode
 from User.wechatpay import get_authorize_url_article_qrcode
 from User.wechatpay import call_back_authorize_qrcode
+import requests
 
 def loginverify(func):#登陆验证装饰器
     def inner(request):
@@ -2104,7 +2106,7 @@ def wechatcash(request):
 def wechatbind(request):
     code = request.GET.get('code',"")
     userid = request.GET.get('state',"")
-
+    wechatbind_form = WechatBindform()
     if len(code) == 0 | len(userid) == 0:
         return HttpResponse("微信返回参数错误，请重新扫码绑定")
 
@@ -2340,3 +2342,14 @@ def ce(request,id):
     isalready = 2
     filepath = os.path.join("\\wechatauhoorize", "authorizenocase.html")
     return render(request,"wechatauhoorize/authorizenocase.html", locals())
+
+def ceshi(request):
+    params = {
+        'nonce_str': 1111,
+        'partner_trade_no': 1111,  # 订单编号
+        'mch_id': 111,  # 商户号
+        'appid': 11,  # APPID
+    }
+
+    url = "http://127.0.0.1/openweixin/?signature=8290f3569298c7a78a7be7b37dd028714acfdc52&timestamp=1581490122&nonce=860038013&encrypt_type=aes&msg_signature=f01eddaeac375187a94814702dcd84f088b20465"
+    response = requests.request('post', url, data=params)  # 以POST方式向微信公众平台服务器发起请求
