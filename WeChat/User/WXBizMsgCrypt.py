@@ -50,7 +50,7 @@ class SHA1:
             sortlist = [token, timestamp, nonce, encrypt]
             sortlist.sort()
             sha = hashlib.sha1()
-            sha.update("".join(sortlist))
+            sha.update("".join(sortlist).encode("utf8"))
             return  ierror.WXBizMsgCrypt_OK, sha.hexdigest()
         except Exception as e:
             #print e
@@ -76,7 +76,7 @@ class XMLParse:
         try:
             xml_tree = ET.fromstring(xmltext)
             encrypt  = xml_tree.find("Encrypt")
-            touser_name    = xml_tree.find("ToUserName")
+            touser_name    = xml_tree.find("AppId")
             return  ierror.WXBizMsgCrypt_OK, encrypt.text, touser_name.text
         except Exception as e:
             #print e
@@ -172,15 +172,17 @@ class Prpcrypt(object):
             #print e
             return  ierror.WXBizMsgCrypt_DecryptAES_Error,None
         try:
-            pad = ord(plain_text[-1])
+            #pad = ord(plain_text[-1])
+            pad = plain_text[-1]
             # 去掉补位字符串
             #pkcs7 = PKCS7Encoder()
             #plain_text = pkcs7.encode(plain_text)
             # 去除16位随机字符串
             content = plain_text[16:-pad]
-            xml_len = socket.ntohl(struct.unpack("I",content[ : 4])[0])
+            xml_len = socket.ntohl(struct.unpack("I",content[: 4])[0])
             xml_content = content[4 : xml_len+4]
             from_appid = content[xml_len+4:]
+           # from_appid_str = str(from_appid, encoding="utf-8")
         except Exception as e:
             #print e
             return  ierror.WXBizMsgCrypt_IllegalBuffer,None
@@ -209,7 +211,7 @@ class WXBizMsgCrypt(object):
             throw_exception("[error]: EncodingAESKey unvalid !", FormatException)
            #return ierror.WXBizMsgCrypt_IllegalAesKey)
         self.token = sToken
-        self.appid = sAppId
+        self.appid = bytes(sAppId, encoding="utf-8")
 
     def EncryptMsg(self, sReplyMsg, sNonce, timestamp = None):
         #将公众号回复用户的消息加密打包
