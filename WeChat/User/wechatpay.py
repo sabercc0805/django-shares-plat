@@ -630,10 +630,11 @@ def openweixin(request):
         timestamp = request.GET.get('timestamp', "")
         msg_sign = request.GET.get('msg_signature', "")
         #postdata
-        encrypt_xml = str(request.body)
-        #encrypt_xml = '<xml>\n <AppId><![CDATA[wxc0ad5e0f7a6d4e4f]]></AppId>\n <Encrypt><![CDATA[bWdLrJBJReLB2411DEdZeGY+0BZO82xtS2lfBpInw5vRkCNNXs9qHUVXMuMoSUePSbvVefhSZIHAscvBU1DIVg4iCsoZoGnhosejrJVKM2BBtnu47exqJsJkwFnwVu5VvsfRl95yDBu16SyvjWALJmMJOBawKiW1YcCrj9VnjFcvqXXa1vEMo1g6J/yoiTrUWStprQZXuUz5HVn6UV3klDUrclvRAdS9lL5NV14XoAQwAYab+8Yk1gXVxHZYURGv96UTHoauma4fEh1VmwinsHBTrnnBCTWvJ39KWiUhNVOjo5LdGLa0e+dMh9OUsJbjjbBWE+8nU4soSdalVYknowuYvwkZzYJnOy+wpZOqHjE//8hHnPKIF8kef7EZHrFbqMPqPLuy8GPftEM7HJo6dgVX5Xrr+0emcD+3B1/rqiU/ZxRgQtl3bvF9a9VeNf6EEtQhzm+sN3xbtmdZVvukrQ==]]></Encrypt>\n </xml>\n'
+        #encrypt_xml = str(request.body)
+        encrypt_xml = '<xml>\n <AppId><![CDATA[wxc0ad5e0f7a6d4e4f]]></AppId>\n <Encrypt><![CDATA[bWdLrJBJReLB2411DEdZeGY+0BZO82xtS2lfBpInw5vRkCNNXs9qHUVXMuMoSUePSbvVefhSZIHAscvBU1DIVg4iCsoZoGnhosejrJVKM2BBtnu47exqJsJkwFnwVu5VvsfRl95yDBu16SyvjWALJmMJOBawKiW1YcCrj9VnjFcvqXXa1vEMo1g6J/yoiTrUWStprQZXuUz5HVn6UV3klDUrclvRAdS9lL5NV14XoAQwAYab+8Yk1gXVxHZYURGv96UTHoauma4fEh1VmwinsHBTrnnBCTWvJ39KWiUhNVOjo5LdGLa0e+dMh9OUsJbjjbBWE+8nU4soSdalVYknowuYvwkZzYJnOy+wpZOqHjE//8hHnPKIF8kef7EZHrFbqMPqPLuy8GPftEM7HJo6dgVX5Xrr+0emcD+3B1/rqiU/ZxRgQtl3bvF9a9VeNf6EEtQhzm+sN3xbtmdZVvukrQ==]]></Encrypt>\n </xml>\n'
+        b = bytes(encrypt_xml, encoding="utf-8")
         decrypt_test = WXBizMsgCrypt(component_tocken, encodingAESKey,component_appid)
-        ret, decryp_xml = decrypt_test.DecryptMsg(encrypt_xml, msg_sign, timestamp, nonce)
+        ret, decryp_xml = decrypt_test.DecryptMsg(b, msg_sign, timestamp, nonce)
         #print(decryp_xml)
         if ret != 0:#解密报错，打印log
             return HttpResponse("success")
