@@ -632,16 +632,17 @@ def openweixin(request):
         #postdata
         encrypt_xml = str(request.body)
         #encrypt_xml = '<xml>\n <AppId><![CDATA[wxc0ad5e0f7a6d4e4f]]></AppId>\n <Encrypt><![CDATA[bWdLrJBJReLB2411DEdZeGY+0BZO82xtS2lfBpInw5vRkCNNXs9qHUVXMuMoSUePSbvVefhSZIHAscvBU1DIVg4iCsoZoGnhosejrJVKM2BBtnu47exqJsJkwFnwVu5VvsfRl95yDBu16SyvjWALJmMJOBawKiW1YcCrj9VnjFcvqXXa1vEMo1g6J/yoiTrUWStprQZXuUz5HVn6UV3klDUrclvRAdS9lL5NV14XoAQwAYab+8Yk1gXVxHZYURGv96UTHoauma4fEh1VmwinsHBTrnnBCTWvJ39KWiUhNVOjo5LdGLa0e+dMh9OUsJbjjbBWE+8nU4soSdalVYknowuYvwkZzYJnOy+wpZOqHjE//8hHnPKIF8kef7EZHrFbqMPqPLuy8GPftEM7HJo6dgVX5Xrr+0emcD+3B1/rqiU/ZxRgQtl3bvF9a9VeNf6EEtQhzm+sN3xbtmdZVvukrQ==]]></Encrypt>\n </xml>\n'
+        print(encrypt_xml)
         decrypt_test = WXBizMsgCrypt(component_tocken, encodingAESKey,component_appid)
         ret, decryp_xml = decrypt_test.DecryptMsg(encrypt_xml, msg_sign, timestamp, nonce)
-        #print(decryp_xml)
+        print(str(ret))
         if ret != 0:#解密报错，打印log
             return HttpResponse("success")
         else:#解密成功写入数据库
             #将xml解析为dict
             dict = trans_xml_to_dict(decryp_xml)
             infotype = dict.get("InfoType","")
-
+            print("1")
             if infotype == "component_verify_ticket":
                 appid = dict.get("AppId", "")
                 createtime = int(dict.get("CreateTime", 0))
@@ -658,12 +659,14 @@ def openweixin(request):
                     component.componentverifyticket = ticket
                     component.tickettime = createtime
                     component.save()
+                    print("2")
                 except:
                     try:
                         component = models.ComponentInfo.objects.create(componentappid=component_appid,
                                                                         componentverifyticket=ticket,
                                                                         tickettime=createtime)
                         component.save()
+                        print(3)
                     except:
                         return HttpResponse("success")
 
