@@ -6589,3 +6589,128 @@ TypeError: object of type 'NoneType' has no len()
 2020-02-12 18:48:22,747 [Thread-91:496] [django.server:136] [INFO]- "POST /openweixin/?signature=f0e72e5202466699140030a3b1fc717676b09610&timestamp=1581504502&nonce=125392601&encrypt_type=aes&msg_signature=d3f1571e5ca2b6a65fc2954098274367cf86d11d HTTP/1.0" 200 7
 2020-02-12 18:58:50,201 [Thread-92:1396] [django.server:136] [INFO]- "POST /openweixin/?signature=c3c9f00a6ed1534e96be83ceefbfc03e592481fe&timestamp=1581505129&nonce=1124529901&encrypt_type=aes&msg_signature=8c79df0d8ed912bd1b18991a7ae226c08cb0fdb7 HTTP/1.0" 200 7
 2020-02-12 18:58:50,294 [Thread-93:2152] [django.server:136] [INFO]- "POST /openweixin/?signature=c58fadc04e88ac0d04449e1480660a5451e9a129&timestamp=1581505129&nonce=2085102638&encrypt_type=aes&msg_signature=fce277df32be06449b2c79356eec629fd822b070 HTTP/1.0" 200 7
+2020-02-12 19:08:43,362 [Thread-1:2124] [django.server:136] [INFO]- "POST /openweixin/?signature=83792b1803c0daffe70a07df5fe773b0b5ff734f&timestamp=1581505723&nonce=147895801&encrypt_type=aes&msg_signature=e226e845aea9253762e319e7ef9e737831c718de HTTP/1.0" 200 7
+2020-02-12 19:08:43,594 [Thread-3:2012] [django.server:136] [INFO]- "POST /openweixin/?signature=4442ae882d2b1cc6f498ce5091ec84915fde8d03&timestamp=1581505723&nonce=1397250610&encrypt_type=aes&msg_signature=1ff8cd1f797aae71e8d72e62fa48e54e4c17ca84 HTTP/1.0" 200 7
+2020-02-12 19:08:43,732 [Thread-4:1600] [django.server:136] [INFO]- "POST /openweixin/?signature=2340b54e363204931f113306bafb5f2ef9ab06d3&timestamp=1581505723&nonce=1231234672&encrypt_type=aes&msg_signature=127429b74359c9f66db88ccbd786ce1958c9416f HTTP/1.0" 200 7
+2020-02-12 19:08:43,864 [Thread-5:2312] [django.server:136] [INFO]- "POST /openweixin/?signature=26bd1672398ca37fda3ab8d40b81cef7547b3f4b&timestamp=1581505723&nonce=341631358&encrypt_type=aes&msg_signature=e1c736215f065220aa8576bde78a7af1f6eec633 HTTP/1.0" 200 7
+2020-02-12 19:09:06,989 [Thread-6:2736] [django.server:136] [INFO]- "POST /openweixin/?signature=6f624ac7d9798cfb715dbda27995739fa3475092&timestamp=1581505746&nonce=1733564735&encrypt_type=aes&msg_signature=16654ce2dfd50e0b6836a437fba783c7cba20645 HTTP/1.0" 200 7
+2020-02-12 19:19:39,578 [Thread-7:2772] [django.server:136] [INFO]- "POST /openweixin/?signature=942dfd8c1ac7128244e2175352b213e54915a262&timestamp=1581506379&nonce=2114107262&encrypt_type=aes&msg_signature=24ab341bb3a3f2233dd7312efbd507555ca46eda HTTP/1.0" 200 7
+2020-02-12 19:29:34,281 [Thread-1:2868] [django.server:136] [INFO]- "POST /openweixin/?signature=b2e5822d20b18d5a40c73f2b8c8feefa7fb9788a&timestamp=1581506974&nonce=1217304102&encrypt_type=aes&msg_signature=6fabca1b9cd3fa4e6f4798b54803a556a1a2d186 HTTP/1.0" 200 7
+2020-02-12 19:29:34,578 [Thread-3:3020] [django.server:136] [INFO]- "POST /openweixin/?signature=8cd9ca0f1dc2f5e61e20125db5307d8a4ccccec1&timestamp=1581506974&nonce=1788739737&encrypt_type=aes&msg_signature=e6117e2d85cc58c3b9b61df37fe8ac4073c2b75b HTTP/1.0" 200 7
+2020-02-12 19:29:34,593 [Thread-4:2344] [django.server:136] [INFO]- "POST /openweixin/?signature=fc5e1b0542cc1c89eb6a1d77e1e8507fec8fb00f&timestamp=1581506974&nonce=1319458263&encrypt_type=aes&msg_signature=17cd89ff0b8942aa4941c9f04ab749ca0241338c HTTP/1.0" 200 7
+2020-02-12 19:41:10,012 [Thread-1:2424] [django.server:136] [INFO]- "POST /openweixin/?signature=2c777b81fabc162c671a04a0d2c414fed3346191&timestamp=1581507669&nonce=2004244958&encrypt_type=aes&msg_signature=776156d341cc614d2f2408b474d0f8c606088c0c HTTP/1.0" 200 7
+2020-02-12 19:41:10,028 [Thread-3:2408] [django.server:136] [INFO]- "POST /openweixin/?signature=58297b9ba9de8808fd7d9fc751909e91ea7b02ba&timestamp=1581507669&nonce=1029077412&encrypt_type=aes&msg_signature=4e4467dd644fd230eb9ab448974ae2c95f74a4b1 HTTP/1.0" 200 7
+2020-02-12 19:41:10,481 [Thread-4:2056] [django.server:136] [INFO]- "POST /openweixin/?signature=06cc549d0951a0f2aa6543efcadb75e5655c8c14&timestamp=1581507670&nonce=797149167&encrypt_type=aes&msg_signature=b7181df2dc5662f615d102c31a234723034b43e3 HTTP/1.0" 200 7
+2020-02-12 19:49:01,606 [Thread-1:2220] [django.server:136] [INFO]- "POST /openweixin/?signature=eef3d21d3332f525735fd7968127e46892578c21&timestamp=1581508141&nonce=1119179677&encrypt_type=aes&msg_signature=995602b28bca68b7e8b824d4401a7efcda3415d7 HTTP/1.0" 200 7
+2020-02-12 19:49:02,966 [Thread-3:2200] [django.server:136] [INFO]- "POST /openweixin/?signature=eaff33151fb9e79d6714f4ee706aa9f88f7b50ef&timestamp=1581508142&nonce=828148369&encrypt_type=aes&msg_signature=2bb33266e666ab7f348b76d1767498ef1be87fbc HTTP/1.0" 200 7
+2020-02-12 19:59:12,641 [Thread-1:2904] [django.server:136] [INFO]- "POST /openweixin/?signature=b6bad9034209f8d9f9e486220042b3b97c8a7955&timestamp=1581508752&nonce=439016657&encrypt_type=aes&msg_signature=b79ff1c3421b5798d4287ea15e0ab8356a95a329 HTTP/1.0" 200 7
+2020-02-12 20:12:07,740 [Thread-1:2920] [django.server:136] [INFO]- "POST /openweixin/?signature=3839d0a9a34fb6e977b3832ad87cc041c4d6cbee&timestamp=1581509527&nonce=49681628&encrypt_type=aes&msg_signature=f490b24e96820de5a09848bb3030ba5231e70492 HTTP/1.0" 200 7
+2020-02-12 20:12:07,771 [Thread-3:2428] [django.server:136] [INFO]- "POST /openweixin/?signature=e2500d9b314faed16c9e41aa84a4701327426835&timestamp=1581509527&nonce=1324580618&encrypt_type=aes&msg_signature=85bcc7a0f7db157b3ec86fcb5c765e89897d2003 HTTP/1.0" 200 7
+2020-02-12 20:20:21,087 [Thread-1:1332] [django.server:136] [INFO]- "POST /openweixin/?signature=2262786a459692cc8899e1b07329523d66dd4f9b&timestamp=1581510020&nonce=873450041&encrypt_type=aes&msg_signature=c5aa46e73d30ba3f96e786a5ef0d3a39a23a38b1 HTTP/1.0" 200 7
+2020-02-12 20:20:21,118 [Thread-3:1968] [django.server:136] [INFO]- "POST /openweixin/?signature=63bcfd6522f3a4944388cc12995095073420cd5d&timestamp=1581510020&nonce=1036609171&encrypt_type=aes&msg_signature=4ec14a47daef0a234dbc8614ff659cea7ee75b78 HTTP/1.0" 200 7
+2020-02-12 20:20:21,603 [Thread-4:2324] [django.server:136] [INFO]- "POST /openweixin/?signature=44b05aed02b9bf1cc32bf3722a71638c622ca3b0&timestamp=1581510021&nonce=958923042&encrypt_type=aes&msg_signature=a14c10a42989bf013add2871b260e437efc2ad10 HTTP/1.0" 200 7
+2020-02-12 20:30:28,685 [Thread-1:2692] [django.request:228] [ERROR]- Internal Server Error: /openweixin/
+Traceback (most recent call last):
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python36\lib\site-packages\django-2.1.4-py3.6.egg\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python36\lib\site-packages\django-2.1.4-py3.6.egg\django\core\handlers\base.py", line 126, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python36\lib\site-packages\django-2.1.4-py3.6.egg\django\core\handlers\base.py", line 124, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\django-shares-plat\WeChat\User\wechatpay.py", line 634, in openweixin
+    encrypt_xml_str = str(encrypt_xml,encoding="utf-8")
+TypeError: decoding str is not supported
+2020-02-12 20:30:28,685 [Thread-1:2692] [django.server:136] [ERROR]- "POST /openweixin/?signature=144fea037c904ecea0d68d27bb881f70cac8aeb1&timestamp=1581510628&nonce=484152473&encrypt_type=aes&msg_signature=ac3561a5733af5c345eb0abe90e1bfa028c7862e HTTP/1.0" 500 70159
+2020-02-12 20:39:33,282 [Thread-1:2340] [django.request:228] [ERROR]- Internal Server Error: /openweixin/
+Traceback (most recent call last):
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python36\lib\site-packages\django-2.1.4-py3.6.egg\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python36\lib\site-packages\django-2.1.4-py3.6.egg\django\core\handlers\base.py", line 126, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python36\lib\site-packages\django-2.1.4-py3.6.egg\django\core\handlers\base.py", line 124, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\django-shares-plat\WeChat\User\wechatpay.py", line 634, in openweixin
+    print(encrypt_xml_str)
+NameError: name 'encrypt_xml_str' is not defined
+2020-02-12 20:39:33,313 [Thread-3:2120] [django.request:228] [ERROR]- Internal Server Error: /openweixin/
+Traceback (most recent call last):
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python36\lib\site-packages\django-2.1.4-py3.6.egg\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python36\lib\site-packages\django-2.1.4-py3.6.egg\django\core\handlers\base.py", line 126, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python36\lib\site-packages\django-2.1.4-py3.6.egg\django\core\handlers\base.py", line 124, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\django-shares-plat\WeChat\User\wechatpay.py", line 634, in openweixin
+    print(encrypt_xml_str)
+NameError: name 'encrypt_xml_str' is not defined
+2020-02-12 20:39:33,313 [Thread-3:2120] [django.server:136] [ERROR]- "POST /openweixin/?signature=5a842b38b60ba2953f47f462bd922c764c319b30&timestamp=1581511173&nonce=1703814677&encrypt_type=aes&msg_signature=6fab1d8069d37a8aca430500b16a6193b2dcf745 HTTP/1.0" 500 70167
+2020-02-12 20:39:33,313 [Thread-1:2340] [django.server:136] [ERROR]- "POST /openweixin/?signature=4e0f1eb918baa26cc8394f23e70d5c29f6bffdbe&timestamp=1581511172&nonce=1553803643&encrypt_type=aes&msg_signature=53b3da46a07fd7c3fea3cca4a24ec765112ee9db HTTP/1.0" 500 70167
+2020-02-12 20:50:04,864 [Thread-1:3068] [django.server:136] [INFO]- "POST /openweixin/?signature=8a7e60abb4aae433bd77dedb2e58d822b37a333a&timestamp=1581511804&nonce=1652805944&encrypt_type=aes&msg_signature=701298a1fbb071c6da00045475529b9eac1e061d HTTP/1.0" 200 7
+2020-02-12 20:50:06,083 [Thread-3:3024] [django.server:136] [INFO]- "POST /openweixin/?signature=409703bcec61263beda6de67f3d84ea75bd44e1a&timestamp=1581511805&nonce=1688763341&encrypt_type=aes&msg_signature=fa617bb92d306becb375c33e1e8bd2a1689c3536 HTTP/1.0" 200 7
+2020-02-12 20:51:20,943 [Thread-4:2156] [django.server:136] [INFO]- "GET / HTTP/1.0" 200 3674
+2020-02-12 20:59:27,789 [Thread-5:1940] [django.server:136] [INFO]- "POST /openweixin/?signature=dcbb9491361b6725ee55664d9b2edacca3a3f5ce&timestamp=1581512367&nonce=1129962468&encrypt_type=aes&msg_signature=014424dfce4b4a91c2494d5251de3ba26b75180d HTTP/1.0" 200 7
+2020-02-12 20:59:27,852 [Thread-6:2676] [django.server:136] [INFO]- "POST /openweixin/?signature=38e0e2312afe4a8875a1dc25cf71bfdf2fcc9476&timestamp=1581512367&nonce=1055445371&encrypt_type=aes&msg_signature=56b23166ccb1dd121a8959fd44ddf4decd39cd24 HTTP/1.0" 200 7
+2020-02-12 20:59:28,071 [Thread-7:1148] [django.server:136] [INFO]- "POST /openweixin/?signature=5d68b3a0ae82580a0ad4748b8c5bafac2d1a859b&timestamp=1581512367&nonce=202539178&encrypt_type=aes&msg_signature=f26aa2df2b980a7c87adffc2186c58d3fb8fec12 HTTP/1.0" 200 7
+2020-02-12 21:01:31,290 [Thread-1:316] [django.server:136] [INFO]- "POST /openweixin/?signature=75477e3a3935f191d5d21d83cb80e6d06d86f5d5&timestamp=1581512491&nonce=1925009566&encrypt_type=aes&msg_signature=613e2d57c95883c621155480ae17114f59a8d0ea HTTP/1.0" 200 7
+2020-02-12 21:01:31,321 [Thread-3:1224] [django.server:136] [INFO]- "POST /openweixin/?signature=90fcdeb3f152ba15332bfcf32991c7a6b11bc3fc&timestamp=1581512491&nonce=695808508&encrypt_type=aes&msg_signature=d5654c58f386eaf3a8e98657fa521b4cd8158f95 HTTP/1.0" 200 7
+2020-02-12 21:09:39,075 [Thread-1:2496] [django.server:136] [INFO]- "POST /openweixin/?signature=87740d16b620c0ad5364d6cf716d577ca9cd1878&timestamp=1581512978&nonce=705794682&encrypt_type=aes&msg_signature=2f22df6d99521c4b175be061a6dc84b981a9c51f HTTP/1.0" 200 7
+2020-02-12 21:12:50,466 [Thread-1:2392] [django.server:136] [INFO]- "GET /superlogin/ HTTP/1.0" 200 6291
+2020-02-12 21:12:50,560 [Thread-3:2500] [django.server:136] [INFO]- "GET /captchaimage/537e2a06d5d40e68e29b6a1a1d4f5fb2fcc60a60/ HTTP/1.0" 200 4588
+2020-02-12 21:13:01,576 [Thread-4:1264] [django.server:136] [INFO]- "POST /superlogin/ HTTP/1.0" 200 6398
+2020-02-12 21:13:01,623 [Thread-5:2768] [django.server:136] [INFO]- "GET /captchaimage/e46a9395becf12d2b2c87b405bd71f7d2af2e291/ HTTP/1.0" 200 4436
+2020-02-12 21:13:09,810 [Thread-6:2984] [django.server:136] [INFO]- "POST /superlogin/ HTTP/1.0" 302 0
+2020-02-12 21:13:09,857 [Thread-7:1396] [django.server:136] [INFO]- "GET /superindex/ HTTP/1.0" 200 10549
+2020-02-12 21:13:09,904 [Thread-8:2200] [django.server:136] [INFO]- "GET /static/css/superindex.css HTTP/1.0" 200 4192
+2020-02-12 21:13:09,951 [Thread-9:2912] [django.server:136] [INFO]- "GET /static/bootstrap/fonts/glyphicons-halflings-regular.woff2 HTTP/1.0" 200 18028
+2020-02-12 21:13:14,185 [Thread-10:2692] [django.server:136] [INFO]- "GET /activecode/ HTTP/1.0" 200 13036
+2020-02-12 21:13:14,232 [Thread-11:2404] [django.server:136] [INFO]- "GET /static/css/article.css HTTP/1.0" 200 409
+2020-02-12 21:13:18,967 [Thread-12:2784] [django.server:136] [INFO]- "POST /activecode/ HTTP/1.0" 302 0
+2020-02-12 21:13:19,263 [Thread-13:2244] [django.server:136] [INFO]- "GET /activecode/ HTTP/1.0" 200 13558
+2020-02-12 21:14:28,358 [Thread-14:3056] [django.server:136] [INFO]- "GET /superlogin/ HTTP/1.0" 200 6398
+2020-02-12 21:14:28,451 [Thread-15:2852] [django.server:136] [INFO]- "GET /captchaimage/8796aeaf47fc41f2079f838d62c11eff2b07c066/ HTTP/1.0" 200 4171
+2020-02-12 21:14:30,780 [Thread-16:1476] [django.server:136] [INFO]- "GET / HTTP/1.0" 200 3674
+2020-02-12 21:14:33,217 [Thread-17:2348] [django.server:136] [INFO]- "GET /index/ HTTP/1.0" 302 0
+2020-02-12 21:14:33,280 [Thread-18:2368] [django.server:136] [INFO]- "GET /logout/ HTTP/1.0" 302 0
+2020-02-12 21:14:33,311 [Thread-19:1664] [django.server:136] [INFO]- "GET /index/ HTTP/1.0" 200 12402
+2020-02-12 21:14:34,733 [Thread-20:1932] [django.server:136] [INFO]- "GET /login/ HTTP/1.0" 200 6579
+2020-02-12 21:14:34,795 [Thread-21:2284] [django.server:136] [INFO]- "GET /captchaimage/55e3f6dfa413c590a184ad6be015bbe6c593ba21/ HTTP/1.0" 200 4705
+2020-02-12 21:14:44,623 [Thread-22:3064] [django.server:136] [INFO]- "POST /login/ HTTP/1.0" 200 6686
+2020-02-12 21:14:44,670 [Thread-23:2944] [django.server:136] [INFO]- "GET /captchaimage/ecf5e383593487b080f6755f46b2864f07faa626/ HTTP/1.0" 200 4627
+2020-02-12 21:14:53,436 [Thread-24:2416] [django.server:136] [INFO]- "POST /login/ HTTP/1.0" 302 0
+2020-02-12 21:14:53,483 [Thread-25:1688] [django.server:136] [INFO]- "GET /index/ HTTP/1.0" 200 12721
+2020-02-12 21:14:58,186 [Thread-26:1436] [django.server:136] [INFO]- "POST /activatespread/ HTTP/1.0" 302 0
+2020-02-12 21:14:58,249 [Thread-27:2520] [django.server:136] [INFO]- "GET /spreadinfo/ HTTP/1.0" 200 18807
+2020-02-12 21:14:58,295 [Thread-28:1384] [django.server:136] [INFO]- "GET /static/css/userinfo.css HTTP/1.0" 200 708
+2020-02-12 21:14:58,311 [Thread-29:2232] [django.server:136] [INFO]- "GET /static/images/login.jpg HTTP/1.0" 200 43944
+2020-02-12 21:14:58,327 [Thread-30:2508] [django.server:136] [INFO]- "GET /static/spreadqrcode/sabercc.png HTTP/1.0" 200 796
+2020-02-12 21:15:01,811 [Thread-31:2264] [django.server:136] [INFO]- "GET /real/ HTTP/1.0" 200 11642
+2020-02-12 21:15:17,499 [Thread-32:2804] [django.server:136] [INFO]- "POST /real/ HTTP/1.0" 200 725
+2020-02-12 21:15:23,608 [Thread-33:292] [django.server:136] [INFO]- "GET /real/ HTTP/1.0" 200 10895
+2020-02-12 21:15:26,249 [Thread-34:2612] [django.server:136] [INFO]- "GET /wechatcash/ HTTP/1.0" 200 17767
+2020-02-12 21:15:26,296 [Thread-35:2292] [django.server:136] [INFO]- "GET /static/images/qrcode_for_fengyadata.jpg HTTP/1.0" 200 9134
+2020-02-12 21:15:26,311 [Thread-36:2884] [django.server:136] [INFO]- "GET /static/qrcode/sabercc.png HTTP/1.0" 200 1866
+2020-02-12 21:19:33,313 [Thread-37:2548] [django.server:136] [INFO]- "POST /openweixin/?signature=18c02e2a4dff8961d68ce98a515b8935df3fc447&timestamp=1581513573&nonce=474595912&encrypt_type=aes&msg_signature=a79cdff33e7b226b8ac36e820d5a61c579f5b1f9 HTTP/1.0" 200 7
+2020-02-12 21:19:33,328 [Thread-38:2152] [django.server:136] [INFO]- "POST /openweixin/?signature=dcdac556953c480ee1a8f5dc189f3e54616dbdd9&timestamp=1581513573&nonce=350238453&encrypt_type=aes&msg_signature=94711ad64caaf492a95afcdfa57ac1e439b9a5d0 HTTP/1.0" 200 7
+2020-02-12 21:21:10,063 [Thread-1:1332] [django.server:136] [INFO]- "GET /wechatbind/?code=021uu9Nz1U7kw90jh6Pz1HP5Nz1uu9N7&state=sabercc HTTP/1.0" 200 2384
+2020-02-12 21:21:10,126 [Thread-3:2812] [django.server:136] [INFO]- "GET /static/js/jquery-3.3.1.min.js HTTP/1.0" 200 86929
+2020-02-12 21:21:10,142 [Thread-4:3052] [django.server:136] [INFO]- "GET /static/bootstrap/css/bootstrap.min.css HTTP/1.0" 200 121205
+2020-02-12 21:21:10,173 [Thread-5:3032] [django.server:136] [WARNING]- "GET /static/images/ico.png HTTP/1.0" 404 1666
+2020-02-12 21:21:33,767 [Thread-6:2140] [django.server:136] [INFO]- "POST /openweixin/?signature=41eefba545160fafda3f0aa4fa9d9ce423be53fb&timestamp=1581513693&nonce=1037442399&encrypt_type=aes&msg_signature=755f2de76f7a95ef54c964c7cb35042e520d26e7 HTTP/1.0" 200 7
+2020-02-12 21:21:33,829 [Thread-7:576] [django.server:136] [INFO]- "POST /openweixin/?signature=8d6cbbc7e93cc82d4c65331f73c5881c938c07e0&timestamp=1581513693&nonce=819082357&encrypt_type=aes&msg_signature=9cadf1487c9f4349134a7181d1f79eb2665d0705 HTTP/1.0" 200 7
+2020-02-12 21:22:01,017 [Thread-8:2892] [django.server:136] [INFO]- "GET /wechatcash/ HTTP/1.0" 200 17767
+2020-02-12 21:22:01,079 [Thread-9:2420] [django.server:136] [INFO]- "GET /static/qrcode/sabercc.png HTTP/1.0" 200 1866
+2020-02-12 21:22:04,095 [Thread-10:1284] [django.server:136] [INFO]- "GET /wechatcash/ HTTP/1.0" 200 17767
+2020-02-12 21:22:04,142 [Thread-11:2676] [django.server:136] [INFO]- "GET /static/qrcode/sabercc.png HTTP/1.0" 200 1866
+2020-02-12 21:29:20,551 [Thread-12:664] [django.server:136] [INFO]- "POST /openweixin/?signature=0c61896f13c30bf3df498bc2a6d840dd4b671988&timestamp=1581514160&nonce=431455267&encrypt_type=aes&msg_signature=3ba8364c9387c35c24fbc3ceae2161d2a7dc479b HTTP/1.0" 200 7
+2020-02-12 21:29:20,551 [Thread-13:1264] [django.server:136] [INFO]- "POST /openweixin/?signature=2d63aca8c0ebc920949e4159670494558282dbb5&timestamp=1581514160&nonce=273346748&encrypt_type=aes&msg_signature=86398bd5dc515ed894d40b6ff2fa0ce0bb0f4d2c HTTP/1.0" 200 7
+2020-02-12 21:29:20,598 [Thread-14:2768] [django.server:136] [INFO]- "POST /openweixin/?signature=7893a57d47a1be7eee3a7834fd2779a1b4cfea9a&timestamp=1581514160&nonce=2115897287&encrypt_type=aes&msg_signature=81725e8826649b00713b7a7d3a7d81091925b447 HTTP/1.0" 200 7
+2020-02-12 21:29:53,676 [Thread-15:2984] [django.server:136] [INFO]- "GET / HTTP/1.0" 200 3674
+2020-02-12 21:30:17,661 [Thread-16:1396] [django.request:228] [WARNING]- Not Found: /HNAP1/
+2020-02-12 21:30:17,661 [Thread-16:1396] [django.server:136] [WARNING]- "GET /HNAP1/ HTTP/1.0" 404 10995
+2020-02-12 21:39:07,086 [Thread-1:2096] [django.server:136] [INFO]- "POST /openweixin/?signature=0167c71a50fdb6ee5142af6387bf9519330a8814&timestamp=1581514746&nonce=1590686869&encrypt_type=aes&msg_signature=a54dac1cafefa4876e0613305938085a6b9a9c25 HTTP/1.0" 200 7
+2020-02-12 21:39:07,227 [Thread-3:1116] [django.server:136] [INFO]- "POST /openweixin/?signature=5bb6107bb7724d6375b9e39fd834e8104bd7d0aa&timestamp=1581514747&nonce=1669114529&encrypt_type=aes&msg_signature=5daf842e13f828f1f5640eada1fd209df1b59194 HTTP/1.0" 200 7
+2020-02-12 21:48:57,090 [Thread-4:2348] [django.server:136] [INFO]- "POST /openweixin/?signature=40106e6f915efd961fabd7101a73fe17ce8c14fa&timestamp=1581515336&nonce=1831132382&encrypt_type=aes&msg_signature=f5e66b48aa6378402de397c1d708976cebc94dd3 HTTP/1.0" 200 7
+2020-02-12 21:48:57,121 [Thread-5:2832] [django.server:136] [INFO]- "POST /openweixin/?signature=899a7d131a92f24f411411b94f40cdec2dded468&timestamp=1581515336&nonce=447603117&encrypt_type=aes&msg_signature=2228f8961618c4fccc129037b6f68ae0205c05f5 HTTP/1.0" 200 7
+2020-02-12 21:48:57,183 [Thread-6:1036] [django.server:136] [INFO]- "POST /openweixin/?signature=bdb8f4a30d7972429e4dd6a6bf68a922ce33aca1&timestamp=1581515337&nonce=1306061386&encrypt_type=aes&msg_signature=6f41835d01f83e7b191a905f143598460c1e3d74 HTTP/1.0" 200 7
+2020-02-12 21:50:55,340 [Thread-7:2672] [django.server:136] [INFO]- "POST /openweixin/?signature=289b9a2628887f37b607894060d42c1311f6cb3a&timestamp=1581515455&nonce=6351714&encrypt_type=aes&msg_signature=a0143922c3300d0c65d772b32134b11a8ddf324b HTTP/1.0" 200 7
+2020-02-12 21:50:55,403 [Thread-8:348] [django.server:136] [INFO]- "POST /openweixin/?signature=5573b8999eb6b9069c3778fa56e576fef8e0d1a2&timestamp=1581515455&nonce=173698199&encrypt_type=aes&msg_signature=373fa8b58aab7c6bcefc98b4a121dc359d7a6edb HTTP/1.0" 200 7

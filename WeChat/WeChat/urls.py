@@ -127,6 +127,7 @@ urlpatterns = [
     #url(r'^componentauthorizeresult/', wechatpay.authorize_user_result),
 #ceshi
     url(r'^ce/(?P<id>\w+)/$', home.ce),
+    url(r'^ceshi/', home.ceshi),
 
 ]
 
