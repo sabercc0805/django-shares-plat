@@ -4662,3 +4662,334 @@ User.models.ArticleContain.DoesNotExist: ArticleContain matching query does not 
 [2020-02-09 21:18:10,770] INFO : "GET / HTTP/1.1" 200 3655
 [2020-02-09 21:18:41,475] INFO : "GET / HTTP/1.1" 200 3652
 [2020-02-09 21:19:45,348] INFO : "GET / HTTP/1.1" 200 3674
+[2020-02-12 12:21:28,086] ERROR : Internal Server Error: /ceshi/
+Traceback (most recent call last):
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\base.py", line 124, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\django-shares-plat\WeChat\User\home.py", line 2347, in ceshi
+    response = requests.request('post', url, data="")  # 以POST方式向微信公众平台服务器发起请求
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\api.py", line 60, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\sessions.py", line 519, in request
+    prep = self.prepare_request(req)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\sessions.py", line 462, in prepare_request
+    hooks=merge_hooks(request.hooks, self.hooks),
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\models.py", line 313, in prepare
+    self.prepare_url(url, params)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\models.py", line 387, in prepare_url
+    raise MissingSchema(error)
+requests.exceptions.MissingSchema: Invalid URL '127.0.0.1/openweixin/?signature=a48a7d674711d3a0d83c82f3839f588177056023&timestamp=1581474561&nonce=1737881438&encrypt_type=aes&msg_signature=7ce9d5d8c1557d2692d1cfde2e8ccd707225adbc': No schema supplied. Perhaps you meant http://127.0.0.1/openweixin/?signature=a48a7d674711d3a0d83c82f3839f588177056023&timestamp=1581474561&nonce=1737881438&encrypt_type=aes&msg_signature=7ce9d5d8c1557d2692d1cfde2e8ccd707225adbc?
+[2020-02-12 12:21:28,086] ERROR : "GET /ceshi/ HTTP/1.1" 500 99201
+[2020-02-12 12:24:15,890] INFO : "GET / HTTP/1.1" 200 3676
+[2020-02-12 12:24:15,910] INFO : "GET /static/images/flag.gif HTTP/1.1" 304 0
+[2020-02-12 12:24:23,444] ERROR : Internal Server Error: /openweixin/
+Traceback (most recent call last):
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\base.py", line 137, in _get_response
+    "returned None instead." % (callback.__module__, view_name)
+ValueError: The view User.wechatpay.openweixin didn't return an HttpResponse object. It returned None instead.
+[2020-02-12 12:24:23,448] ERROR : "GET /openweixin/ HTTP/1.1" 500 62268
+[2020-02-12 12:25:04,924] ERROR : Internal Server Error: /openweixin/
+Traceback (most recent call last):
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\base.py", line 137, in _get_response
+    "returned None instead." % (callback.__module__, view_name)
+ValueError: The view User.wechatpay.openweixin didn't return an HttpResponse object. It returned None instead.
+[2020-02-12 12:25:04,924] ERROR : "GET /openweixin/ HTTP/1.1" 500 64741
+[2020-02-12 12:25:11,178] ERROR : Internal Server Error: /ceshi/
+Traceback (most recent call last):
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\base.py", line 124, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\django-shares-plat\WeChat\User\home.py", line 2347, in ceshi
+    response = requests.request('post', url, data="")  # 以POST方式向微信公众平台服务器发起请求
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\api.py", line 60, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\sessions.py", line 519, in request
+    prep = self.prepare_request(req)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\sessions.py", line 462, in prepare_request
+    hooks=merge_hooks(request.hooks, self.hooks),
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\models.py", line 313, in prepare
+    self.prepare_url(url, params)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\models.py", line 387, in prepare_url
+    raise MissingSchema(error)
+requests.exceptions.MissingSchema: Invalid URL '127.0.0.1/openweixin/?signature=a48a7d674711d3a0d83c82f3839f588177056023&timestamp=1581474561&nonce=1737881438&encrypt_type=aes&msg_signature=7ce9d5d8c1557d2692d1cfde2e8ccd707225adbc': No schema supplied. Perhaps you meant http://127.0.0.1/openweixin/?signature=a48a7d674711d3a0d83c82f3839f588177056023&timestamp=1581474561&nonce=1737881438&encrypt_type=aes&msg_signature=7ce9d5d8c1557d2692d1cfde2e8ccd707225adbc?
+[2020-02-12 12:25:11,178] ERROR : "GET /ceshi/ HTTP/1.1" 500 101673
+[2020-02-12 12:25:13,737] ERROR : Internal Server Error: /ceshi/
+Traceback (most recent call last):
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\base.py", line 124, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\django-shares-plat\WeChat\User\home.py", line 2347, in ceshi
+    response = requests.request('post', url, data="")  # 以POST方式向微信公众平台服务器发起请求
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\api.py", line 60, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\sessions.py", line 519, in request
+    prep = self.prepare_request(req)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\sessions.py", line 462, in prepare_request
+    hooks=merge_hooks(request.hooks, self.hooks),
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\models.py", line 313, in prepare
+    self.prepare_url(url, params)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\models.py", line 387, in prepare_url
+    raise MissingSchema(error)
+requests.exceptions.MissingSchema: Invalid URL '127.0.0.1/openweixin/?signature=a48a7d674711d3a0d83c82f3839f588177056023&timestamp=1581474561&nonce=1737881438&encrypt_type=aes&msg_signature=7ce9d5d8c1557d2692d1cfde2e8ccd707225adbc': No schema supplied. Perhaps you meant http://127.0.0.1/openweixin/?signature=a48a7d674711d3a0d83c82f3839f588177056023&timestamp=1581474561&nonce=1737881438&encrypt_type=aes&msg_signature=7ce9d5d8c1557d2692d1cfde2e8ccd707225adbc?
+[2020-02-12 12:25:13,737] ERROR : "GET /ceshi/ HTTP/1.1" 500 101673
+[2020-02-12 12:26:35,425] ERROR : Internal Server Error: /ceshi/
+Traceback (most recent call last):
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\base.py", line 124, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\django-shares-plat\WeChat\User\home.py", line 2347, in ceshi
+    response = requests.request('post', url)  # 以POST方式向微信公众平台服务器发起请求
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\api.py", line 60, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\sessions.py", line 519, in request
+    prep = self.prepare_request(req)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\sessions.py", line 462, in prepare_request
+    hooks=merge_hooks(request.hooks, self.hooks),
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\models.py", line 313, in prepare
+    self.prepare_url(url, params)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\models.py", line 387, in prepare_url
+    raise MissingSchema(error)
+requests.exceptions.MissingSchema: Invalid URL '127.0.0.1/openweixin/?signature=a48a7d674711d3a0d83c82f3839f588177056023&timestamp=1581474561&nonce=1737881438&encrypt_type=aes&msg_signature=7ce9d5d8c1557d2692d1cfde2e8ccd707225adbc': No schema supplied. Perhaps you meant http://127.0.0.1/openweixin/?signature=a48a7d674711d3a0d83c82f3839f588177056023&timestamp=1581474561&nonce=1737881438&encrypt_type=aes&msg_signature=7ce9d5d8c1557d2692d1cfde2e8ccd707225adbc?
+[2020-02-12 12:26:35,437] ERROR : "GET /ceshi/ HTTP/1.1" 500 101603
+[2020-02-12 12:27:01,585] ERROR : Internal Server Error: /ceshi/
+Traceback (most recent call last):
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\base.py", line 124, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\django-shares-plat\WeChat\User\home.py", line 2347, in ceshi
+    response = requests.request('post', url)  # 以POST方式向微信公众平台服务器发起请求
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\api.py", line 60, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\sessions.py", line 519, in request
+    prep = self.prepare_request(req)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\sessions.py", line 462, in prepare_request
+    hooks=merge_hooks(request.hooks, self.hooks),
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\models.py", line 313, in prepare
+    self.prepare_url(url, params)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\models.py", line 387, in prepare_url
+    raise MissingSchema(error)
+requests.exceptions.MissingSchema: Invalid URL '127.0.0.1/openweixin/?signature=a48a7d674711d3a0d83c82f3839f588177056023&timestamp=1581474561&nonce=1737881438&encrypt_type=aes&msg_signature=7ce9d5d8c1557d2692d1cfde2e8ccd707225adbc': No schema supplied. Perhaps you meant http://127.0.0.1/openweixin/?signature=a48a7d674711d3a0d83c82f3839f588177056023&timestamp=1581474561&nonce=1737881438&encrypt_type=aes&msg_signature=7ce9d5d8c1557d2692d1cfde2e8ccd707225adbc?
+[2020-02-12 12:27:01,601] ERROR : "GET /ceshi/ HTTP/1.1" 500 101603
+[2020-02-12 12:28:37,638] ERROR : Internal Server Error: /ceshi/
+Traceback (most recent call last):
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\base.py", line 124, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\django-shares-plat\WeChat\User\home.py", line 2354, in ceshi
+    response = requests.request('post', url, data=params)  # 以POST方式向微信公众平台服务器发起请求
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\api.py", line 60, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\sessions.py", line 519, in request
+    prep = self.prepare_request(req)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\sessions.py", line 462, in prepare_request
+    hooks=merge_hooks(request.hooks, self.hooks),
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\models.py", line 313, in prepare
+    self.prepare_url(url, params)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\models.py", line 387, in prepare_url
+    raise MissingSchema(error)
+requests.exceptions.MissingSchema: Invalid URL '127.0.0.1/openweixin/?signature=a48a7d674711d3a0d83c82f3839f588177056023&timestamp=1581474561&nonce=1737881438&encrypt_type=aes&msg_signature=7ce9d5d8c1557d2692d1cfde2e8ccd707225adbc': No schema supplied. Perhaps you meant http://127.0.0.1/openweixin/?signature=a48a7d674711d3a0d83c82f3839f588177056023&timestamp=1581474561&nonce=1737881438&encrypt_type=aes&msg_signature=7ce9d5d8c1557d2692d1cfde2e8ccd707225adbc?
+[2020-02-12 12:28:37,653] ERROR : "GET /ceshi/ HTTP/1.1" 500 102158
+[2020-02-12 12:28:45,555] ERROR : Internal Server Error: /ceshi/
+Traceback (most recent call last):
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\base.py", line 124, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\django-shares-plat\WeChat\User\home.py", line 2354, in ceshi
+    response = requests.request('post', url, data=params)  # 以POST方式向微信公众平台服务器发起请求
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\api.py", line 60, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\sessions.py", line 519, in request
+    prep = self.prepare_request(req)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\sessions.py", line 462, in prepare_request
+    hooks=merge_hooks(request.hooks, self.hooks),
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\models.py", line 313, in prepare
+    self.prepare_url(url, params)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\models.py", line 387, in prepare_url
+    raise MissingSchema(error)
+requests.exceptions.MissingSchema: Invalid URL '127.0.0.1/openweixin/?signature=a48a7d674711d3a0d83c82f3839f588177056023&timestamp=1581474561&nonce=1737881438&encrypt_type=aes&msg_signature=7ce9d5d8c1557d2692d1cfde2e8ccd707225adbc': No schema supplied. Perhaps you meant http://127.0.0.1/openweixin/?signature=a48a7d674711d3a0d83c82f3839f588177056023&timestamp=1581474561&nonce=1737881438&encrypt_type=aes&msg_signature=7ce9d5d8c1557d2692d1cfde2e8ccd707225adbc?
+[2020-02-12 12:28:45,570] ERROR : "GET /ceshi/ HTTP/1.1" 500 102158
+[2020-02-12 12:29:38,749] ERROR : Internal Server Error: /ceshi/
+Traceback (most recent call last):
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\base.py", line 124, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\django-shares-plat\WeChat\User\home.py", line 2354, in ceshi
+    response = requests.request('post', url, data=params)  # 以POST方式向微信公众平台服务器发起请求
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\api.py", line 60, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\sessions.py", line 519, in request
+    prep = self.prepare_request(req)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\sessions.py", line 462, in prepare_request
+    hooks=merge_hooks(request.hooks, self.hooks),
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\models.py", line 313, in prepare
+    self.prepare_url(url, params)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\models.py", line 390, in prepare_url
+    raise InvalidURL("Invalid URL %r: No host supplied" % url)
+requests.exceptions.InvalidURL: Invalid URL 'http:\\127.0.0.1/openweixin/?signature=a48a7d674711d3a0d83c82f3839f588177056023&timestamp=1581474561&nonce=1737881438&encrypt_type=aes&msg_signature=7ce9d5d8c1557d2692d1cfde2e8ccd707225adbc': No host supplied
+[2020-02-12 12:29:38,749] ERROR : "GET /ceshi/ HTTP/1.1" 500 100823
+[2020-02-12 12:29:54,493] ERROR : Internal Server Error: /ceshi/
+Traceback (most recent call last):
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\base.py", line 124, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\django-shares-plat\WeChat\User\home.py", line 2354, in ceshi
+    response = requests.request('post', url, data=params)  # 以POST方式向微信公众平台服务器发起请求
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\api.py", line 60, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\sessions.py", line 519, in request
+    prep = self.prepare_request(req)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\sessions.py", line 462, in prepare_request
+    hooks=merge_hooks(request.hooks, self.hooks),
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\models.py", line 313, in prepare
+    self.prepare_url(url, params)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\requests\models.py", line 390, in prepare_url
+    raise InvalidURL("Invalid URL %r: No host supplied" % url)
+requests.exceptions.InvalidURL: Invalid URL 'http:\\127.0.0.1/openweixin/?signature=a48a7d674711d3a0d83c82f3839f588177056023&timestamp=1581474561&nonce=1737881438&encrypt_type=aes&msg_signature=7ce9d5d8c1557d2692d1cfde2e8ccd707225adbc': No host supplied
+[2020-02-12 12:29:54,509] ERROR : "GET /ceshi/ HTTP/1.1" 500 100823
+[2020-02-12 12:37:25,495] ERROR : Internal Server Error: /openweixin/
+Traceback (most recent call last):
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\base.py", line 124, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\django-shares-plat\WeChat\User\wechatpay.py", line 628, in openweixin
+    query = request.query_params
+AttributeError: 'WSGIRequest' object has no attribute 'query_params'
+[2020-02-12 12:37:28,628] ERROR : "POST /openweixin/?signature=a48a7d674711d3a0d83c82f3839f588177056023&timestamp=1581474561&nonce=1737881438&encrypt_type=aes&msg_signature=7ce9d5d8c1557d2692d1cfde2e8ccd707225adbc HTTP/1.1" 500 75521
+[2020-02-12 12:37:28,831] ERROR : Internal Server Error: /ceshi/
+Traceback (most recent call last):
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\base.py", line 137, in _get_response
+    "returned None instead." % (callback.__module__, view_name)
+ValueError: The view User.home.ceshi didn't return an HttpResponse object. It returned None instead.
+[2020-02-12 12:37:28,831] ERROR : "GET /ceshi/ HTTP/1.1" 500 64246
+[2020-02-12 12:37:49,809] ERROR : Internal Server Error: /openweixin/
+Traceback (most recent call last):
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\base.py", line 124, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\django-shares-plat\WeChat\User\wechatpay.py", line 628, in openweixin
+    query = request.query_params
+AttributeError: 'WSGIRequest' object has no attribute 'query_params'
+[2020-02-12 12:37:49,825] ERROR : "POST /openweixin/?signature=a48a7d674711d3a0d83c82f3839f588177056023&timestamp=1581474561&nonce=1737881438&encrypt_type=aes&msg_signature=7ce9d5d8c1557d2692d1cfde2e8ccd707225adbc HTTP/1.1" 500 75522
+[2020-02-12 12:37:49,981] ERROR : Internal Server Error: /ceshi/
+Traceback (most recent call last):
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\base.py", line 137, in _get_response
+    "returned None instead." % (callback.__module__, view_name)
+ValueError: The view User.home.ceshi didn't return an HttpResponse object. It returned None instead.
+[2020-02-12 12:37:49,981] ERROR : "GET /ceshi/ HTTP/1.1" 500 64246
+[2020-02-12 12:37:53,242] ERROR : Internal Server Error: /openweixin/
+Traceback (most recent call last):
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\base.py", line 124, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\django-shares-plat\WeChat\User\wechatpay.py", line 628, in openweixin
+    query = request.query_params
+AttributeError: 'WSGIRequest' object has no attribute 'query_params'
+[2020-02-12 12:37:53,257] ERROR : "POST /openweixin/?signature=a48a7d674711d3a0d83c82f3839f588177056023&timestamp=1581474561&nonce=1737881438&encrypt_type=aes&msg_signature=7ce9d5d8c1557d2692d1cfde2e8ccd707225adbc HTTP/1.1" 500 75522
+[2020-02-12 12:37:53,386] ERROR : Internal Server Error: /ceshi/
+Traceback (most recent call last):
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\base.py", line 137, in _get_response
+    "returned None instead." % (callback.__module__, view_name)
+ValueError: The view User.home.ceshi didn't return an HttpResponse object. It returned None instead.
+[2020-02-12 12:37:53,402] ERROR : "GET /ceshi/ HTTP/1.1" 500 64246
+[2020-02-12 12:38:24,662] ERROR : Internal Server Error: /openweixin/
+Traceback (most recent call last):
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\base.py", line 124, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\django-shares-plat\WeChat\User\wechatpay.py", line 628, in openweixin
+    query = request.query_params
+AttributeError: 'WSGIRequest' object has no attribute 'query_params'
+[2020-02-12 12:38:24,678] ERROR : "POST /openweixin/?signature=a48a7d674711d3a0d83c82f3839f588177056023&timestamp=1581474561&nonce=1737881438&encrypt_type=aes&msg_signature=7ce9d5d8c1557d2692d1cfde2e8ccd707225adbc HTTP/1.1" 500 75522
+[2020-02-12 12:38:24,855] ERROR : Internal Server Error: /ceshi/
+Traceback (most recent call last):
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\base.py", line 137, in _get_response
+    "returned None instead." % (callback.__module__, view_name)
+ValueError: The view User.home.ceshi didn't return an HttpResponse object. It returned None instead.
+[2020-02-12 12:38:24,868] ERROR : "GET /ceshi/ HTTP/1.1" 500 64496
+[2020-02-12 12:52:00,983] ERROR : Internal Server Error: /openweixin/
+Traceback (most recent call last):
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\base.py", line 124, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\django-shares-plat\WeChat\User\wechatpay.py", line 643, in openweixin
+    dict = trans_xml_to_dict(decryp_xml)
+  File "C:\django-shares-plat\WeChat\User\wechatpay.py", line 75, in trans_xml_to_dict
+    soup = BeautifulSoup(data_xml, features='xml')
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\bs4\__init__.py", line 267, in __init__
+    elif len(markup) <= 256 and (
+TypeError: object of type 'NoneType' has no len()
+[2020-02-12 12:52:00,995] ERROR : "POST /openweixin/?signature=a48a7d674711d3a0d83c82f3839f588177056023&timestamp=1581474561&nonce=1737881438&encrypt_type=aes&msg_signature=7ce9d5d8c1557d2692d1cfde2e8ccd707225adbc HTTP/1.1" 500 86454
+[2020-02-12 12:52:01,175] ERROR : Internal Server Error: /ceshi/
+Traceback (most recent call last):
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\base.py", line 137, in _get_response
+    "returned None instead." % (callback.__module__, view_name)
+ValueError: The view User.home.ceshi didn't return an HttpResponse object. It returned None instead.
+[2020-02-12 12:52:01,179] ERROR : "GET /ceshi/ HTTP/1.1" 500 64495
+[2020-02-12 16:01:17,922] INFO : "POST /openweixin/?signature=8290f3569298c7a78a7be7b37dd028714acfdc52&timestamp=1581490122&nonce=860038013&encrypt_type=aes&msg_signature=f01eddaeac375187a94814702dcd84f088b20465 HTTP/1.1" 200 7
+[2020-02-12 16:01:17,953] INFO : code 400, message Bad request syntax ('nonce_str=1111&partner_trade_no=1111&mch_id=111&appid=11')
+[2020-02-12 16:01:17,968] WARNING : "nonce_str=1111&partner_trade_no=1111&mch_id=111&appid=11" 400 -
+[2020-02-12 16:01:18,438] ERROR : Internal Server Error: /ceshi/
+Traceback (most recent call last):
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\django-shares-plat\WeChat\venv\lib\site-packages\django\core\handlers\base.py", line 137, in _get_response
+    "returned None instead." % (callback.__module__, view_name)
+ValueError: The view User.home.ceshi didn't return an HttpResponse object. It returned None instead.
+[2020-02-12 16:01:18,438] ERROR : "GET /ceshi/ HTTP/1.1" 500 64630
