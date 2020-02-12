@@ -625,14 +625,15 @@ def openweixin(request):
     #获取加密数据解密，然后将时间戳与ticket存入数据库
     #若失败不更新，ticket有效时间较长
     if request.method == "POST":
-        return HttpResponse("success")
         nonce = request.POST.get("nonce","")
         timestamp = request.POST.get("timestamp", "")
         msg_sign = request.POST.get("msg_signature", "")
-        print(nonce)
-        print(msg_sign)
+        print(str(nonce))
+        print(str(msg_sign))
+        return HttpResponse("success")
         #postdata
         encrypt_xml = str(request.body)
+        print(encrypt_xml)
         decrypt_test = WXBizMsgCrypt(component_tocken, encodingAESKey, component_appid)
         ret, decryp_xml = decrypt_test.DecryptMsg(encrypt_xml, msg_sign, timestamp, nonce)
         print(decryp_xml)
