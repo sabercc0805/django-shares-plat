@@ -1,4 +1,4 @@
-# This is an auto-generated Django model module.
+﻿# This is an auto-generated Django model module.
 # You'll have to do the following manually to clean this up:
 #   * Rearrange models' order
 #   * Make sure each model has one field with primary_key=True
@@ -300,6 +300,10 @@ class OrderStart(models.Model):
     orderstate = models.IntegerField(db_column='orderstate', blank=False,default=-1)  # 充值状态，为了不与OrderStart重复修改默认为-1：订单未支付；-2：未知状态
     wechatid = models.CharField(db_column='wechatid', max_length=32, default="")  # 32位订单号,微信订单号
     appeal = models.IntegerField(db_column='appeal', blank=False, default=0)  # 订单申诉0：无问题可申诉；1：已申诉；2：已处理申诉结果查看注册邮箱
+    binduser = models.CharField(db_column='binduser', max_length=32, default="")  # md5绑定
+    dividemoney = models.IntegerField(db_column='dividemoney', default=0)  # 充值分成金额 分为单位，打折前算分成
+    spreadprecent = models.IntegerField(db_column='spreadprecent', default=5)  # 当前该订单下用户分成比例，由于会变相同用户每个订单可能不同
+    spreadentry = models.IntegerField(db_column='spreadentry', default=0)  # 分成入账标志0：未入账不显示；1、已入账显示
 
     class Meta:
         managed = True
@@ -410,6 +414,8 @@ class ConcernInfo(models.Model):  # 领取过缝芽币的，目前未制作已�
     userid = models.CharField(db_column='UserID', max_length=128)
     concerntime = models.DateTimeField(db_column='concerntime', auto_now_add=True)
     type = models.IntegerField(db_column='type', blank=False, default=1)#是否领取缝芽币字段，后续扩展用
+    nick_name = models.CharField(db_column='nickname', max_length=256, default="")  # 公众号名称
+    openid = models.CharField(db_column='openid', blank=True, null=True, max_length=32, default="")
 
     class Meta:
         managed = True

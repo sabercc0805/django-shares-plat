@@ -1,4 +1,4 @@
-from django import forms
+﻿from django import forms
 from captcha.fields import CaptchaField
 from DjangoUeditor.forms import UEditorField
 from django.forms import widgets
@@ -209,9 +209,9 @@ class BankCashform(forms.Form):
         attrs={'id': 'code', 'class': 'form-control', 'placeholder': "填入6位验证码", }))
 
 class WechatCashform(forms.Form):
-    cash = forms.IntegerField(label="提现金额", min_value=100, max_value=2000, required=True,
+    cash = forms.IntegerField(label="提现金额", min_value=10, max_value=2000, required=True,
                                 widget=forms.NumberInput(
-                                    attrs={'class': 'form-control', 'defalut': '1','step':'0.01', 'placeholder': "请输大于100小于2000的数值"}))
+                                    attrs={'class': 'form-control', 'defalut': '1','step':'0.01', 'placeholder': "请输大于10小于2000的数值"}))
     code = forms.CharField(label="验证码", max_length=6, widget=forms.TextInput(
         attrs={'id': 'code', 'class': 'form-control', 'placeholder': "填入6位验证码", }))
 

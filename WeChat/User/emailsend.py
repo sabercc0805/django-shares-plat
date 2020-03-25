@@ -212,14 +212,19 @@ def verifycode(code,type,email):
 def ScreenAppid(userid):#筛选用户关注的公众号
     result = 0
     appid = ""
+    app_list = []
+    concern_list = []
+    list_new = []
     try:
         app_list = models.AuthorizeInfo.objects.filter(type=1).values_list('appid',flat=True)
         concern_list = models.ConcernInfo.objects.filter(userid=userid).values_list('appid',flat=True)
         list_new = list(set(app_list).difference(set(concern_list)))
-        count = list_new.count()
+        count = len(list_new)
         if count > 0:
             random = Random()
-            appid = list_new(random.randint(0, count-1))
+            appid = list_new[random.randint(0, count-1)]
+            print("src1")
+            print(appid)
             result = 0
         else:
             result = 2#已无可关注的公众号

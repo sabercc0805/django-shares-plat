@@ -10,20 +10,19 @@
         <script src="{% static 'js/jquery-3.3.1.min.js' %}">
         </script>
         <script src="{% static 'js/TimeCircles.js' %}"></script>
-
+        <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
     </head>
     <body>
         <div class="row">
             <div class="someTimer" data-timer="21" style="width: 200px; margin: 0 auto;"></div>
         </div>
         <div class="row">
-            <h4>正在提现中，倒计时结束或页面跳转前请不要关闭页面！</h4>
+            <h4 class="text-center center-block">正在提现中...，倒计时结束或页面跳转前请不要关闭页面！</h4>
         </div>
 <script>
 
     onload=function () {
-        setInterval(go,1000)
-        setInterval(check,2000)
+        setInterval(check,2000);
 
         $('.someTimer').TimeCircles({
 		time : {
@@ -59,15 +58,6 @@
     };
 
     var x=10;
-    function go() {
-        if (x>=0){
-            document.getElementById("sp").innerText=x;
-        }else {
-            location.href="/cashresult/?result=3&orderid={{ orderid }}";
-        }
-        x--;
-    };
-
     function check() {
        if (x > 0)
             {
@@ -82,6 +72,10 @@
                 }
         })
             }
+       else {
+            location.href="/cashresult/?result=3&orderid=1234";
+        }
+        x--;
     };
 
 </script>

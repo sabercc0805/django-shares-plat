@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'mi%tre=qolrih14h4ly^a%5btqcoj65op#dv&-ff-!peulu5c='
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*',]
 
@@ -179,7 +179,7 @@ CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Asia/Shanghai'
-
+CELERY_WORKER_MAX_TASKS_PER_CHILD = 500
 
 LOGGING_DIR = os.path.join(BASE_DIR, 'log')
 

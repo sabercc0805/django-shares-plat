@@ -1,4 +1,4 @@
-"""WeChat URL Configuration
+﻿"""WeChat URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/2.1/topics/http/urls/
@@ -29,8 +29,11 @@ from User import wechatpay
 from superuser import super
 from account import account
 from User import views
+from django.views import static
+from django.conf import settings
 
 plat_patterns = [
+    url(r'^concernlist/', home.concernlist),
     url(r'^authorizeinfo/', home.authorizeinfo),
     url(r'^articlenocase/', home.authorizenocase),
     url(r'^articlenocasetran/', home.ajax_checkarticle),
@@ -38,12 +41,14 @@ plat_patterns = [
     url(r'^allconcerncoin/', home.allconcerncoin),
     url(r'^authorizecallback/(?P<userid>\w+)/$', wechatpay.call_back_authorize),
     url(r'^componentauthorize/(?P<userid>\w+)/$', wechatpay.authorize_user_code),
-    url(r'^componentauthorizearticle/(?P<userid>\w+)/(?P<title>\S\s+)/$', wechatpay.authorize_article),
+    url(r'^componentauthorizearticle/(?P<userid>\w+)/(?P<title>\w+)/$', wechatpay.authorize_article),
 ]
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^$',home.tranupdate),
+    url(r'^static/(?P<path>.*)$', static.serve, {'document_root': settings.STATIC_ROOT }, name='static'),
+    url(r'^static/uepload/(?P<path>.*)$',static.serve, {"document_root": settings.MEDIA_ROOT[0]},name='static'),
+    url(r'^$',home.index),
     url(r'^uindex/', home.tranupdate),
     url(r'^ueditor/',include('DjangoUeditor.urls' )),
     url(r'^index/', home.index),
@@ -121,6 +126,8 @@ urlpatterns = [
     url(r'^cashappeal/', super.cashappeal),
     url(r'^wechatbind/', home.wechatbind),
     url(r'^wechatverify/', home.wechatverify),
+    url(r'^checkcash/', home.ajax_checkcash),
+    url(r'^cashresult/', home.cashresult),
 #三方平台相关url
     url(r'^openweixin/', wechatpay.openweixin),
     url(r'^plat/', include(plat_patterns)),
@@ -128,6 +135,6 @@ urlpatterns = [
 #ceshi
     url(r'^ce/(?P<id>\w+)/$', home.ce),
     url(r'^ceshi/', home.ceshi),
+    url(r'^ceshitocken/', wechatpay.get_plattocken),
 
 ]
-

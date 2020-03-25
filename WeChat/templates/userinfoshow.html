@@ -390,17 +390,16 @@
                                            <div class="col-md-6">
                                                <div class="row">
                                                     <h4 class="text-center"><strong>第一步：</strong>微信扫码关注公众号</h4>
-                                                    <h5 class="text-center">(已关注可以省略该步)</h5>
                                                     <br/>
                                                </div>
                                                 <div class="row center-block"style="text-align: center;">
                                                     <img src="{{ qrcodeurl }}" style="height:200px;width:200px;">
+                                                    <h5 class="text-center">(已关注可以省略该步)</h5>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="row">
                                                     <h4 class="text-center"><strong>第二步：</strong>微信扫码授权领取缝芽币</h4>
-                                                    <br/>
                                                     <br/>
                                                 </div>
                                                 <div class="row center-block"style="text-align: center;">
@@ -409,10 +408,10 @@
                                             </div>
                                             {% elif isalready == 2 %}
                                             <div class="row clearfix">
-                                                <h4 class="text-center">恭喜您，您已经关注了目前全部公众号，今日可以直接点击下方按钮免费领取缝芽币！</h4>
+                                                <h4 class="text-center">恭喜您，您已经关注了目前全部公众号，今日可以直接点击下方链接免费领取缝芽币！</h4>
                                             </div>
                                             <div class="row clearfix center-block">
-                                                <button class="center-block btn btn-primary class-button" href="/palt/allconcerncoin/">免费领取缝芽币</button>
+                                                <a class="center-block btn btn-primary class-button" href="/plat/allconcerncoin/">免费领取缝芽币</a>
                                             </div>
                                              {% else %}
                                                 <div class="row clearfix">

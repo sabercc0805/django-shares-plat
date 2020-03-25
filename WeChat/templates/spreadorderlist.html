@@ -90,9 +90,9 @@
                             {% for order in order_list %}
                             <tr>
                                 <td>{{ order.userid }}</td>
-                                <td>{{ order.orginmenoy |div:100 }}</td>
+                                <td>{{ order.money |div:100 }}</td>
                                 <td>{{ order.spreadprecent}}% </td>
-                                <td>{{ order.dividemoney}}% </td>
+                                <td>{{ order.dividemoney|div:100}} </td>
                                 <td>{{ order.chargedate | date:'Y-m-d' }} </td>
 
                                 {% if order.spreadentry == 1 %}

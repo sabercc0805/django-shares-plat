@@ -8,6 +8,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+        <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
     </head>
     <body>
     {% if result == 1 %}
@@ -41,7 +42,7 @@
         if (x>=0){
             document.getElementById("sp").innerText=x;
         }else {
-                location.href="/userinfo/";
+                location.href="/wechatcash/";
         }
         x--;
     }

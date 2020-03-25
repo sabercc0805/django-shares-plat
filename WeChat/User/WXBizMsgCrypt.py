@@ -73,19 +73,13 @@ class XMLParse:
         @param xmltext: 待提取的xml字符串
         @return: 提取出的加密消息字符串
         """
-        print("e1")
         try:
-            print("e2")
             xml_tree = ET.fromstring(xmltext)
-            print("e3")
             encrypt  = xml_tree.find("Encrypt")
-            print("e4")
             touser_name    = xml_tree.find("AppId")
-            print("e5")
             return  ierror.WXBizMsgCrypt_OK, encrypt.text, touser_name.text
         except Exception as e:
-            #print e
-            print("e6")
+            print(e)
             return  ierror.WXBizMsgCrypt_ParseXml_Error,None,None
 
     def generate(self, encrypt, signature, timestamp, nonce):
@@ -253,12 +247,10 @@ class WXBizMsgCrypt(object):
         ret,encrypt,touser_name = xmlParse.extract(sPostData)
         if ret != 0:
             return ret, None
-        print("de1")
         sha1 = SHA1()
         ret,signature = sha1.getSHA1(self.token, sTimeStamp, sNonce, encrypt)
         if ret  != 0:
             return ret, None
-        print("de2")
         if not signature == sMsgSignature:
             return ierror.WXBizMsgCrypt_ValidateSignature_Error, None
         pc = Prpcrypt(self.key)

@@ -30,6 +30,7 @@ from User.WXBizMsgCrypt import WXBizMsgCrypt
 _APP_ID = "wxb5d226f10420789f"
 _MCH_ID = "1543525851"
 _API_KEY = "zzhr1990hr0805zjw1991pmf04251111"
+_APP_SECRET = "c7e6d8d12101607eb9ae80900af8df3e"
 
 _UFDODER_URL = "https://api.mch.weixin.qq.com/pay/unifiedorder" #url是微信下单api
 _NOTIFY_URL = "https://www.yuntaoz.cn/checkresult/"
@@ -37,7 +38,7 @@ _PAYMENT_URL = "https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transf
 _PAYMENTCHECK_URL = "https://api.mch.weixin.qq.com/mmpaymkttransfers/gettransferinfo"
 
 #myname = socket.getfqdn(socket.gethostname())
-_CREATE_IP = "127.0.0.1"#socket.gethostbyname(myname)  # 发起支付请求的ip
+_CREATE_IP = "47.93.201.81"#socket.gethostbyname(myname)  # 发起支付请求的ip
 
 component_appid = "wxc0ad5e0f7a6d4e4f"
 encodingAESKey = "zzhr19900805hr19910425zhx19631228zjwpmf1234"
@@ -59,6 +60,9 @@ syserror_dict = {"NO_AUTH":"没有该接口权限","PARAM_ERROR":"参数错误",
                  }
 
 retryerror_dict = {"SEND_FAILED":"付款错误","SYSTEMERROR":"系统繁忙，请稍后再试"}
+
+cert_path = "D:\\1543525851_20191015_cert\\apiclient_cert.pem"
+key_path = "D:\\1543525851_20191015_cert\\apiclient_key.pem"
 
 # 定义字典转XML的函数
 def trans_dict_to_xml(data_dict):
@@ -162,9 +166,9 @@ def wxpay(request):
 
         xml = trans_dict_to_xml(params)  # 转换字典为XML
         response = requests.request('post', _UFDODER_URL, data=xml.encode())  # 以POST方式向微信公众平台服务器发起请求
-        data_dict = trans_xml_to_dict(response.content)  # 将请求返回的数据转为字典
+        content = response.content
+        data_dict = trans_xml_to_dict(content)  # 将请求返回的数据转为字典
         qrcode_name = out_trade_no + '.png'  # 支付二维码图片保存路径
-
         if data_dict.get('return_code') == 'SUCCESS':  # 如果请求成功
             #获取成功写入orderstart
             try:
@@ -190,7 +194,6 @@ def wxpay(request):
 @csrf_exempt  # 去除csrf验证
 def check_wxpay(request):
     data_dict = trans_xml_to_dict(request.body)  # 回调数据转字典
-
     try:
         sign = data_dict.pop('sign')  # 取出签名
         key = _API_KEY  # 商户交易密钥
@@ -221,8 +224,8 @@ def check_wxpay(request):
                 username = order_start.userid
                 UserCheck = models.Commonuser.objects.get(userid=username)
                 md5 = UserCheck.binduser
-
-                if len(md5 <= 0):
+                print("resultpay")
+                if len(md5) <= 0:
                     new_orderover = models.OrderOver.objects.create(orderid=out_trade_no, coin=order_start.coin,
                                                                     money=order_start.money, userid=order_start.userid,
                                                                     precent=order_start.precent, orderstate=orderstate,
@@ -404,17 +407,27 @@ def wechatauthorizeqrcode(userid):
     return qrcodepath
 
 def get_bindwechat_userinfo(code):
-    token_url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="+ _APP_ID + "&secret=" +_API_KEY +"&code=" + code + "&grant_type=authorization_code"
+    token_url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="+ _APP_ID + "&secret=" +_APP_SECRET +"&code=" + code + "&grant_type=authorization_code"
     response = requests.request('get', token_url)
     data_dict = json.loads(response.content)  # 将请求返回的数据转为字典
     openid = data_dict.get("openid","")
     access_token = data_dict.get("access_token","")
-
+  
     if len(openid) == 0 | len(access_token) == 0:
         return  {"errorcode":-1,"errormessage":"获取用户openid失败，请重新扫码绑定！"}
 
-    user_url = "https://api.weixin.qq.com/sns/userinfo?access_token="+ access_token +"&openid="+ openid + "&lang=zh_CN"
+    #获取UnionID机制下tocken 可获得更多用户信息
+    cgi_token_url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" + _APP_ID + "&secret=" + _APP_SECRET
+    responsecgi = requests.request('get', cgi_token_url)
+    cgi_data_dict = json.loads(responsecgi.content)
+    cgi_access_token = cgi_data_dict.get("access_token", "")
 
+    if len(cgi_access_token) == 0:
+        return {"errorcode": -1, "errormessage": "获取cgi_tocken失败，请重新扫码绑定！"}
+
+    user_url = "https://api.weixin.qq.com/cgi-bin/user/info?access_token="+ cgi_access_token +"&openid="+ openid + "&lang=zh_CN"
+
+    #user_url = "https://api.weixin.qq.com/cgi-bin/user/info?access_token="+ access_token +"&openid="+ openid + "&lang=zh_CN"
     responseuser = requests.request('get', user_url)
     user_data_dict = json.loads(responseuser.content)  # 将请求返回的数据转为字典
     subscribe = user_data_dict.get("subscribe",-1)
@@ -445,11 +458,11 @@ def wechatcash(realname,cash,trade_no,openid,userid):
     params['sign'] = sign  # 添加签名到参数字典
 
     xml = trans_dict_to_xml(params)  # 转换字典为XML
-    response = requests.request('post', _PAYMENT_URL, data=xml.encode())  # 以POST方式向微信公众平台服务器发起请求
+    response = requests.request('post', _PAYMENT_URL, data=xml.encode(),cert=(cert_path,key_path))  # 以POST方式向微信公众平台服务器发起请求
+    content = response.content
     data_dict = trans_xml_to_dict(response.content)
-
     return_code = data_dict.get("return_code","")
-
+    print(return_code)
     if return_code == "SUCCESS":
         result_code = data_dict.get("result_code","")
         if result_code == "SUCCESS":
@@ -529,7 +542,7 @@ def researchcash(userid,trade_no,cash):
     params['sign'] = sign  # 添加签名到参数字典
 
     xml = trans_dict_to_xml(params)  # 转换字典为XML
-    response = requests.request('post', _PAYMENTCHECK_URL, data=xml.encode())  # 以POST方式向微信公众平台服务器发起请求
+    response = requests.request('post', _PAYMENTCHECK_URL, data=xml.encode(),cert=(cert_path,key_path))  # 以POST方式向微信公众平台服务器发起请求
     data_dict = trans_xml_to_dict(response.content)
 
     return_code = data_dict.get("return_code","")
@@ -606,7 +619,7 @@ def retospreaduserpay(userid,cash):
 def recoverdaytimes():
     try:
         models.CashBind.objects.all().update(wechateverydaytimes=1)
-        models.Commonuser.objects.all().update(appstate=0)
+        #models.Commonuser.objects.all().update(appstate=0)
     except:
         return
     return
@@ -618,6 +631,12 @@ def recovermonthtimes():
         return
     return
 
+def recoverappstate():
+    try:
+        models.Commonuser.objects.all().update(appstate=0)
+    except:
+        return
+    return
 
 #三方平台使用
 #获取票据ticket，微信每十分钟推送一次
@@ -630,19 +649,15 @@ def openweixin(request):
         timestamp = request.GET.get('timestamp', "")
         msg_sign = request.GET.get('msg_signature', "")
         #postdata
-        encrypt_xml = str(request.body)
-        #encrypt_xml = '<xml>\n <AppId><![CDATA[wxc0ad5e0f7a6d4e4f]]></AppId>\n <Encrypt><![CDATA[bWdLrJBJReLB2411DEdZeGY+0BZO82xtS2lfBpInw5vRkCNNXs9qHUVXMuMoSUePSbvVefhSZIHAscvBU1DIVg4iCsoZoGnhosejrJVKM2BBtnu47exqJsJkwFnwVu5VvsfRl95yDBu16SyvjWALJmMJOBawKiW1YcCrj9VnjFcvqXXa1vEMo1g6J/yoiTrUWStprQZXuUz5HVn6UV3klDUrclvRAdS9lL5NV14XoAQwAYab+8Yk1gXVxHZYURGv96UTHoauma4fEh1VmwinsHBTrnnBCTWvJ39KWiUhNVOjo5LdGLa0e+dMh9OUsJbjjbBWE+8nU4soSdalVYknowuYvwkZzYJnOy+wpZOqHjE//8hHnPKIF8kef7EZHrFbqMPqPLuy8GPftEM7HJo6dgVX5Xrr+0emcD+3B1/rqiU/ZxRgQtl3bvF9a9VeNf6EEtQhzm+sN3xbtmdZVvukrQ==]]></Encrypt>\n </xml>\n'
-        print(encrypt_xml)
+        encrypt_xml = request.body
         decrypt_test = WXBizMsgCrypt(component_tocken, encodingAESKey,component_appid)
         ret, decryp_xml = decrypt_test.DecryptMsg(encrypt_xml, msg_sign, timestamp, nonce)
-        print(str(ret))
         if ret != 0:#解密报错，打印log
             return HttpResponse("success")
         else:#解密成功写入数据库
             #将xml解析为dict
             dict = trans_xml_to_dict(decryp_xml)
             infotype = dict.get("InfoType","")
-            print("1")
             if infotype == "component_verify_ticket":
                 appid = dict.get("AppId", "")
                 createtime = int(dict.get("CreateTime", 0))
@@ -659,14 +674,12 @@ def openweixin(request):
                     component.componentverifyticket = ticket
                     component.tickettime = createtime
                     component.save()
-                    print("2")
                 except:
                     try:
                         component = models.ComponentInfo.objects.create(componentappid=component_appid,
                                                                         componentverifyticket=ticket,
                                                                         tickettime=createtime)
                         component.save()
-                        print(3)
                     except:
                         return HttpResponse("success")
 
@@ -678,7 +691,7 @@ def openweixin(request):
 
 
 #通过ticket获取tocken ；定时1分钟;读取数据库token时间，100分钟以上更新
-def get_plattocken():
+def get_plattocken(request):
     try:
         component = models.ComponentInfo.objects.get(componentappid=component_appid)
         tockentime = component.tockentime
@@ -687,9 +700,8 @@ def get_plattocken():
             #获取tocken
             ticket = component.componentverifyticket
             tockenurl = "https://api.weixin.qq.com/cgi-bin/component/api_component_token"
-            dict = {"component_appid": component_appid, "component_appsecret": component_secret, "component_verify_ticket": ticket}
-            postdata = str(dict)
-            response = requests.request('post', tockenurl, data=postdata.encode())  # 以POST方式向微信公众平台服务器发起请求
+            dict = json.dumps({"component_appid": component_appid, "component_appsecret": component_secret, "component_verify_ticket": ticket})
+            response = requests.request('post', tockenurl, data=dict.encode())  # 以POST方式向微信公众平台服务器发起请求
             content = response.content
             tocken_dict = eval(content)
             tocken = tocken_dict.get("component_access_token", "")
@@ -698,12 +710,12 @@ def get_plattocken():
                 component.tockentime = nowtockentime
                 component.componentaccesstoken = tocken
                 component.save()
-                return
-            return
+                return HttpResponse("success")
+            return HttpResponse("fail")
         else:
-            return
+            return HttpResponse("fail")
     except:
-        return
+        return HttpResponse("fail")
 
 #获取预授权码；调用的时候在获取即可，有效时限10分钟
 def get_pre_auth_code():
@@ -715,9 +727,8 @@ def get_pre_auth_code():
         if nowstamp - tockentime < 6600:
             tocken = component.componentaccesstoken
             url = "https://api.weixin.qq.com/cgi-bin/component/api_create_preauthcode?component_access_token=" + tocken
-            dict = {"component_appid": component_appid}
-            postdata = str(dict)
-            response = requests.request('post', url, data=postdata.encode())  # 以POST方式向微信公众平台服务器发起请求
+            dict = json.dumps({"component_appid": component_appid})
+            response = requests.request('post', url, data=dict.encode())  # 以POST方式向微信公众平台服务器发起请求
             content = response.content
             code_dict = eval(content)
             code = code_dict.get("pre_auth_code", "")
@@ -730,7 +741,7 @@ def get_pre_auth_code():
 
 #获取公众号授权回调二维码
 def call_back_authorize_qrcode(userid):
-    uri = "https://www.yuntaoz.cn/palt/authorizecallback/" + userid + "/"
+    uri = "https://www.yuntaoz.cn/plat/authorizecallback/" + userid + "/"
     code = get_pre_auth_code()
     success = 0
     if(len(code) == 0):
@@ -739,12 +750,12 @@ def call_back_authorize_qrcode(userid):
     url = "https://mp.weixin.qq.com/cgi-bin/componentloginpage?component_appid=" + component_appid + \
           "&pre_auth_code="+ code +"&redirect_uri=" + uri +"&auth_type=1" #当前只展示公众号
 
-    qrcode_name = userid + '.png'
-    img = qrcode.make(url)
-    img.save('static' + '/authorizeqrcode/' + qrcode_name)#是否回覆盖原文件需要测试一下（必须覆盖，因为每次code不相同可能），10分钟提醒用户更新图片
-    qrcodepath = '/authorizeqrcode/' + qrcode_name
+    #qrcode_name = userid + '.png'
+    #img = qrcode.make(url)
+    #img.save('static' + '/authorizeqrcode/' + qrcode_name)#是否回覆盖原文件需要测试一下（必须覆盖，因为每次code不相同可能），10分钟提醒用户更新图片
+    #qrcodepath = '/authorizeqrcode/' + qrcode_name
     success = 1
-    return success,qrcodepath
+    return success,url
 
 
 #微信公众号授权回调
@@ -758,30 +769,34 @@ def call_back_authorize(request,userid):
         component = models.ComponentInfo.objects.get(componentappid=component_appid)
         tockentime = component.tockentime
         nowstamp = int(time.time())
-        if nowstamp - tockentime < 6600:
+        minux = nowstamp - tockentime
+        if minux < 6600:
             tocken = component.componentaccesstoken
             url = "https://api.weixin.qq.com/cgi-bin/component/api_query_auth?component_access_token=" + tocken
-            dict = {"component_appid": component_appid, "authorization_code":auth_code}
-            postdata = str(dict)
-            response = requests.request('post', url, data=postdata.encode())  # 以POST方式向微信公众平台服务器发起请求
+            dict = json.dumps({"component_appid": component_appid, "authorization_code":auth_code})
+            response = requests.request('post', url, data=dict.encode())  # 以POST方式向微信公众平台服务器发起请求
             content = response.content
-            user_dict = trans_xml_to_dict(content)
-            authorizer_appid = user_dict.get("authorizer_appid", "")
-            authorizer_access_token = user_dict.get("authorizer_access_token", "")
-            authorizer_refresh_token = user_dict.get("authorizer_refresh_token", "")
+            user_dict = eval(content)
+            authorizer_dict = user_dict.get("authorization_info","")
+            authorizer_appid = authorizer_dict.get("authorizer_appid", "")
+            authorizer_access_token = authorizer_dict.get("authorizer_access_token", "")
+            authorizer_refresh_token = authorizer_dict.get("authorizer_refresh_token", "")
             nowtockentime = int(time.time())
-
             try:#在用户绑定界面时，就判断是否被别的账号绑定，或已经绑定
                 authorizeinfo = models.AuthorizeInfo.objects.get(appid=authorizer_appid)
                 useridalready = authorizeinfo.userid
                 type = authorizeinfo.type
                 if type == 1:
+                    authorizeinfo.accesstoken = authorizer_access_token
+                    authorizeinfo.refreshtoken = authorizer_refresh_token
+                    authorizeinfo.tockentime = nowtockentime
+                    authorizeinfo.save()
                     ret = get_app_info(authorizer_appid,tocken)
                     if useridalready == userid:
                         if ret == 0:
                             return HttpResponse("该公众号已绑定成功，但是未拉取到公众号信息，不能使用平台增粉功能，您可以解除授权后重新授权，很抱歉给您带来的麻烦!")
 
-                        return HttpResponse("该公众号已绑定成功，可以使用增粉功能，请刷新平台授权页面后查看!")
+                        return render(request, 'wechatauhoorize/authorizetran.html')  # 授权u页面也进行提示
                     else:
                         return HttpResponse("该公众号已绑定其他推广用户，请解除授权后重试!")
                 else:
@@ -795,7 +810,7 @@ def call_back_authorize(request,userid):
                     ret = get_app_info(authorizer_appid,tocken)
                     if ret == 0:
                         return HttpResponse("该公众号已绑定成功，但是未拉取到公众号信息，不能使用平台增粉功能，您可以解除授权后重新授权，很抱歉给您带来的麻烦!")
-                    return HttpResponse("恭喜您，公众号授权成功，可以使用增粉功能，请刷新平台授权页面后查看!")#授权u页面也进行提示
+                    return render(request, 'wechatauhoorize/authorizetran.html')  # 授权u页面也进行提示
             except:
                 try:
                     models.AuthorizeInfo.objects.filter(userid=userid).update(type=-3)
@@ -807,7 +822,7 @@ def call_back_authorize(request,userid):
                     ret = get_app_info(authorizer_appid, tocken)
                     if ret == 0:
                         return HttpResponse("该公众号已绑定成功，但是未拉取到公众号信息，不能使用平台增粉功能，您可以解除授权后重新授权，很抱歉给您带来的麻烦!")
-                    return HttpResponse("恭喜您，公众号授权成功，可以使用增粉功能!")
+                    return render(request, 'wechatauhoorize/authorizetran.html')  # 授权u页面也进行提示
                 except:
                     return HttpResponse("对不起，由于网站系统超时，您的授权失败，请稍后重新进行授权,若显示已授权，请解除授权后重试!")
         else:
@@ -818,15 +833,17 @@ def call_back_authorize(request,userid):
 #获取公众号信息写入数据库
 def get_app_info(appid,tocken):
     url = "https://api.weixin.qq.com/cgi-bin/component/api_get_authorizer_info?component_access_token=" + tocken
-    dict = {"component_appid": component_appid, "authorizer_appid": appid}
-    postdata = str(dict)
-    response = requests.request('post', url, data=postdata.encode())  # 以POST方式向微信公众平台服务器发起请求
+    dict = json.dumps({"component_appid": component_appid, "authorizer_appid": appid})
+    response = requests.request('post', url, data=dict.encode())  # 以POST方式向微信公众平台服务器发起请求
     content = response.content
-    info_dict = trans_xml_to_dict(content)
+    print(content)
+    info_dict = eval(content)
     authorization_info_dict = info_dict.get("authorizer_info")
     nickname = authorization_info_dict.get("nick_name","")
     headimg = authorization_info_dict.get("head_img","")
+    headimg = headimg.replace("\/","/")
     qrcodeurl = authorization_info_dict.get("qrcode_url","")
+    qrcodeurl = qrcodeurl.replace("\/","/")
     principal_name = authorization_info_dict.get("principal_name","")
     signature = authorization_info_dict.get("signature","")#公众号介绍，直接获取
     id = authorization_info_dict.get("service_type_info","").get("id",-1)
@@ -853,6 +870,7 @@ def get_app_info(appid,tocken):
         authorizeinfo.qrcode_url = qrcodeurl
         authorizeinfo.principal = principal_name
         authorizeinfo.describe = signature
+        authorizeinfo.save()
     except:
         ret = 0
 
@@ -876,8 +894,9 @@ def get_refresh_tocken(authorizer_appid):
             usertimestamp = authorizeinfo.tockentime
             if nowstamp - usertimestamp < 6600:
                 str = authorizeinfo.accesstoken
-                errornum = 10001
-                return str, errornum
+                if len(str) != 0:                
+                   errornum = 10001
+                   return str, errornum
         except:
             errornum = -10002  # 数据库出错
             return str, errornum
@@ -889,15 +908,15 @@ def get_refresh_tocken(authorizer_appid):
             if nowstamp - tockentime < 6600:
                 tocken = component.componentaccesstoken
                 url = "https://api.weixin.qq.com/cgi-bin/component/api_authorizer_token?component_access_token=" + tocken
-                dict = {"component_access_token": tocken, "component_appid": component_appid, "authorizer_appid":authorizer_appid, "authorizer_refresh_token":refreshtoken}
-                postdata = str(dict)
-                response = requests.request('post', url, data=postdata.encode())  # 以POST方式向微信公众平台服务器发起请求
+                dict = json.dumps({"component_appid": component_appid, "authorizer_appid":authorizer_appid, "authorizer_refresh_token":refreshtoken})
+                response = requests.request('post', url, data=dict.encode())  # 以POST方式向微信公众平台服务器发起请求
                 content = response.content
                 user_dict = eval(content)
                 authorizer_access_token = user_dict.get("authorizer_access_token", "")
+                authorizer_refresh_token = user_dict.get("authorizer_refresh_token", "")
                 nowtockentime = int(time.time())
                 try:
-                    models.AuthorizeInfo.objects.filter(appid=authorizer_appid).update(accesstoken=authorizer_access_token,tockentime=nowtockentime)
+                    models.AuthorizeInfo.objects.filter(appid=authorizer_appid).update(accesstoken=authorizer_access_token,tockentime=nowtockentime,refreshtoken=authorizer_refresh_token)
                     str = authorizer_access_token
                     errornum = 10002
                     return str, errornum
@@ -920,7 +939,7 @@ def get_refresh_tocken(authorizer_appid):
 #授权网址#代公众号网页授权
 def get_authorize_url_qrcode(appid,userid):#appid：推广公众号id；userid：推广用户id
     return_uri = "https://www.yuntaoz.cn/plat/componentauthorize/" + userid + "/"
-    url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+ appid +"&redirect_uri="+ return_uri +"&response_type=code&scope=snsapi_userinfo&state="+ userid +"component_appid="+ component_appid +"#wechat_redirect"
+    url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+ appid +"&redirect_uri="+ return_uri +"&response_type=code&scope=snsapi_userinfo&state="+ userid +"&component_appid="+ component_appid +"#wechat_redirect"
 
     qrcode_name = appid + userid + '.png'
     img = qrcode.make(url)  # 创建支付二维码片
@@ -931,7 +950,7 @@ def get_authorize_url_qrcode(appid,userid):#appid：推广公众号id；userid�
 #授权网址#代公众号网页授权,文章
 def get_authorize_url_article_qrcode(appid,userid,title):#appid：推广公众号id；userid：推广用户id
     return_uri = "https://www.yuntaoz.cn/plat/componentauthorizearticle/" + userid + "/" + title + "/"
-    url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+ appid +"&redirect_uri="+ return_uri +"&response_type=code&scope=snsapi_userinfo&state="+ userid +"component_appid="+ component_appid +"#wechat_redirect"
+    url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+ appid +"&redirect_uri="+ return_uri +"&response_type=code&scope=snsapi_userinfo&state="+ userid +"&component_appid="+ component_appid +"#wechat_redirect"
 
     qrcode_name = appid + userid + 'article.png'
     img = qrcode.make(url)  # 创建支付二维码片
@@ -969,10 +988,9 @@ def get_palt_tocken(component_appid):
                 # 获取tocken
                 ticket = component.componentverifyticket
                 tockenurl = "https://api.weixin.qq.com/cgi-bin/component/api_component_token"
-                dict = {"component_appid": component_appid, "component_appsecret": component_secret,
-                        "component_verify_ticket": ticket}
-                postdata = str(dict)
-                response = requests.request('post', tockenurl, data=postdata.encode())  # 以POST方式向微信公众平台服务器发起请求
+                dict = json.dumps({"component_appid": component_appid, "component_appsecret": component_secret,
+                        "component_verify_ticket": ticket})
+                response = requests.request('post', tockenurl, data=dict.encode())  # 以POST方式向微信公众平台服务器发起请求
                 content = response.content
                 tocken_dict = eval(content)
                 tocken = tocken_dict.get("component_access_token", "")
@@ -1004,7 +1022,84 @@ def authorize_user_code(request,userid):
         success = 0
         return render(request, 'authorizeuserinfo.html', locals())
 
-    authorize_user_result(request, code, userid, appid)
+    #authorize_user_result(request, code, userid, appid)
+    tocken,errornum = get_palt_tocken(component_appid)
+
+    if errornum < 0:
+        return render(request, 'authorizeuserresult.html', {"sign":-3})
+
+    token_url = "https://api.weixin.qq.com/sns/oauth2/component/access_token?appid=" + appid + "&code="+ code + "&grant_type=authorization_code&component_appid=" + component_appid + "&component_access_token=" + tocken
+    response = requests.request('get', token_url)
+    content = response.content
+
+    data_dict = eval(content)  # 将请求返回的数据转为字典
+    openid = data_dict.get("openid", "")
+    access_token = data_dict.get("access_token", "")
+
+    if len(openid) == 0 | len(access_token) == 0:
+        return render(request, 'authorizeuserresult.html', {"sign":0})
+
+    #该微信是否已经关注过该公众号
+    try:
+        concern = models.ConcernInfo.objects.get(appid=appid, openid=openid)
+        id = concern.id
+        return render(request, 'authorizeuserresult.html', {"sign": -4})
+    except:
+        pass
+
+    #同正常公众号授权，获取通用tocken，不是网页授权tocken，要获得更多信息必须用cgi-bin
+    common_tocken,errornum = get_refresh_tocken(appid)
+    if errornum < 0:
+        return render(request, 'authorizeuserresult.html', {"sign": -3})
+
+    #user_url = "https://api.weixin.qq.com/sns/userinfo?access_token=" + access_token + "&openid=" + openid + "&lang=zh_CN"
+
+    user_url = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=" + common_tocken + "&openid=" + openid + "&lang=zh_CN"
+
+    responseuser = requests.request('get', user_url)
+    user_data_dict = json.loads(responseuser.content)  # 将请求返回的数据转为字典
+    subscribe = user_data_dict.get("subscribe", -1)
+
+    if subscribe < 0:
+        return render(request, 'authorizeuserresult.html', {"sign": 0})
+    elif subscribe == 0:
+        return render(request, 'authorizeuserresult.html', {"sign": -1})
+
+    #处理领取缝芽币，防止以重复领取，用户界面勿忘领取过不在显示二维码
+    try:
+        User = models.Commonuser.objects.get(userid = userid)
+        giftdate = User.fengyadate
+        if len(giftdate) != 0:
+            alreadyget = isequaldate(giftdate)
+            if alreadyget == 1:
+                return render(request, 'authorizeuserresult.html', {"sign": -2})
+
+        # 记录已关注公众号,记录出错不可领取缝芽币，稍后领取
+        try:
+            authorizeinfo = models.AuthorizeInfo.objects.get(appid=appid)
+            concern = models.ConcernInfo.objects.create(appid=appid, userid=userid, openid=openid,
+                                                        nick_name=authorizeinfo.nick_name)
+            concern.save()
+        except:
+            pass
+
+        #赠送缝芽币不进入pool，但是有订单生成，表示赠送
+        #赠送
+        User.fengyadate = timezone.now().strftime("%Y-%m-%d")
+        User.giftcoin = F('giftcoin') + 500
+        User.save()
+    except:
+        return render(request, 'authorizeuserresult.html', {"sign": -3})
+
+    try:
+        # 生成赠送订单（积分赠送也要生成）,102赠送逢芽币
+        orderid = order_num(102, userid)
+        order = models.OrderOver.objects.create(orderid=orderid,coin=500,userid=userid,orderstate=2,appeal=-1,money=0)
+        order.save()
+    except:
+        pass
+
+    return render(request, 'authorizeuserresult.html', {"sign": 1})
 
 def authorize_user_result(request,code,userid,appid):
 
@@ -1012,7 +1107,7 @@ def authorize_user_result(request,code,userid,appid):
         success = 0
         return render(request, 'authorizeuserinfo.html', locals())
 
-    tocken,errornum = get_palt_tocken()
+    tocken,errornum = get_palt_tocken(component_appid)
 
     if errornum < 0:
         return render(request, 'authorizeuserresult.html', {"sign":-3})
@@ -1025,6 +1120,14 @@ def authorize_user_result(request,code,userid,appid):
 
     if len(openid) == 0 | len(access_token) == 0:
         return render(request, 'authorizeuserresult.html', {"sign":0})
+    
+    #该微信是否已经关注过该公众号
+    try:
+        concern = models.ConcernInfo.objects.get(appid=appid, openid=openid)
+        id = concern.id
+        return render(request, 'authorizeuserresult.html', {"sign": -4})
+    except:
+        pass
 
     user_url = "https://api.weixin.qq.com/sns/userinfo?access_token=" + access_token + "&openid=" + openid + "&lang=zh_CN"
 
@@ -1050,7 +1153,7 @@ def authorize_user_result(request,code,userid,appid):
             concern = models.ConcernInfo.objects.create(appid=appid, userid=userid)
             concern.save()
         except:
-            return render(request, 'authorizeuserresult.html', {"sign": -3})
+            pass
 
         #赠送缝芽币不进入pool，但是有订单生成，表示赠送
         #赠送
@@ -1121,15 +1224,77 @@ def authorize_article(request,userid,title):
         success = 0
         return render(request, 'authorizeuserinfo.html', locals())
 
-    authorize_article_result(request, code, userid, appid, title)
+    tocken, errornum = get_palt_tocken(component_appid)
+
+    if errornum < 0:
+        return render(request, 'authorizeuserresult.html', {"sign": -3})
+
+    token_url = "https://api.weixin.qq.com/sns/oauth2/component/access_token?appid=" + appid + "&code=" + code + "&grant_type=authorization_code&component_appid=" + component_appid + "&component_access_token=" + tocken
+    response = requests.request('get', token_url)
+    data_dict = json.loads(response.content)  # 将请求返回的数据转为字典
+    openid = data_dict.get("openid", "")
+    access_token = data_dict.get("access_token", "")
+
+    if len(openid) == 0 | len(access_token) == 0:
+        return render(request, 'authorizeuserresult.html', {"sign": 0})
+    
+    #该微信是否已经关注过该公众号
+    try:
+        concern = models.ConcernInfo.objects.get(appid=appid, openid=openid)
+        id = concern.id
+        return render(request, 'authorizeuserresult.html', {"sign": -4})
+    except:
+        pass
+
+    # 同正常公众号授权，获取通用tocken，不是网页授权tocken，要获得更多信息必须用cgi-bin
+    common_tocken, errornum = get_refresh_tocken(appid)
+
+    if errornum < 0:
+        return render(request, 'authorizeuserresult.html', {"sign": -3})
+
+    # user_url = "https://api.weixin.qq.com/sns/userinfo?access_token=" + access_token + "&openid=" + openid + "&lang=zh_CN"
+
+    user_url = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=" + common_tocken + "&openid=" + openid + "&lang=zh_CN"
+
+    responseuser = requests.request('get', user_url)
+    user_data_dict = json.loads(responseuser.content)  # 将请求返回的数据转为字典
+    subscribe = user_data_dict.get("subscribe", -1)
+
+    if subscribe < 0:
+        return render(request, 'authorizeuserresult.html', {"sign": 0})
+    elif subscribe == 0:
+        return render(request, 'authorizeuserresult.html', {"sign": -1})
+
+    try:
+        authorizeinfo = models.AuthorizeInfo.objects.get(appid=appid)
+        concern = models.ConcernInfo.objects.create(appid=appid, userid=userid, openid=openid,
+                                                        nick_name=authorizeinfo.nick_name)
+        concern.save()
+    except:
+        pass
+
+    # 处理开通文章权限
+    try:
+        article = models.BlogArticle.objects.get(title=title)
+        new_data = models.ArticleContain.objects.create(title=title, userid=userid,
+                                                                costtype=article.articlecosttype,
+                                                                cost=0, tag=article.tag)
+        new_data.save()
+    except:
+        return HttpResponse("十分抱歉，网站数据出错，请稍后重新扫码开通权限！")
+
+    return HttpResponse("恭喜您，开通权限成功，请您稍后网页自动跳转或后退点击题目阅读文章！")
+
+    #authorize_article_result(request, code, userid, appid, title)
 
 def authorize_article_result(request,code,userid,appid,title):
+    return HttpResponse("ceshi")
 
     if len(code) == 0 or len(appid) == 0 or len(userid) == 0:
         success = 0
         return HttpResponse("对不起，您的授权失败，请重新扫码开通权限，或稍后重试！")
-
-    tocken,errornum = get_palt_tocken()
+    
+    tocken,errornum = get_palt_tocken(component_appid)
 
     if errornum < 0:
         return HttpResponse("十分抱歉，网站数据出错，请稍后重新扫码开通权限！")
@@ -1155,13 +1320,11 @@ def authorize_article_result(request,code,userid,appid,title):
 
     #处理开通文章权限
     try:
-        arcticlecontain = models.ArticleContain.objects.get(title=title, userid=userid)
-        if not arcticlecontain:
-            article = models.BlogArticle.objects.get(title=title)
-            new_data = models.ArticleContain.objects.create(title=title, userid=userid,
-                                                            costtype=article.articlecosttype,
-                                                            cost=0, tag=article.tag)
-            new_data.save()
+       article = models.BlogArticle.objects.get(title=title)
+       new_data = models.ArticleContain.objects.create(title=title, userid=userid,
+                                                                costtype=article.articlecosttype,
+                                                                cost=0, tag=article.tag)
+       new_data.save()
     except:
         return HttpResponse("十分抱歉，网站数据出错，请稍后重新扫码开通权限！")
 

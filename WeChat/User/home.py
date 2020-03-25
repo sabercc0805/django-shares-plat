@@ -21,6 +21,7 @@ from .forms import RealNameform
 from .forms import BankBindform
 from .forms import BankCashform
 from .forms import WechatBindform
+from .forms import WechatCashform
 from django.forms.models import model_to_dict
 from django.http import Http404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -55,6 +56,7 @@ from User.wechatpay import isequaldate
 from User.wechatpay import get_authorize_url_qrcode
 from User.wechatpay import get_authorize_url_article_qrcode
 from User.wechatpay import call_back_authorize_qrcode
+from User.wechatpay import get_refresh_tocken
 import requests
 
 def loginverify(func):#登陆验证装饰器
@@ -417,6 +419,7 @@ def register(request):
                     new_user.binduser = md5
                     binddate = timezone.now().strftime("%Y-%m-%d")
                     new_user.binddate = binddate
+                    new_user.integrate = 300
                 new_user.save()
                 response = render(request, 'registertran.html') # 自动跳转到登录页面
                 response.delete_cookie('md5')
@@ -479,8 +482,13 @@ def userinfo(request):
         else:
             if appstate == 1:
                 isalready = 0
+                print("ceshi1")
+                print(str(isalready))
             else:
+                result = -1
                 result,appidget = ScreenAppid(username)
+                print(str(result))
+                print(appidget)
                 if result == 0:
                     User.appstate = 1
                     User.appid = appidget
@@ -494,7 +502,8 @@ def userinfo(request):
 
         if isalready == 0:
             # 获取公众号二维码及授权二维码
-            qrcodeurl = models.AuthorizeInfo.objects.get(appid=appid).value(qrcodeurl)
+            authorize = models.AuthorizeInfo.objects.get(appid=appid)
+            qrcodeurl = authorize.qrcode_url
             qrcodepath = get_authorize_url_qrcode(appid,username)
 
         return render(request, 'userinfoshow.html', locals())
@@ -634,6 +643,7 @@ def articlecontent(request):
                 acticlejudge = models.BlogArticle.objects.get(title=titlename)
                 userinfo = models.Commonuser.objects.get(userid=username)
                 coin = int(userinfo.fengyacoin/100)
+                showgiftcoin = int(userinfo.giftcoin/100)
                 integral = userinfo.integrate
                 filecosttype = acticlejudge.filecosttype
                 #查找一下在已有列表中是否存在如果存在不再重复扣费
@@ -1334,6 +1344,7 @@ def chargeresult(request):
     if success == 1:
         orderover = models.OrderOver.objects.get(userid=username, orderid=orderid)
         num = orderover.coin
+        num = num/100
 
     content = "充值"
     unit = "缝芽币"
@@ -1357,14 +1368,19 @@ def orderlist(request):
     try:
         if ordertype == 1:
             over_list = models.OrderOver.objects.filter(userid=username).order_by('-chargedate')
-            start_list = models.OrderStart.objects.filter(userid=username).order_by('-chargedate')
-            if over_list.count() > 0 & start_list.count() > 0:
-                over_list.extend(start_list)
-                order_list = over_list
-            elif over_list.count() > 0:
-                order_list = over_list
-            elif start_list.count() > 0:
-                order_list = start_list
+            start_list = models.OrderStart.objects.filter(userid=username).order_by('-chargedate')      
+            if len(over_list) > 0:
+                if len(start_list) > 0:
+                    for order in over_list:
+                         order_list.append(order)
+
+                    for order in start_list:
+                         order_list.append(order)
+                else:
+                    order_list = over_list                  
+            else:
+                if len(start_list) > 0:
+                    order_list = start_list
         elif ordertype == 2:
             order_list = models.CreditExchange.objects.filter(userid=username).order_by('-exchangedate')
     except:
@@ -1477,11 +1493,9 @@ def spreaduorderlist(request):
 
         order_list = models.OrderOver.objects.filter(binduser=md5,orderstate=1).order_by('-chargedate')
 
-        nNum = 0
         for order in order_list:
             replacename = replace_username(order.userid)
-            order_list[nNum].userid = replacename
-            ++nNum
+            order.userid = replacename
     except:
         return render(request, 'commontran.html')
 
@@ -1521,8 +1535,7 @@ def spreadbindlist(request):
         nNum = 0
         for userreplace in user_list:
             replacename = replace_username(userreplace.userid)
-            user_list[nNum].userid = replacename
-            ++nNum
+            userreplace.userid = replacename
     except:
         return render(request, 'commontran.html')
 
@@ -1784,6 +1797,10 @@ def bindbank(request):
             bankname = Bank.bankname
             banktimes = Bank.banktimes
             isbank = True
+            if len(bankid) == 0:
+                isbank = False
+            elif len(bankname) == 0:
+                isbank = False
         except:
             isbank = False
 
@@ -2050,11 +2067,11 @@ def wechatcash(request):
 
     if request.method == "POST":
         try:
-            wechatid = request.POST["wechatid"]
             cash = float(request.POST["cash"]) * 100
             code = request.POST["code"]
 
             BindUserOprate = models.CashBind.objects.get(userid=username)
+            wechatid = BindUserOprate.wechatid
             if BindUserOprate.wechateverydaytimes <= 0:
                 info = "今日提现次数已达上限，请于明日9点以后重试！"
                 return render(request, 'commoninfotran.html', {"info": info})
@@ -2101,22 +2118,24 @@ def wechatcash(request):
         except:
             return render(request, 'commontran.html')
     else:
+        wechatcash_form = WechatCashform()
         return render(request, 'spreadwechatcash.html', locals())
 
 def wechatbind(request):
     code = request.GET.get('code',"")
-    userid = request.GET.get('state',"")
+    state = request.GET.get('state',"")
     wechatbind_form = WechatBindform()
-    if len(code) == 0 | len(userid) == 0:
+    if len(code) == 0 | len(state) == 0:
         return HttpResponse("微信返回参数错误，请重新扫码绑定")
 
     return render(request, 'bindwechat.html', locals())
 
 def wechatverify(request):
     if request.method == "POST":
-        code = request.POST['code', ""]
-        userid = request.POST['state', ""]
-        wechatid = request.POST['wechatid', ""]
+        dict = request.POST
+        code = dict.get("code","")
+        userid = dict.get("state","")
+        wechatid = dict.get("wechatid","")
         iswechatid = False
         if len(code) == 0 | len(userid) == 0:
             return HttpResponse("微信返回参数错误，请重新扫码绑定")
@@ -2129,7 +2148,7 @@ def wechatverify(request):
 
         if errorcode < 0:
             return HttpResponse(userinfodict.get("errormessage"))
-
+        
         try:
             User = models.Commonuser.objects.get(userid=userid)
             realname = User.realname
@@ -2144,8 +2163,10 @@ def wechatverify(request):
                 success = 0
                 info = "您所绑定的用户尚未激活推广账户，请激活后重试"
                 return render(request, 'wechatbindtran.html', locals())
-
+            
+            print("use1")
             try:
+                print("use3")
                 BindUser = models.CashBind.objects.get(userid=userid)
                 BindUser.openid = userinfodict.get("openid")
                 BindUser.wechatid = wechatid
@@ -2154,6 +2175,7 @@ def wechatverify(request):
                 return render(request, 'wechatbindtran.html', locals())
             except:
                 try:
+                    print("use1")
                     BindUser = models.CashBind.objects.create(userid=userid,openid=userinfodict.get("openid"),wechatid=wechatid)
                     BindUser.save()
                     success = 1
@@ -2200,14 +2222,15 @@ def cashresult(request):
         except:
             failreason = "系统错误，或订单不存在，请稍后再试"
     elif result == -1:
-        ontent = "提现订单状态不明！"
+        content = "提现订单状态不明！"
     elif result == 3:
-        ontent = "提现订单处理中...！"
+        content = "提现订单处理中...！"
 
     return render(request, 'wechatcashresult.html', locals())
 
 @loginverify
 def authorizeinfo(request):
+    kind = 0
     type = 9
     userid = request.session['user_id']
     isauthorize = False
@@ -2222,9 +2245,10 @@ def authorizeinfo(request):
         qrcodeurl = authorize.qrcode_url
         describe = authorize.describe
         isauthorize = True
+        success, url = call_back_authorize_qrcode(userid)
         return render(request, 'wechatauhoorize/authorize.html', locals())
     except:
-        success, qrcodepath = call_back_authorize_qrcode(userid)
+        success, url = call_back_authorize_qrcode(userid)
         return render(request, 'wechatauhoorize/authorize.html', locals())
 
 #def update_authorize_info(request):公众号信息腾讯不可改，暂不支持更新信息
@@ -2255,7 +2279,8 @@ def authorizenocase(request):#关注公众号免费阅读文章
 
     if isalready == 0:
         # 获取公众号二维码及授权二维码
-        qrcodeurl = models.AuthorizeInfo.objects.get(appid=appid).value(userid)
+        authorize = models.AuthorizeInfo.objects.get(appid=appid)
+        qrcodeurl = authorize.qrcode_url
         qrcodepath = get_authorize_url_article_qrcode(appid, userid,title)
 
     return render(request, 'wechatauhoorize/authorizenocase.html', locals())
@@ -2281,29 +2306,28 @@ def allconcernarticle(request):
     userid = request.session['user_id']
     title = request.GET.get("title", "")
     currentPage = int(request.GET.get('currentPage', 1))
-
-    if ScreenAppid(userid) != 2:
+    isalready,appid = ScreenAppid(userid)
+    if isalready != 2:
         info = "对不起，您尚未关注所有公众号，无法开通！"
         return render(request,"commoninfotran.html",{"info":info})
 
     try:
-        arcticlecontain = models.ArticleContain.objects.get(title=title, userid=userid)
-        if not arcticlecontain:
-            article = models.BlogArticle.objects.get(title=title)
-            new_data = models.ArticleContain.objects.create(title=title, userid=userid,
+        article = models.BlogArticle.objects.get(title=title)
+        new_data = models.ArticleContain.objects.create(title=title, userid=userid,
                                                             costtype=article.articlecosttype,
                                                             cost=0, tag=article.tag)
-            new_data.save()
-            url = "articlecontent/?title=" + title + "&currentPage=" + str(currentPage)
-            return redirect(url)
+        new_data.save()
+        swapurl = "/articlecontent/?title=" + title + "&currentPage=" + str(currentPage)
+        return redirect(swapurl)
     except:
         return render(request,"commontran.html")
 
 @loginverify
 def allconcerncoin(request):
     userid = request.session['user_id']
-
-    if ScreenAppid(userid) != 2:
+    isinword = 1
+    isalready,appid = ScreenAppid(userid)
+    if  isalready != 2:
         info = "对不起，您尚未关注所有公众号，无法开通！"
         return render(request, "commoninfotran.html", {"info": info})
     # 处理领取缝芽币，防止以重复领取，用户界面勿忘领取过不在显示二维码
@@ -2313,7 +2337,7 @@ def allconcerncoin(request):
         if len(giftdate) != 0:
             alreadyget = isequaldate(giftdate)
             if alreadyget == 1:
-                return render(request, 'authorizeuserresult.html', {"sign": -2})
+                return render(request, 'authorizeuserresult.html', {"sign": -2, "isinword":isinword})
 
         # 赠送缝芽币不进入pool，但是有订单生成，表示赠送
         # 赠送
@@ -2321,18 +2345,60 @@ def allconcerncoin(request):
         User.giftcoin = F('giftcoin') + 500
         User.save()
     except:
-        return render(request, 'authorizeuserresult.html', {"sign": -3})
+        return render(request, 'authorizeuserresult.html', {"sign": -3, "isinword":isinword})
 
     try:
         # 生成赠送订单（积分赠送也要生成）,102赠送逢芽币
         orderid = order_num(102, userid)
-        order = models.OrderOver.objects.create(orderid=orderid, coin=500, userid=userid, orderstate=2, appeal=-1)
+        order = models.OrderOver.objects.create(orderid=orderid, coin=500, userid=userid, orderstate=2, appeal=-1,money=0)
         order.save()
     except:
         pass
 
-    return render(request, 'authorizeuserresult.html', {"sign": 1})
+    return render(request, 'authorizeuserresult.html', {"sign": 1, "isinword":isinword})
 
+@loginverify
+def concernlist(request):
+    kind = 0
+    contentname = "公众号增粉记录"
+    type = 10
+    username = request.session['user_id']
+    concern_list = []
+    appnickname = ""
+    totalnum = 0
+    try:
+        authorizeinfo = models.AuthorizeInfo.objects.get(userid=username,type=1)
+        appid = authorizeinfo.appid
+        appnickname = authorizeinfo.nick_name
+        concern_list = models.ConcernInfo.objects.filter(appid=appid).order_by('-concerntime')
+        totalnum = len(concern_list)
+
+        for concern in concern_list:
+            replacename = replace_username(concern.userid)
+            concern.userid = replacename
+    except:
+        info = "系统参数错误，请稍后重试！"
+        return render(request, 'commoninfotran.html', {"info": info})
+
+    paginator = Paginator(concern_list, 15)
+    # 从前端获取当前的页码数,默认为1
+    page = request.GET.get('page', 1)
+
+    currentPage = int(page)
+
+    try:
+        concern_list = paginator.page(page)  # 获取当前页码的记录
+    except PageNotAnInteger:
+        concern_list = paginator.page(1)  # 如果用户输入的页码不是整数时,显示第1页的内容
+    except EmptyPage:
+        concern_list = paginator.page(paginator.num_pages)  # 如果用户输入的页数不在系统的页码列表中时,显示最后一页的内容
+
+    try:
+        User = models.Commonuser.objects.get(userid=username)
+        return render(request, 'wechatauhoorize/concernlist.html', locals())
+    except:
+        info = "系统参数错误，请稍后重试！"
+        return render(request, 'commoninfotran.html', {"info": info})
 
 def tranupdate(request):
     return render(request,"Tran/updatetran.html")
@@ -2344,12 +2410,4 @@ def ce(request,id):
     return render(request,"wechatauhoorize/authorizenocase.html", locals())
 
 def ceshi(request):
-    params = {
-        'nonce_str': 1111,
-        'partner_trade_no': 1111,  # 订单编号
-        'mch_id': 111,  # 商户号
-        'appid': 11,  # APPID
-    }
-
-    url = "http://127.0.0.1/openweixin/?signature=8290f3569298c7a78a7be7b37dd028714acfdc52&timestamp=1581490122&nonce=860038013&encrypt_type=aes&msg_signature=f01eddaeac375187a94814702dcd84f088b20465"
-    response = requests.request('post', url, data=params)  # 以POST方式向微信公众平台服务器发起请求
+    return HttpResponse("提交参数有误，请重新扫码绑定")

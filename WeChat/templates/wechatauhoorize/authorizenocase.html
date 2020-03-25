@@ -17,7 +17,7 @@
         <div class="row clearfix">
             {% if isalready == 1 %}
                 <div class="row clearfix">
-                    <h4 class="text-center">您已获取该文章阅读权限，还有<span id="sp">5</span>秒跳转到上级页面...</h4>
+                    <h4 class="text-center">您已获取该文章阅读权限，还有<span id="sp">5</span>秒跳转到该文章页面...</h4>
                 </div>
             {% elif isalready == 0 %}
                 <div class="col-md-6">
@@ -35,7 +35,6 @@
                         <h4 class="text-center"><strong>第二步：</strong>微信扫码授权开通文章阅读权限</h4>
                         <h5 class="text-center">(请注意，若未扫码开通权限退出该页面再次进入需要重新关注公众号)</h5>
                         <br/>
-                        <br/>
                     </div>
                     <div class="row center-block"style="text-align: center;">
                         <img src="{% static qrcodepath %}" style="height:200px;width:200px;">
@@ -45,8 +44,8 @@
                 <div class="row clearfix">
                     <h4 class="text-center">恭喜您，您已经关注了目前全部公众号，今日可以直接点击下方按钮免费开通文章阅读权限！</h4>
                 </div>
-                <div class="row clearfix center-block">
-                    <button class="center-block btn btn-primary class-button" href="/palt/allconcernarticle/?title={{ title }}&currentPage={{ currentPage }}">开通文章阅读权限</button>
+                <div class="row center-block">
+                    <a class="center-block btn btn-primary class-button" style="width: 200px" href="/plat/allconcernarticle/?title={{ title }}&currentPage={{ currentPage }}">开通文章阅读权限</a>
                 </div>
             {% else %}
                 <div class="row clearfix">
@@ -56,8 +55,7 @@
         </div>
     <script>
     onload=function () {
-        setInterval(go,1000)
-        {% if isalready == 1 %}
+        {% if isalready == 0 %}
             {
                 setInterval(function () {
                     $.get("/plat/articlenocasetran/?title={{ title }}", {}, function (ret) {
@@ -68,16 +66,29 @@
                 }, 5000)
             }
         {% endif %}
+        setInterval(go,1000)
     };
-    var x=4;
-    function go() {
+    {% if isalready == 1 %}
+        var x=4;
+        function go() {
+        if (x>=0){
+            document.getElementById("sp").innerText=x;
+        }else {
+                location.href = "/articlecontent/?title={{ title }}&currentPage={{ currentPage }}";
+        }
+        x--;
+        }
+    {% elif isalready == -1 %}
+        var x=4;
+        function go() {
         if (x>=0){
             document.getElementById("sp").innerText=x;
         }else {
                 history.go(-1);
         }
         x--;
-    }
+        }
+    {% endif %}
     </script>
     </body>
 

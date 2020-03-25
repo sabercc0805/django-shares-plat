@@ -117,6 +117,8 @@
                                     <td>成功</td>
                                 {% elif order.orderstate == -1 %}
                                     <td>状态不明</td>
+                                {% elif order.orderstate == 2 %}
+                                    <td>申请已提交，等待处理</td>
                                 {% elif order.orderstate == 3 %}
                                     <td>处理中</td>
                                 {% endif %}
