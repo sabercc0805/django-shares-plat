@@ -16,7 +16,7 @@ django-simple-captcha==0.5.9
 django-timezone-field==3.0
 DjangoUeditor==1.8.143
 dnspython==1.16.0
-eventlet==0.25.1
+eventlet==0.31.0
 greenlet==0.4.15
 idna==2.8
 image==1.5.27
